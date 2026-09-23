@@ -1,0 +1,11 @@
+.DS_Store
+.idea/
+.vscode/
+*.iml
+target/
+build/
+out/
+bin/
+obj/
+__pycache__/
+node_modules/
