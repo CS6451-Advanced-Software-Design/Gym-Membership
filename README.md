@@ -11,7 +11,7 @@ A monolithic business tier for a gym and fitness club: membership plans and bill
 | Member | GitHub | Roles |
 | --- | --- | --- |
 | Chirag Aggarwal | @ChiragAgg5k | |
-| Bharat Doodi | | |
+| Bharat Doodi | @AKABharat | |
 | DineshReddy Mogili | | |
 | Dhruv Punj | | |
 
