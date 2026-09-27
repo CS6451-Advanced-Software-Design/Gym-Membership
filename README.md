@@ -13,7 +13,7 @@ A monolithic business tier for a gym and fitness club: membership plans and bill
 | Chirag Aggarwal | @ChiragAgg5k | |
 | Bharat Doodi | @AKABharat | |
 | DineshReddy Mogili | @sanjuD1603 | |
-| Dhruv Punj | | |
+| Dhruv Punj | @DHRUVx22 | |
 
 See [docs/roles.md](docs/roles.md) for the proposed role split.
 
