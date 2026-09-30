@@ -8,7 +8,7 @@ The spec (Table 2) lists 10 roles. Everyone must contribute **equally to code an
 
 | Member | Report-facing role | Technical role | Owns feature |
 | --- | --- | --- | --- |
-| A | Project Manager (§3 plan, diary, transparency tables §7) | Tester (test strategy, JUnit/xUnit setup, §8 tests) | Booking |
+| A | Project Manager (§3 plan, diary, transparency tables §7) | Tester (test strategy, JUnit 5 setup, §8 tests) | Booking |
 | B | Business Analyst / Requirements Engineer (§4) | Systems Analyst (§6 analysis sketches) | Membership |
 | C | Architect (§5 architecture, tech pipeline) | Designer (§10 recovered blueprints in the UML workbench) | Billing |
 | D | Documentation Manager (assembles the report, presentation checks) | Technical Lead + DevOps (repo, CI/CD, metrics → refactoring §9) | Member |

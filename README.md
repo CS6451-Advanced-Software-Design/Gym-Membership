@@ -22,6 +22,7 @@ See [docs/roles.md](docs/roles.md) for the proposed role split.
 | Doc | Purpose |
 | --- | --- |
 | [docs/requirements](docs/requirements/README.md) | Actors, use cases, business rules, quality attributes (report §4) |
+| [docs/tech-stack.md](docs/tech-stack.md) | Java 21 + Spring Boot, Maven, tests, CI/CD, metrics, UML workbench, hosting stack (report §5, §8, §9, §10) |
 | [docs/roles.md](docs/roles.md) | Roles and package ownership (report §3) |
 | [docs/diary.md](docs/diary.md) | Weekly diary, Weeks 4–12 (report §7). **Update every week** |
 | [docs/genai-prompts.md](docs/genai-prompts.md) | Every GenAI prompt used (report §13). **Log prompts as you go** |
