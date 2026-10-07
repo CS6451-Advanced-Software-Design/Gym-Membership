@@ -14,3 +14,4 @@ Report §13. The spec requires the **list of prompts** in the main body of the r
 | 8 | 2026-10-07 | Chirag | Claude (Claude Code) | "no dont use unprofessional lines... it should be normal diagrams" | Switched the diagrams back to plain straight-line UML |
 | 9 | 2026-10-07 | Chirag | Claude (Claude Code) | "lets remove the code added for the diagrams, we only need the diagram images" | Rendered the use case diagram to an image with a cleaner layout and removed all PlantUML sources |
 | 10 | 2026-10-07 | Chirag | Claude (Claude Code) | "assign random roles" | Randomly matched members to the four role sets in roles.md |
+| 11 | 2026-10-07 | Chirag | Claude (Claude Code) | "research how hosting of this tech stack will take place, are there tools we can use to init the stack and maintain it" then "yes lets add those notes" | Project setup, hosting options and maintenance tooling in tech-stack.md |
