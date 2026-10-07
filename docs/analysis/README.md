@@ -2,15 +2,13 @@
 
 > **Bootstrap draft (GenAI, prompts #6–7 in [genai-prompts.md](../genai-prompts.md)).** The Systems Analyst should challenge these, redraw them by hand if preferred (the spec allows photographed sketches), and write the report text in our own words.
 
-| Required by §6 | Diagram | Source |
-| --- | --- | --- |
-| Candidate objects | [below](#candidate-objects) | |
-| Class diagram | ![Class diagram](class-diagram.png) | [class-diagram.puml](class-diagram.puml) |
-| Sequence diagram | ![UC2 sequence](sequence-book-class.png) | [sequence-book-class.puml](sequence-book-class.puml) |
-| State chart (object from the sequence diagram) | ![Membership state chart](membership-statechart.png) | [membership-statechart.puml](membership-statechart.puml) |
-| ER diagram with cardinality | ![ER diagram](er-diagram.png) | [er-diagram.puml](er-diagram.puml) |
-
-Render with `plantuml -tpng docs/analysis/*.puml` (needs Graphviz).
+| Required by §6 | Diagram |
+| --- | --- |
+| Candidate objects | [below](#candidate-objects) |
+| Class diagram | ![Class diagram](class-diagram.png) |
+| Sequence diagram | ![UC2 sequence](sequence-book-class.png) |
+| State chart (object from the sequence diagram) | ![Membership state chart](membership-statechart.png) |
+| ER diagram with cardinality | ![ER diagram](er-diagram.png) |
 
 ## Candidate objects
 
@@ -42,7 +40,7 @@ Found by noun identification (Lecture B method) over [UC1](../requirements/use-c
 
 ## Kept deliberately simple
 
-These are analysis **sketches**, so they show only the main classes and a few attributes and operations each. Design patterns (State for `Membership`, Strategy for `DiscountPolicy`, Observer for `Waitlist`, Factory for `Plan`) are added in the design and implementation iterations, not here. All diagrams share one plain style from [style.iuml](../style.iuml).
+These are analysis **sketches**, so they show only the main classes and a few attributes and operations each. Design patterns (State for `Membership`, Strategy for `DiscountPolicy`, Observer for `Waitlist`, Factory for `Plan`) are added in the design and implementation iterations, not here.
 
 ## Checklist against the §6 marking criteria
 

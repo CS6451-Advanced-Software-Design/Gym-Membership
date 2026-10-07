@@ -33,7 +33,7 @@
 
 ★ = the 2 key use cases for full descriptions: [UC1](use-cases/UC1-sign-up-for-membership.md) and [UC2](use-cases/UC2-book-class.md).
 
-Diagram: [use-case-diagram.puml](use-case-diagram.puml).
+![Use case diagram](use-case-diagram.png)
 
 ## Business rules
 
