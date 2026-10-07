@@ -6,9 +6,9 @@
 
 ## Diagrams
 
-| Diagram | Source | Purpose |
-| --- | --- | --- |
-| ![Package diagram](package-diagram.png) | [package-diagram.puml](package-diagram.puml) | The required high-level package diagram. Every dependency points towards `domain` |
+| Diagram | Purpose |
+| --- | --- |
+| ![Package diagram](package-diagram.png) | The required high-level package diagram. Every dependency points towards `domain` |
 
 ## Pattern 1: MVC (covered in lectures)
 
