@@ -1,0 +1,20 @@
+@startuml package-diagram
+' Bootstrap draft, GenAI prompt #6 and #7. Report §5.
+!include ../style.iuml
+skinparam packageStyle folder
+
+package controller
+package service
+package port
+package adapter
+package domain
+
+controller ..> port : calls
+service ..> port : implements
+adapter ..> port : implements
+service ..> domain
+port ..> domain
+
+note right of controller : MVC controller\n(REST, Postman)
+note bottom of domain : MVC model,\nplain Java
+@enduml

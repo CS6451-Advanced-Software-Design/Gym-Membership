@@ -1,0 +1,46 @@
+@startuml er-diagram
+' Bootstrap draft, GenAI prompt #6 and #7. Report §6.
+!include ../style.iuml
+
+entity MEMBER {
+  * member_id <<PK>>
+  --
+  name
+  email
+}
+entity PLAN {
+  * plan_id <<PK>>
+  --
+  monthly_price
+}
+entity MEMBERSHIP {
+  * membership_id <<PK>>
+  --
+  member_id <<FK>>
+  plan_id <<FK>>
+  state
+}
+entity GYM_CLASS {
+  * class_id <<PK>>
+  --
+  capacity
+}
+entity BOOKING {
+  * booking_id <<PK>>
+  --
+  member_id <<FK>>
+  class_id <<FK>>
+}
+entity INVOICE {
+  * invoice_id <<PK>>
+  --
+  membership_id <<FK>>
+  total
+}
+
+MEMBER ||--o{ MEMBERSHIP
+PLAN ||--o{ MEMBERSHIP
+MEMBERSHIP ||--o{ INVOICE
+MEMBER ||--o{ BOOKING
+GYM_CLASS ||--o{ BOOKING
+@enduml

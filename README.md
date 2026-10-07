@@ -2,7 +2,7 @@
 
 CS6451 Advanced Software Design, Team-Based Assignment Part 1 (Brightspace Group 1), University of Limerick, Autumn 2026/27.
 
-A monolithic (package-by-layer MVC) business tier for a gym and fitness club: membership plans and billing, class bookings with capacity and waitlists, check-in, freezes, penalties, and referral credits. The front end is simulated with Postman and the data layer with file I/O behind repositories and DTOs.
+A monolithic (package-by-layer MVC + Hexagonal) business tier for a gym and fitness club: membership plans and billing, class bookings with capacity and waitlists, check-in, freezes, penalties, and referral credits. The front end is simulated with Postman and the data layer with file I/O behind repositories and DTOs.
 
 **Deadline: 23:59 Sun 1 Nov 2026.**
 
@@ -22,6 +22,8 @@ See [docs/roles.md](docs/roles.md) for the proposed role split.
 | Doc | Purpose |
 | --- | --- |
 | [docs/requirements](docs/requirements/README.md) | Actors, use cases, business rules, quality attributes (report §4) |
+| [docs/architecture](docs/architecture/README.md) | MVC + Hexagonal, package diagram, hosting stack (report §5) |
+| [docs/analysis](docs/analysis/README.md) | Candidate objects, class, sequence, state chart and ER diagrams (report §6) |
 | [docs/tech-stack.md](docs/tech-stack.md) | Java 21 + Spring Boot, Maven, tests, CI/CD, metrics, UML workbench, hosting stack (report §5, §8, §9, §10) |
 | [docs/roles.md](docs/roles.md) | Roles and package ownership (report §3) |
 | [docs/diary.md](docs/diary.md) | Weekly diary, Weeks 4–12 (report §7). **Update every week** |

@@ -1,0 +1,25 @@
+@startuml sequence-book-class
+' Bootstrap draft, GenAI prompt #6 and #7. Report §6: UC2 Book Class.
+!include ../style.iuml
+hide footbox
+
+actor Member
+participant ":BookingService" as service
+participant ":Membership" as membership
+participant ":GymClass" as gymClass
+participant ":Waitlist" as waitlist
+
+Member -> service : book(classId)
+service -> membership : canBook()
+membership --> service : yes
+service -> gymClass : isFull()
+alt space left
+  gymClass --> service : no
+  service -> gymClass : reserve(member)
+  service --> Member : booked
+else full
+  gymClass --> service : yes
+  service -> waitlist : add(member)
+  service --> Member : waitlisted (position)
+end
+@enduml

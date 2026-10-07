@@ -1,0 +1,5 @@
+' Shared style for all diagrams: plain UML, straight lines.
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide empty members
