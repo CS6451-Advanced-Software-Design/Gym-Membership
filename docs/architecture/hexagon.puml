@@ -1,0 +1,58 @@
+@startuml hexagon
+' Bootstrap draft, GenAI prompt #6. Report §5: how the hexagon maps onto our classes.
+title Ports and Adapters view
+left to right direction
+skinparam componentStyle rectangle
+skinparam linetype polyline
+
+actor "Postman\n(simulated front end)" as Client
+actor "Clock\n(scheduled billing)" as Clock
+
+package "Inbound adapters" {
+  [BookingController] as BC
+  [MembershipController] as MC
+  [BillingJob] as BJ
+}
+
+package "Application core (the hexagon)" {
+  interface "BookClassUseCase" as BookPort
+  interface "SignUpUseCase" as SignUpPort
+  interface "RunBillingUseCase" as BillingPort
+  [BookingService] as BS
+  [MembershipService] as MS
+  [BillingService] as BLS
+  [Domain model] as DM
+  interface "BookingRepository\nMembershipRepository\n..." as RepoPort
+  interface "PaymentGateway" as PayPort
+  interface "NotificationSender" as NotifyPort
+}
+
+package "Outbound adapters" {
+  [JsonFileBookingRepository\nJsonFileMembershipRepository\n...] as Json
+  [FakePaymentGateway] as Pay
+  [EventNotificationSender] as Notify
+}
+
+database "JSON files\n(EIS)" as Files
+
+Client --> BC
+Client --> MC
+Clock --> BJ
+BC --> BookPort
+MC --> SignUpPort
+BJ --> BillingPort
+BS -up-|> BookPort
+MS -up-|> SignUpPort
+BLS -up-|> BillingPort
+BS --> DM
+MS --> DM
+BLS --> DM
+BS --> RepoPort
+BS --> NotifyPort
+MS --> PayPort
+BLS --> PayPort
+Json -up-|> RepoPort
+Pay -up-|> PayPort
+Notify -up-|> NotifyPort
+Json --> Files
+@enduml

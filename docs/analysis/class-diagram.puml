@@ -1,0 +1,265 @@
+@startuml class-diagram
+' Bootstrap draft, GenAI prompt #6. Report §6: analysis class diagram (sketch).
+' Shows: inheritance, realisation, composition, aggregation, association (incl. reflexive
+' and association class), dependency, visibility, multiplicity, a template, and
+' interfaces with pre/postconditions. Each attribute and operation appears once.
+title Gym membership: analysis class diagram
+skinparam classAttributeIconSize 0
+skinparam nodesep 40
+skinparam ranksep 50
+hide empty members
+
+interface BookClassUseCase <<interface>> <<port.in>> {
+  + book(memberId: String, classId: String): BookingResult
+}
+interface SignUpUseCase <<interface>> <<port.in>> {
+  + signUp(request: SignUpRequest): Membership
+}
+
+class BookingService <<control>> {
+  - clock: Clock
+}
+class MembershipService <<control>>
+
+class Member <<entity>> {
+  - id: String
+  - name: String
+  - email: String
+  - studentId: String [0..1]
+  - joinedOn: LocalDate
+  - referralCode: String
+  - suspendedUntil: LocalDate [0..1]
+  + isSuspendedOn(date: LocalDate): boolean
+  + monthsAsMember(on: LocalDate): int
+}
+
+class Membership <<entity>> {
+  - id: String
+  - startDate: LocalDate
+  - endDate: LocalDate
+  - failedPayments: int = 0
+  - trialBookingsUsed: int = 0
+  + canBook(): boolean
+  + canCheckIn(at: LocalDateTime): boolean
+  + freeze(months: int, today: LocalDate): void
+  + unfreeze(today: LocalDate): void
+  + paymentSucceeded(): void
+  + paymentFailed(): void
+  + cancel(today: LocalDate): Money
+  ~ changeState(next: MembershipState): void
+}
+
+class Freeze {
+  - startDate: LocalDate
+  - months: int
+}
+
+abstract class MembershipState <<State>> {
+  + canBook(membership: Membership): boolean
+  + canCheckIn(membership: Membership): boolean
+  + freeze(membership: Membership, months: int): void
+  + unfreeze(membership: Membership): void
+  + paymentSucceeded(membership: Membership): void
+  + paymentFailed(membership: Membership): void
+  + cancel(membership: Membership): Money
+}
+class TrialState
+class ActiveState
+class FrozenState
+class LapsedState
+class CancelledState
+
+abstract class Plan {
+  - name: String
+  - monthlyPrice: Money
+  + {abstract} priceFor(period: YearMonth, joinedOn: LocalDate): Money
+  + allowsAccessAt(time: LocalDateTime): boolean
+  + earlyExitFee(monthsHeld: int): Money
+  + includesPremiumClasses(): boolean
+}
+class MonthlyPlan
+class AnnualPlan {
+  - upfrontPrice: Money
+}
+class StudentPlan
+class OffPeakPlan {
+  - window: TimeWindow
+}
+class PlanFactory <<Factory>> {
+  + create(type: PlanType): Plan
+}
+
+class GymClass <<entity>> {
+  - id: String
+  - title: String
+  - startsAt: LocalDateTime
+  - capacity: int
+  - premium: boolean
+  + isFull(): boolean
++ waitlist(): Waitlist
+  + reserve(member: Member): Booking
+  + release(booking: Booking, now: LocalDateTime): Charge [0..1]
+}
+
+class Waitlist {
+  + add(member: Member): int
+  + promoteNext(): Member [0..1]
+  + positionOf(member: Member): int
+  + attach(observer: WaitlistObserver): void
+}
+class WaitlistEntry {
+  - joinedAt: LocalDateTime
+}
+interface WaitlistObserver <<interface>> <<Observer>> {
+  + promoted(member: Member, gymClass: GymClass): void
+}
+
+class Instructor <<entity>> {
+  - id: String
+  - name: String
+}
+
+class Booking <<entity>> {
+  - id: String
+  - bookedAt: LocalDateTime
+  - status: BookingStatus
+  - surcharge: Money
+  + cancel(now: LocalDateTime): Charge [0..1]
+  + markNoShow(): Charge
+}
+enum BookingStatus {
+  BOOKED
+  CANCELLED
+  ATTENDED
+  NO_SHOW
+}
+
+class Charge {
+  - amount: Money
+  - type: ChargeType
+  - incurredOn: LocalDate
+}
+enum ChargeType {
+  PLAN_FEE
+  LATE_CANCELLATION
+  NO_SHOW
+  PREMIUM_SURCHARGE
+  DISCOUNT
+  REFERRAL_CREDIT
+  EARLY_EXIT_FEE
+}
+class Invoice <<entity>> {
+  - id: String
+  - period: YearMonth
+  - issuedOn: LocalDate
+  + total(): Money
+}
+class ChargeCalculator {
+  + calculate(membership: Membership, period: YearMonth): List<Charge>
+}
+interface DiscountPolicy <<interface>> <<Strategy>> {
+  + discountFor(member: Member, amount: Money, on: LocalDate): Money
+}
+abstract class PercentageDiscount {
+  # rate: BigDecimal
+  # {abstract} isEligible(member: Member, on: LocalDate): boolean
+}
+class CorporateDiscount
+class FamilyDiscount
+class LoyaltyDiscount
+
+interface "Repository<T, ID>" as Repository <<interface>> <<port.out>> {
+  + findById(id: ID): Optional<T>
+  + save(entity: T): void
+}
+interface MembershipRepository <<interface>> <<port.out>> {
++ findCurrentFor(memberId: String): Membership
+}
+interface GymClassRepository <<interface>> <<port.out>>
+interface PaymentGateway <<interface>> <<port.out>> {
+  + charge(member: Member, amount: Money): PaymentResult
+}
+
+' Control classes
+BookingService ..|> BookClassUseCase
+MembershipService ..|> SignUpUseCase
+BookingService --> "1" MembershipRepository : - memberships
+BookingService --> "1" GymClassRepository : - classes
+MembershipService --> "1" PaymentGateway : - payments
+MembershipService ..> PlanFactory
+
+' Membership aggregate
+Member "1" -- "1..*" Membership : holds >
+Member "0..1" -- "0..*" Member : referrer / referrals
+Membership "1" *-- "0..*" Freeze : freezes
+Membership "*" --> "1" Plan
+Membership "*" --> "1" MembershipState : - state
+Membership "1" *-- "0..*" Charge : pending >
+MembershipState <|-- TrialState
+MembershipState <|-- ActiveState
+MembershipState <|-- FrozenState
+MembershipState <|-- LapsedState
+MembershipState <|-- CancelledState
+Plan <|-- MonthlyPlan
+Plan <|-- AnnualPlan
+Plan <|-- StudentPlan
+Plan <|-- OffPeakPlan
+PlanFactory ..> Plan : <<creates>>
+
+' Booking aggregate
+Instructor "1" -- "0..*" GymClass : teaches >
+GymClass "1" *-- "1" Waitlist
+Waitlist "1" *-- "0..*" WaitlistEntry : {ordered}
+WaitlistEntry "*" --> "1" Member
+Waitlist "1" --> "0..*" WaitlistObserver : - observers
+Member "*" -- "*" GymClass
+(Member, GymClass) .. Booking
+Booking ..> BookingStatus
+Charge ..> ChargeType
+
+' Billing
+Invoice "0..1" o-- "1..*" Charge : lines
+Invoice "*" --> "1" Membership
+ChargeCalculator "1" o-- "1..*" DiscountPolicy : policies
+DiscountPolicy <|.. PercentageDiscount
+PercentageDiscount <|-- CorporateDiscount
+PercentageDiscount <|-- FamilyDiscount
+PercentageDiscount <|-- LoyaltyDiscount
+
+' Ports
+MembershipRepository ..> Repository : <<bind>>\nT=Membership, ID=String
+GymClassRepository ..> Repository : <<bind>>\nT=GymClass, ID=String
+
+note top of BookClassUseCase
+pre: member and class exist
+     and gymClass.startsAt > now
+post: exactly one of
+  a booking exists and bookedCount
+    = bookedCount@pre + 1 <= capacity
+  the member is last on the waitlist
+  BookingRefused is thrown and
+    nothing has changed
+end note
+
+note top of SignUpUseCase
+pre: no Active, Trial or Frozen
+     membership for request.email
+post: membership in Trial (Active for Annual)
+      and first charge paid, or nothing saved
+end note
+
+note right of DiscountPolicy
+pre: amount >= 0
+post: 0 <= result <= amount
+end note
+
+note bottom of PaymentGateway
+pre: amount > 0
+post: result.succeeded implies the
+      member was debited exactly once
+end note
+
+note bottom of Repository
+post (save): findById(entity.id) = entity
+end note
+@enduml

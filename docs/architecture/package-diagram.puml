@@ -1,0 +1,50 @@
+@startuml package-diagram
+' Bootstrap draft, GenAI prompt #6. Report §5: high-level package diagram.
+' MVC + Hexagonal (Ports and Adapters). Every dependency points inward, towards domain.
+title Gym membership: high-level package diagram (MVC + Hexagonal)
+skinparam packageStyle folder
+skinparam nodesep 70
+skinparam ranksep 60
+hide empty members
+
+package "controller" <<inbound adapter>> <<MVC Controller>> as controller {
+}
+package "dto" <<MVC View>> as dto {
+}
+package "port.in" as in <<port>> {
+}
+package "service" <<application core>> as service {
+}
+package "port.out" as out <<port>> {
+}
+package "adapter" <<outbound adapter>> as adapter {
+  package "persistence" {
+  }
+  package "payment" {
+  }
+  package "notification" {
+  }
+}
+package "domain" <<application core>> <<MVC Model>> as domain {
+}
+
+controller .right.> in : calls
+service .left.|> in : implements
+service .right.> out : calls
+adapter .left.|> out : implements
+controller .down.> dto
+service .down.> domain
+in .down.> domain
+out .down.> domain
+adapter .down.> domain
+dto .right.> domain
+
+note bottom of domain
+  Plain Java: no Spring, no I/O.
+  Every dependency points towards domain.
+end note
+note bottom of adapter
+  JSON file repositories (EIS), fake payment
+  gateway, ApplicationEventPublisher events.
+end note
+@enduml

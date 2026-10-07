@@ -1,0 +1,51 @@
+@startuml membership-statechart
+' Bootstrap draft, GenAI prompt #6. Report §6: state chart for Membership, which appears in
+' sequence-book-class.puml. Transition strings: event [guard] / action.
+title Membership: state chart
+hide empty description
+skinparam state {
+  BackgroundColor<<blocked>> #FDECEA
+}
+
+[*] --> Trial : signUp(plan) [plan is not Annual] / chargeFirstMonth()
+[*] --> Active : signUp(plan) [plan is Annual] / chargeUpfront()
+
+state Trial {
+  Trial : entry / trialBookingsUsed := 0
+  Trial : book() [trialBookingsUsed < 2] / trialBookingsUsed++
+}
+
+state Active {
+  Active : entry / failedPayments := 0
+  Active : paymentFailed() [failedPayments = 0] / failedPayments := 1; notifyMember()
+}
+
+state Frozen {
+  Frozen : entry / suspendBilling()
+  Frozen : exit / resumeBilling()
+}
+
+state Lapsed <<blocked>> {
+  Lapsed : entry / blockBookingAndCheckIn(); notifyMember()
+}
+
+state Cancelled <<blocked>> {
+  Cancelled : entry / issueFinalBill()
+}
+
+Trial --> Active : after(7 days) [first payment succeeded]
+Trial --> Cancelled : cancel()
+Trial --> Cancelled : after(7 days) [first payment failed]
+
+Active --> Frozen : freeze(months) [1 <= months <= 3 and no freeze in last 12 months] / endDate += months
+Frozen --> Active : unfreeze() or after(months)
+Active --> Lapsed : paymentFailed() [failedPayments = 1]
+Lapsed --> Active : arrearsPaid(amount) [amount >= arrears]
+
+Active --> Cancelled : cancel() [not Annual or monthsHeld >= 6]
+Active --> Cancelled : cancel() [Annual and monthsHeld < 6] / charge(earlyExitFee = 50)
+Frozen --> Cancelled : cancel()
+Lapsed --> Cancelled : cancel() / chargeArrears()
+
+Cancelled --> [*]
+@enduml

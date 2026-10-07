@@ -1,0 +1,117 @@
+@startuml er-diagram
+' Bootstrap draft, GenAI prompt #6. Report §6: ER diagram with cardinality (crow's foot).
+' Logical model. At runtime each entity is a JSON file behind a repository, so foreign keys
+' are ids stored in the documents.
+title Gym membership: entity relationship diagram
+hide circle
+skinparam nodesep 60
+skinparam ranksep 60
+
+entity MEMBER {
+  * member_id : string <<PK>>
+  --
+  * name : string
+  * email : string <<unique>>
+  student_id : string
+  * joined_on : date
+  * referral_code : string <<unique>>
+  referred_by : string <<FK MEMBER>>
+  suspended_until : date
+}
+
+entity PLAN {
+  * plan_id : string <<PK>>
+  --
+  * type : MONTHLY | ANNUAL | STUDENT | OFF_PEAK
+  * name : string
+  * monthly_price : decimal
+  upfront_price : decimal
+  access_from : time
+  access_to : time
+}
+
+entity MEMBERSHIP {
+  * membership_id : string <<PK>>
+  --
+  * member_id : string <<FK>>
+  * plan_id : string <<FK>>
+  * state : TRIAL | ACTIVE | FROZEN | LAPSED | CANCELLED
+  * start_date : date
+  * end_date : date
+  * failed_payments : int
+  * trial_bookings_used : int
+}
+
+entity FREEZE {
+  * freeze_id : string <<PK>>
+  --
+  * membership_id : string <<FK>>
+  * start_date : date
+  * months : int
+}
+
+entity INSTRUCTOR {
+  * instructor_id : string <<PK>>
+  --
+  * name : string
+}
+
+entity GYM_CLASS {
+  * class_id : string <<PK>>
+  --
+  * instructor_id : string <<FK>>
+  * title : string
+  * starts_at : datetime
+  * capacity : int
+  * premium : boolean
+}
+
+entity BOOKING {
+  * booking_id : string <<PK>>
+  --
+  * member_id : string <<FK>>
+  * class_id : string <<FK>>
+  * booked_at : datetime
+  * status : BOOKED | CANCELLED | ATTENDED | NO_SHOW
+  * surcharge : decimal
+}
+
+entity WAITLIST_ENTRY {
+  * class_id : string <<PK, FK>>
+  * member_id : string <<PK, FK>>
+  --
+  * joined_at : datetime
+}
+
+entity CHARGE {
+  * charge_id : string <<PK>>
+  --
+  * membership_id : string <<FK>>
+  invoice_id : string <<FK>>
+  * type : string
+  * amount : decimal
+  * incurred_on : date
+}
+
+entity INVOICE {
+  * invoice_id : string <<PK>>
+  --
+  * membership_id : string <<FK>>
+  * period : year_month
+  * issued_on : date
+  * paid : boolean
+}
+
+MEMBER ||--o{ MEMBERSHIP : holds
+MEMBER |o--o{ MEMBER : refers
+PLAN ||--o{ MEMBERSHIP : "priced by"
+MEMBERSHIP ||--o{ FREEZE : has
+MEMBERSHIP ||--o{ CHARGE : accrues
+MEMBERSHIP ||--o{ INVOICE : billed
+INVOICE |o--|{ CHARGE : itemises
+GYM_CLASS }o-up-|| INSTRUCTOR : "taught by"
+MEMBER ||--o{ BOOKING : makes
+BOOKING }o--|| GYM_CLASS : for
+MEMBER ||--o{ WAITLIST_ENTRY : queues
+WAITLIST_ENTRY }o--|| GYM_CLASS : "waitlist of"
+@enduml

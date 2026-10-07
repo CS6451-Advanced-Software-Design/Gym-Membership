@@ -1,0 +1,69 @@
+@startuml sequence-book-class
+' Bootstrap draft, GenAI prompt #6. Report §6: sequence diagram for UC2 Book Class.
+' Membership appears here, so its state chart (membership-statechart.puml) satisfies §6.
+title UC2 Book Class: sequence diagram
+autonumber
+skinparam sequenceMessageAlign center
+hide footbox
+
+actor Member as actor
+boundary ":BookingController" as controller
+control ":BookingService" as service
+participant ":MembershipRepository" as memberships
+entity ":Membership" as membership
+participant "state:MembershipState" as state
+participant ":GymClassRepository" as classes
+entity ":GymClass" as gymClass
+entity ":Waitlist" as waitlist
+participant "observer:WaitlistObserver" as observer
+
+actor -> controller : POST /bookings {memberId, classId}
+controller -> service : book(memberId, classId)
+service -> memberships : findCurrentFor(memberId)
+memberships --> service : membership
+service -> membership : canBook()
+membership -> state : canBook(this)
+note right of state
+  Trial: trialBookingsUsed < 2
+  Active: true
+  Frozen, Lapsed, Cancelled: false
+end note
+state --> membership : allowed
+membership --> service : allowed
+
+alt not allowed (Lapsed, Frozen, suspended or over the limit)
+  service --> controller : BookingRefused(reason)
+  controller --> actor : 409 Conflict + reason
+else allowed
+  service -> classes : findById(classId)
+  classes --> service : gymClass
+  service -> gymClass : isFull()
+  gymClass --> service : full
+
+  alt space available
+    service -> gymClass : reserve(member)
+    create entity ":Booking" as booking
+    gymClass -> booking : <<create>>
+    gymClass --> service : booking
+    service -> classes : save(gymClass)
+    service --> controller : BookingResult.confirmed(booking)
+    controller --> actor : 201 Created
+  else class is full
+    service -> gymClass : waitlist()
+    gymClass --> service : waitlist
+    service -> waitlist : add(member)
+    waitlist --> service : position
+    service -> classes : save(gymClass)
+    service --> controller : BookingResult.waitlisted(position)
+    controller --> actor : 202 Accepted + position
+  end
+end
+
+== Later: another member cancels (UC3), so the waitlist promotes ==
+service -> waitlist : promoteNext()
+waitlist -> observer : promoted(member, gymClass)
+note right of observer
+  Observer: sends the
+  notification (BR-B2)
+end note
+@enduml
