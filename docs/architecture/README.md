@@ -32,7 +32,7 @@ Source: Cockburn, A. (2005) *The Hexagonal (Ports & Adapters) Architecture*, HaT
 | Driving (inbound) port | `SignUpUseCase`, `BookClassUseCase`, `RunBillingUseCase`, ... | `port.in` |
 | Driving (inbound) adapter | REST controllers (Postman), `BillingJob` (clock), JUnit tests | `controller` |
 | Driven (outbound) port | `Repository<T, ID>` and its bindings, `PaymentGateway`, `NotificationSender` | `port.out` |
-| Driven (outbound) adapter | `JsonFile*Repository`, `FakePaymentGateway`, `EventNotificationSender` | `adapter.*` |
+| Driven (outbound) adapter | `Cloud*Repository` and `JsonFile*Repository`, `FakePaymentGateway`, `EventNotificationSender` | `adapter.*` |
 
 **Dependency rule:** `domain` depends on nothing. `service` depends on `domain` and the ports. Adapters depend inwards on the ports. Nothing in `domain` or `service` imports Spring web, Jackson or `java.io`. This can be checked automatically with an ArchUnit test, which is a candidate for §9 added value.
 
@@ -41,8 +41,11 @@ Source: Cockburn, A. (2005) *The Hexagonal (Ports & Adapters) Architecture*, HaT
 **Why Hexagonal for this scenario:**
 - QA1 extensibility: a new plan or discount sits in `domain`. A new payment provider or a real database (Part 2) is a new adapter, with no changes to the core.
 - QA2 testability (if chosen): every business rule runs with in-memory fakes behind the outbound ports. No files, no HTTP, and a fixed `Clock`.
+- The same repository ports take both a JSON file adapter and a cloud database adapter, chosen by a Spring profile. That shows the pattern working with no change to the business tier.
 - The spec allows a simulated front end and file I/O. Hexagonal makes "simulated" an adapter swap rather than a hack.
 - It sets up Part 2 (microservices), where each service keeps the same hexagon around its own domain.
+
+**Still a monolith:** the cloud database is the EIS tier, like any database server. All business logic runs in one deployable jar. The database only stores rows: no business rules live in it (no server-side functions, triggers or events).
 
 **Liabilities to discuss:** more interfaces and indirection than plain layering. A mapping step between DTOs, domain objects and JSON documents. It's easy to let Spring annotations leak into `domain`.
 
@@ -59,7 +62,7 @@ From [tech-stack.md](../tech-stack.md#hosting-stack-report-5):
 | --- | --- |
 | Web server + application server | Tomcat, embedded in the Spring Boot jar |
 | Business tier | `domain` + `service` (the hexagon) |
-| EIS / database | JSON files, reached only through `adapter.persistence` |
+| EIS / database | A hosted table database (`cloud` profile), or JSON files offline (`local` profile). Both reached only through `adapter.persistence`. The product choice is in [tech-stack.md](../tech-stack.md#cloud-database) |
 | Message bus | Spring `ApplicationEventPublisher` (in-process), used by `adapter.notification` |
 
 ## Package structure
@@ -73,7 +76,7 @@ gym/
 +- port/out/                Repository<T, ID>, MembershipRepository, GymClassRepository, ..., PaymentGateway, NotificationSender
 +- service/                 implements port.in: MembershipService, BookingService, BillingService, MemberService
 +- domain/                  Member, Membership, MembershipState (+ states), Plan (+ plans), GymClass, Waitlist, Booking, Charge, Invoice, DiscountPolicy (+ policies)
-+- adapter/persistence/     JsonFileMembershipRepository, ...
++- adapter/persistence/     CloudMembershipRepository, JsonFileMembershipRepository, ...
 +- adapter/payment/         FakePaymentGateway
 +- adapter/notification/    EventNotificationSender
 ```
