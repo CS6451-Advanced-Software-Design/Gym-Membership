@@ -39,11 +39,11 @@ class Invoice {
 class Charge {
   - amount: Money
 }
-interface DiscountPolicy {
+interface DiscountPolicy <<interface>> {
   + discountFor(amount): Money
 }
 class LoyaltyDiscount
-interface PaymentGateway {
+interface PaymentGateway <<interface>> {
   + charge(m: Member, amount): boolean
 }
 

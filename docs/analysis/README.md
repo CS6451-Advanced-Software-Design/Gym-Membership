@@ -42,7 +42,7 @@ Found by noun identification (Lecture B method) over [UC1](../requirements/use-c
 
 ## Kept deliberately simple
 
-These are analysis **sketches**, so they show only the main classes and a few attributes and operations each. Design patterns (State for `Membership`, Strategy for `DiscountPolicy`, Observer for `Waitlist`, Factory for `Plan`) are added in the design and implementation iterations, not here. All diagrams share one hand-drawn style from [style.iuml](../style.iuml).
+These are analysis **sketches**, so they show only the main classes and a few attributes and operations each. Design patterns (State for `Membership`, Strategy for `DiscountPolicy`, Observer for `Waitlist`, Factory for `Plan`) are added in the design and implementation iterations, not here. All diagrams share one plain style from [style.iuml](../style.iuml).
 
 ## Checklist against the §6 marking criteria
 
