@@ -1,6 +1,6 @@
 # Roles
 
-**Status: proposal, to be agreed by the team.**
+**Status: assigned 7 Oct 2026.** Members were matched to the four role sets at random.
 
 The spec (Table 2) lists 10 roles. Everyone must contribute **equally to code and to the report**, so each member takes one report-facing role and one technical role, **owns one feature across every layer** (its controller, port, service, domain and adapter classes, plus their tests), and writes their own reflection.
 
@@ -8,14 +8,12 @@ The spec (Table 2) lists 10 roles. Everyone must contribute **equally to code an
 
 | Member | Report-facing role | Technical role | Owns feature |
 | --- | --- | --- | --- |
-| A | Project Manager (§3 plan, diary, transparency tables §7) | Tester (test strategy, JUnit 5 setup, §8 tests) | Booking |
-| B | Business Analyst / Requirements Engineer (§4) | Systems Analyst (§6 analysis sketches) | Membership |
-| C | Architect (§5 architecture, tech pipeline) | Designer (§10 recovered blueprints in the UML workbench) | Billing |
-| D | Documentation Manager (assembles the report, presentation checks) | Technical Lead + DevOps (repo, CI/CD, metrics → refactoring §9) | Member |
+| Bharat | Project Manager (§3 plan, diary, transparency tables §7) | Tester (test strategy, JUnit 5 setup, §8 tests) | Booking |
+| Dhruv | Business Analyst / Requirements Engineer (§4) | Systems Analyst (§6 analysis sketches) | Membership |
+| Chirag | Architect (§5 architecture, tech pipeline) | Designer (§10 recovered blueprints in the UML workbench) | Billing |
+| DineshReddy | Documentation Manager (assembles the report, presentation checks) | Technical Lead + DevOps (repo, CI/CD, metrics → refactoring §9) | Member |
 
 Everyone: Programmer (spec Table 2, row 8), reviews other members' PRs, and writes their own reflection (§12).
-
-Chirag's platform and DevOps background suits role D. The other allocations are open, so match them to experience and interest.
 
 ## Package structure: monolithic, package by layer
 
