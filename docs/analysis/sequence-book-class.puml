@@ -1,69 +1,25 @@
 @startuml sequence-book-class
-' Bootstrap draft, GenAI prompt #6. Report §6: sequence diagram for UC2 Book Class.
-' Membership appears here, so its state chart (membership-statechart.puml) satisfies §6.
-title UC2 Book Class: sequence diagram
-autonumber
-skinparam sequenceMessageAlign center
+' Bootstrap draft, GenAI prompt #6 and #7. Report §6: UC2 Book Class.
+!include ../style.iuml
 hide footbox
 
-actor Member as actor
-boundary ":BookingController" as controller
-control ":BookingService" as service
-participant ":MembershipRepository" as memberships
-entity ":Membership" as membership
-participant "state:MembershipState" as state
-participant ":GymClassRepository" as classes
-entity ":GymClass" as gymClass
-entity ":Waitlist" as waitlist
-participant "observer:WaitlistObserver" as observer
+actor Member
+participant ":BookingService" as service
+participant ":Membership" as membership
+participant ":GymClass" as gymClass
+participant ":Waitlist" as waitlist
 
-actor -> controller : POST /bookings {memberId, classId}
-controller -> service : book(memberId, classId)
-service -> memberships : findCurrentFor(memberId)
-memberships --> service : membership
+Member -> service : book(classId)
 service -> membership : canBook()
-membership -> state : canBook(this)
-note right of state
-  Trial: trialBookingsUsed < 2
-  Active: true
-  Frozen, Lapsed, Cancelled: false
-end note
-state --> membership : allowed
-membership --> service : allowed
-
-alt not allowed (Lapsed, Frozen, suspended or over the limit)
-  service --> controller : BookingRefused(reason)
-  controller --> actor : 409 Conflict + reason
-else allowed
-  service -> classes : findById(classId)
-  classes --> service : gymClass
-  service -> gymClass : isFull()
-  gymClass --> service : full
-
-  alt space available
-    service -> gymClass : reserve(member)
-    create entity ":Booking" as booking
-    gymClass -> booking : <<create>>
-    gymClass --> service : booking
-    service -> classes : save(gymClass)
-    service --> controller : BookingResult.confirmed(booking)
-    controller --> actor : 201 Created
-  else class is full
-    service -> gymClass : waitlist()
-    gymClass --> service : waitlist
-    service -> waitlist : add(member)
-    waitlist --> service : position
-    service -> classes : save(gymClass)
-    service --> controller : BookingResult.waitlisted(position)
-    controller --> actor : 202 Accepted + position
-  end
+membership --> service : yes
+service -> gymClass : isFull()
+alt space left
+  gymClass --> service : no
+  service -> gymClass : reserve(member)
+  service --> Member : booked
+else full
+  gymClass --> service : yes
+  service -> waitlist : add(member)
+  service --> Member : waitlisted (position)
 end
-
-== Later: another member cancels (UC3), so the waitlist promotes ==
-service -> waitlist : promoteNext()
-waitlist -> observer : promoted(member, gymClass)
-note right of observer
-  Observer: sends the
-  notification (BR-B2)
-end note
 @enduml

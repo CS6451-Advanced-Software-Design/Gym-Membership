@@ -1,6 +1,6 @@
 # Analysis sketches (report §6)
 
-> **Bootstrap draft (GenAI, prompt #6 in [genai-prompts.md](../genai-prompts.md)).** The Systems Analyst should challenge these, redraw them by hand if preferred (the spec allows photographed sketches), and write the report text in our own words.
+> **Bootstrap draft (GenAI, prompts #6–7 in [genai-prompts.md](../genai-prompts.md)).** The Systems Analyst should challenge these, redraw them by hand if preferred (the spec allows photographed sketches), and write the report text in our own words.
 
 | Required by §6 | Diagram | Source |
 | --- | --- | --- |
@@ -40,35 +40,27 @@ Found by noun identification (Lecture B method) over [UC1](../requirements/use-c
 | Personal details, payment details | UC1 | Discard | Attributes, or handled outside the system |
 | Front Desk Staff, Manager | Actors | Discard for now | Only roles for authorisation. No business state |
 
-## Design patterns visible at analysis
+## Kept deliberately simple
 
-| Pattern | Where | Business rule |
-| --- | --- | --- |
-| State | `Membership` → `MembershipState` | BR-M2–M5 |
-| Strategy | `ChargeCalculator` → `DiscountPolicy` | BR-P2 |
-| Observer | `Waitlist` → `WaitlistObserver` | BR-B2 |
-| Factory | `PlanFactory` → `Plan` | BR-M1, QA1 (new plan type) |
-
-Command (book or cancel with undo) is still a candidate for Iteration 2 if one of these four is dropped.
+These are analysis **sketches**, so they show only the main classes and a few attributes and operations each. Design patterns (State for `Membership`, Strategy for `DiscountPolicy`, Observer for `Waitlist`, Factory for `Plan`) are added in the design and implementation iterations, not here. All diagrams share one hand-drawn style from [style.iuml](../style.iuml).
 
 ## Checklist against the §6 marking criteria
 
-- [x] Inheritance: `Plan`, `MembershipState`, `PercentageDiscount`
-- [x] Composition: `Membership ◆ Freeze`, `Membership ◆ Charge`, `GymClass ◆ Waitlist ◆ WaitlistEntry`
-- [x] Aggregation: `Invoice ◇ Charge`, `ChargeCalculator ◇ DiscountPolicy`
-- [x] Associations: navigable, reflexive (referrals), association class (`Booking`)
-- [x] Dependencies: `<<creates>>`, `<<bind>>`, enum usage
-- [x] Visibility: `+`, `-`, `#`, `~`
-- [x] Multiplicity on every association
-- [x] Interfaces with pre/postconditions: `BookClassUseCase`, `SignUpUseCase`, `DiscountPolicy`, `PaymentGateway`, `Repository<T, ID>`
-- [x] Template class: `Repository<T, ID>`
-- [x] No duplicated attributes or operations (subclasses list only what is new)
+- [x] Inheritance: `Plan` → `MonthlyPlan`, `AnnualPlan`, `StudentPlan`
+- [x] Realisation: `LoyaltyDiscount` implements `DiscountPolicy`
+- [x] Composition: `GymClass ◆ Waitlist`
+- [x] Aggregation: `Invoice ◇ Charge`
+- [x] Associations with multiplicity: `Member`–`Membership`, `Member`–`Booking`, `Booking` → `GymClass`, `Membership` → `Plan`
+- [x] Dependencies: `Invoice` uses `DiscountPolicy`, `Membership` uses `PaymentGateway`
+- [x] Visibility: `+`, `-`, `#`
+- [x] Interfaces with pre/postconditions: `DiscountPolicy`, `PaymentGateway`
+- [x] No duplicated attributes or operations
 - [x] Sequence diagram contains `Membership`, the object with the state chart
 - [x] State chart transitions annotated as `event [guard] / action`
 - [x] ER diagram with crow's foot cardinality
 
 ## Open questions for the team
 
-- Does a Trial membership pay at sign-up (UC1, step 6) or only when the trial ends (BR-M2)? The state chart assumes sign-up charges the first month and the trial ends as Active only if that payment succeeded.
+- Does a Trial membership pay at sign-up (UC1, step 6) or only when the trial ends (BR-M2)? The state chart assumes the trial becomes Active only once a payment has gone through.
 - Should `Lapsed` time out to `Cancelled` automatically (e.g. after 60 days)? Not in the rules yet.
 - Are family memberships in scope (UC1 open issue)? If so, `Member` needs a payer association.

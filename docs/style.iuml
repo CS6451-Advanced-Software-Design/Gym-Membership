@@ -1,0 +1,9 @@
+' Shared sketch style for all diagrams: hand-drawn, black and white.
+!option handwritten true
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName "Bradley Hand"
+skinparam defaultFontSize 15
+skinparam classAttributeIconSize 0
+hide circle
+hide empty members

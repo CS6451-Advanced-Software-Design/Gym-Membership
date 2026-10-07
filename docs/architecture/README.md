@@ -1,6 +1,6 @@
 # Architecture (report §5)
 
-> **Bootstrap notes (GenAI, prompt #6 in [genai-prompts.md](../genai-prompts.md)).** These are facts and decisions for the Architect, not report text. The report section (max 2 pages) must be written in our own words.
+> **Bootstrap notes (GenAI, prompts #6–7 in [genai-prompts.md](../genai-prompts.md)).** These are facts and decisions for the Architect, not report text. The report section (max 2 pages) must be written in our own words.
 
 **Status:** pattern chosen 7 Oct 2026. MVC + **Hexagonal (Ports and Adapters)**, monolithic, one Spring Boot jar.
 
@@ -9,7 +9,6 @@
 | Diagram | Source | Purpose |
 | --- | --- | --- |
 | ![Package diagram](package-diagram.png) | [package-diagram.puml](package-diagram.puml) | The required high-level package diagram. Every dependency points towards `domain` |
-| ![Ports and adapters view](hexagon.png) | [hexagon.puml](hexagon.puml) | Shows which of our classes are ports and which are adapters |
 
 ## Pattern 1: MVC (covered in lectures)
 
