@@ -10,12 +10,12 @@ A monolithic (package-by-layer MVC + Hexagonal) business tier for a gym and fitn
 
 | Member | GitHub | Roles |
 | --- | --- | --- |
-| Chirag Aggarwal | @ChiragAgg5k | |
-| Bharat Doodi | @AKABharat | |
-| DineshReddy Mogili | @sanjuD1603 | |
-| Dhruv Punj | @DHRUVx22 | |
+| Chirag Aggarwal | @ChiragAgg5k | Architect, Designer. Owns Billing |
+| Bharat Doodi | @AKABharat | Project Manager, Tester. Owns Booking |
+| DineshReddy Mogili | @sanjuD1603 | Documentation Manager, Technical Lead + DevOps. Owns Member |
+| Dhruv Punj | @DHRUVx22 | Business Analyst, Systems Analyst. Owns Membership |
 
-See [docs/roles.md](docs/roles.md) for the proposed role split.
+See [docs/roles.md](docs/roles.md) for the full role split.
 
 ## Documents
 
