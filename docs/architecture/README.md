@@ -32,7 +32,7 @@ Source: Cockburn, A. (2005) *The Hexagonal (Ports & Adapters) Architecture*, HaT
 | Driving (inbound) port | `SignUpUseCase`, `BookClassUseCase`, `RunBillingUseCase`, ... | `port.in` |
 | Driving (inbound) adapter | REST controllers (Postman), `BillingJob` (clock), JUnit tests | `controller` |
 | Driven (outbound) port | `Repository<T, ID>` and its bindings, `PaymentGateway`, `NotificationSender` | `port.out` |
-| Driven (outbound) adapter | `JsonFile*Repository`, `FakePaymentGateway`, `EventNotificationSender` | `adapter.*` |
+| Driven (outbound) adapter | `Appwrite*Repository` and `JsonFile*Repository`, `FakePaymentGateway`, `AppwriteNotificationSender` | `adapter.*` |
 
 **Dependency rule:** `domain` depends on nothing. `service` depends on `domain` and the ports. Adapters depend inwards on the ports. Nothing in `domain` or `service` imports Spring web, Jackson or `java.io`. This can be checked automatically with an ArchUnit test, which is a candidate for §9 added value.
 
@@ -41,6 +41,7 @@ Source: Cockburn, A. (2005) *The Hexagonal (Ports & Adapters) Architecture*, HaT
 **Why Hexagonal for this scenario:**
 - QA1 extensibility: a new plan or discount sits in `domain`. A new payment provider or a real database (Part 2) is a new adapter, with no changes to the core.
 - QA2 testability (if chosen): every business rule runs with in-memory fakes behind the outbound ports. No files, no HTTP, and a fixed `Clock`.
+- The same ports take both a JSON file adapter and an Appwrite adapter, chosen by a Spring profile. That shows the pattern working with no change to the business tier.
 - The spec allows a simulated front end and file I/O. Hexagonal makes "simulated" an adapter swap rather than a hack.
 - It sets up Part 2 (microservices), where each service keeps the same hexagon around its own domain.
 
@@ -59,7 +60,7 @@ From [tech-stack.md](../tech-stack.md#hosting-stack-report-5):
 | --- | --- |
 | Web server + application server | Tomcat, embedded in the Spring Boot jar |
 | Business tier | `domain` + `service` (the hexagon) |
-| EIS / database | JSON files, reached only through `adapter.persistence` |
+| EIS / database | Appwrite Databases (TablesDB) on Appwrite Cloud, or JSON files offline. Both reached only through `adapter.persistence` |
 | Message bus | Spring `ApplicationEventPublisher` (in-process), used by `adapter.notification` |
 
 ## Package structure
@@ -73,9 +74,9 @@ gym/
 +- port/out/                Repository<T, ID>, MembershipRepository, GymClassRepository, ..., PaymentGateway, NotificationSender
 +- service/                 implements port.in: MembershipService, BookingService, BillingService, MemberService
 +- domain/                  Member, Membership, MembershipState (+ states), Plan (+ plans), GymClass, Waitlist, Booking, Charge, Invoice, DiscountPolicy (+ policies)
-+- adapter/persistence/     JsonFileMembershipRepository, ...
++- adapter/persistence/     AppwriteMembershipRepository, JsonFileMembershipRepository, ...
 +- adapter/payment/         FakePaymentGateway
-+- adapter/notification/    EventNotificationSender
++- adapter/notification/    AppwriteNotificationSender (Appwrite Messaging)
 ```
 
 This is still package by layer, so it stays monolithic. Each member owns one feature's classes across every package (see [roles.md](../roles.md)).
