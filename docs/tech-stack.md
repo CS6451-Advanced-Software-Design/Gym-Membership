@@ -37,6 +37,42 @@ Each member needs a **JDK 21** locally, e.g. `brew install --cask temurin@21` on
 
 A single Spring Boot jar, deployed as one unit. This is the monolith.
 
+```
+                 Postman (simulated front end)
+                              |
+                              |  HTTP + JSON, localhost:8080
+                              v
++--------------------------------------------------------------+
+| JVM: Java 21 (Temurin)                                       |
+|  +--------------------------------------------------------+  |
+|  | gym-membership.jar (Spring Boot 4.1, one deployable)   |  |
+|  |                                                        |  |
+|  |   Embedded Tomcat           web + application server   |  |
+|  |          |                                             |  |
+|  |   controller, dto           MVC controller and view    |  |
+|  |          |                                             |  |
+|  |   port.in                                              |  |
+|  |          |                                             |  |
+|  |   service, domain           business tier (hexagon)    |  |
+|  |          |                                             |  |
+|  |   port.out                                             |  |
+|  |          |                                             |  |
+|  |   adapter                   JSON files, fake payments, |  |
+|  |          |                  ApplicationEventPublisher  |  |
+|  |          |                  (message bus)              |  |
+|  +----------|---------------------------------------------+  |
++-------------|------------------------------------------------+
+              |  Jackson, file I/O
+              v
+     data/*.json                    EIS (one file per entity)
+
+
+Build and CI (GitHub Actions on every pull request):
+
+  ./mvnw verify --> compile --> JUnit 5 + Mockito --> JaCoCo + PMD --> gym-membership.jar
+                                                                         (build artifact)
+```
+
 | Tier | What we use |
 | --- | --- |
 | Web server + application server | Tomcat, embedded in the Spring Boot jar. `java -jar gym-membership.jar` starts everything |
