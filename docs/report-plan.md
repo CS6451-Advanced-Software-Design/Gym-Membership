@@ -1,6 +1,6 @@
 # Report Plan
 
-What each report section needs, what evidence backs it, and who owns it. Sections must appear in this order (spec §1–14). Use this as the checklist before submission. Owners follow [roles.md](roles.md). The owners for §1, §2, §11 and §14 are proposals, so swap them if the split isn't even.
+What each report section needs, what evidence backs it, and who owns it. Sections must appear in this order (spec §1–14). Use this as the checklist before submission. The reasoning behind the quality bar is in [sample-project-lessons.md](sample-project-lessons.md). Owners follow [roles.md](roles.md). The owners for §1, §2, §11 and §14 are proposals, so swap them if the split isn't even.
 
 **Rule for every section: never claim anything the code or the repository doesn't show.** If a pattern, pipeline or test is in the report, a marker must be able to find it in the code.
 
