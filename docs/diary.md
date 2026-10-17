@@ -28,7 +28,7 @@ Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 f
 
 | Member | Contributions | Issues arising | Plan for next week |
 | --- | --- | --- | --- |
-| Chirag | | | |
+| Chirag | Reviewed the two newer sample projects released on Brightspace against this year's spec. Added a report plan (owner, evidence and quality bar per section) and tightened the docs: CI must block merges on test failures, ArchUnit enforces Hexagonal, §7 numbers come from tools, a test for each pattern, QA1 as a six-part scenario. Logged GenAI prompts #16–17 | Still no code, with about 2.5 weeks left. Nobody else has committed yet | Set up the Spring Boot skeleton, the JSON file repository port and adapter, and GitHub Actions CI, then open one issue per member for their feature |
 | Bharat | | | |
 | DineshReddy | | | |
 | Dhruv | | | |

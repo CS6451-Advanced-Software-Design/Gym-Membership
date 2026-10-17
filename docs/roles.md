@@ -47,6 +47,8 @@ Dependencies point inwards towards `domain`: controller → port.in ← service 
 | Booking | Class schedule, bookings, capacity, waitlist, no-shows | Command (book and cancel with undo), Observer (waitlist promotion) |
 | Member | Member profiles, check-in, referrals, notifications | Observer (notifications) |
 
+Each pattern owner also writes at least one test that exercises the pattern itself (e.g. Frozen refuses a booking, the best discount wins, cancelling promotes the first waitlisted member). Name every pattern by its GoF name and only where it really applies: a class that picks a strategy is not a Factory Method.
+
 The owner of a feature writes its class in each layer, e.g. the Booking owner writes `BookingController`, `BookClassUseCase`, `BookingService`, `Booking`/`Waitlist`, `GymClassRepository` and `JsonFileGymClassRepository`. That keeps contributions equal and traceable in the §7 transparency tables (classes per package with author and LOC).
 
 Shared (built together in Iteration 1): the MVC/REST controller base, the `Repository<T, ID>` port with a generic JSON file adapter, and the domain exceptions.

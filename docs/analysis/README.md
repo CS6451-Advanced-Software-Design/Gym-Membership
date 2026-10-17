@@ -54,6 +54,7 @@ These are analysis **sketches**, so they show only the main classes and a few at
 - [x] Interfaces with pre/postconditions: `DiscountPolicy`, `PaymentGateway`
 - [x] No duplicated attributes or operations
 - [x] Sequence diagram contains `Membership`, the object with the state chart
+- [x] The state chart is for the same object the State pattern implements (`Membership`), so the analysis, the code and the recovered diagrams tell one story
 - [x] State chart transitions annotated as `event [guard] / action`
 - [x] ER diagram with crow's foot cardinality
 

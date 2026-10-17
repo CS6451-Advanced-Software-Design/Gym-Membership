@@ -34,7 +34,7 @@ Source: Cockburn, A. (2005) *The Hexagonal (Ports & Adapters) Architecture*, HaT
 | Driven (outbound) port | `Repository<T, ID>` and its bindings, `PaymentGateway`, `NotificationSender` | `port.out` |
 | Driven (outbound) adapter | `JsonFile*Repository`, `FakePaymentGateway`, `EventNotificationSender` | `adapter.*` |
 
-**Dependency rule:** `domain` depends on nothing. `service` depends on `domain` and the ports. Adapters depend inwards on the ports. Nothing in `domain` or `service` imports Spring web, Jackson or `java.io`. This can be checked automatically with an ArchUnit test, which is a candidate for §9 added value.
+**Dependency rule:** `domain` depends on nothing. `service` depends on `domain` and the ports. Adapters depend inwards on the ports. Nothing in `domain` or `service` imports Spring web, Jackson or `java.io`. An ArchUnit test checks this in CI, so a violation fails the build. Every Hexagonal element in the table above must exist in the code: the report must never claim a pattern the code doesn't have.
 
 **How the two patterns fit together:** MVC organises the *driving* side (how a request reaches the application and how the answer is shown). Hexagonal organises the *whole* application around the domain, so MVC's controller turns into one adapter among several. JUnit tests and the billing clock drive the same ports as Postman does.
 
