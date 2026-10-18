@@ -25,6 +25,8 @@ See [docs/roles.md](docs/roles.md) for the full role split.
 | [docs/architecture](docs/architecture/README.md) | MVC + Hexagonal, package diagram, hosting stack (report §5) |
 | [docs/analysis](docs/analysis/README.md) | Candidate objects, class, sequence, state chart and ER diagrams (report §6) |
 | [docs/tech-stack.md](docs/tech-stack.md) | Java 21 + Spring Boot, Maven, tests, CI/CD, metrics, UML workbench, hosting stack (report §5, §8, §9, §10) |
+| [docs/sample-project-lessons.md](docs/sample-project-lessons.md) | What past submissions did well and where they lost marks |
+| [docs/report-plan.md](docs/report-plan.md) | Owner, evidence and quality bar for every report section (§1–14) |
 | [docs/roles.md](docs/roles.md) | Roles and package ownership (report §3) |
 | [docs/diary.md](docs/diary.md) | Weekly diary, Weeks 4–12 (report §7). **Update every week** |
 | [docs/genai-prompts.md](docs/genai-prompts.md) | Every GenAI prompt used (report §13). **Log prompts as you go** |
@@ -33,6 +35,7 @@ See [docs/roles.md](docs/roles.md) for the full role split.
 
 - Work on a branch per task and open a pull request. Another member reviews before merge.
 - Conventional commit messages, e.g. `feat(booking): add waitlist promotion`.
-- Commit under your own GitHub account. The commit history is marked evidence of equal contribution (report §7 and §8).
+- Commit under your own GitHub account, **every week**. The commit history is marked evidence of equal contribution (report §7 and §8) and has to agree with the diary.
+- Only claim in the report what the code shows. Every pattern, test and pipeline mentioned must be findable in the repo.
 - Log any GenAI prompt in `docs/genai-prompts.md` in the same PR that uses its output.
 - Report prose must be in our own words. GenAI may bootstrap diagrams and code only.

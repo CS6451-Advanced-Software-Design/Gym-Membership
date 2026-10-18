@@ -63,7 +63,19 @@ These make the system "compute intense" rather than CRUD. All values are placeho
 ## Quality attributes
 
 **QA1: Extensibility (mandatory).** Example scenario: *a developer adds a new plan type (e.g. "Weekend Only") with its own pricing and access rules, changing no existing class and without touching billing or booking code, in under 1 day.*
-Relevant tactics (Bass et al., modifiability): increase cohesion (split responsibilities), reduce coupling (encapsulate, use an intermediary, abstract common services), and defer binding (polymorphism, registration or configuration of plans and discount policies). These map to Strategy for pricing, State for the lifecycle, and Factory for plan creation.
+
+Written as a six-part scenario (Bass et al. 2019), which is how the report should present it:
+
+| Part | QA1 |
+| --- | --- |
+| Source | A developer on the team |
+| Stimulus | The manager asks for a new "Weekend Only" plan |
+| Artefact | `domain` (plans) and `PlanFactory` |
+| Environment | Design time |
+| Response | A new `Plan` subclass and a factory registration, plus its tests. No existing class is edited |
+| Response measure | 0 existing classes changed, all tests pass, done in under 1 day |
+
+Relevant tactics (Bass et al., modifiability): increase cohesion (split responsibilities), reduce coupling (encapsulate, use an intermediary, abstract common services), and defer binding (polymorphism, registration or configuration of plans and discount policies). These map to Strategy for pricing, State for the lifecycle, and Factory for plan creation. In the report, name each tactic and point at the class that applies it, rather than describing extensibility in general terms.
 
 **QA2: choose one**, for example:
 - *Performance:* the monthly billing run for 10,000 members finishes in under 30 seconds. Tactics: increase efficiency, introduce concurrency, bound execution time.
