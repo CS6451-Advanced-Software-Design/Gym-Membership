@@ -9,3 +9,8 @@ bin/
 obj/
 __pycache__/
 node_modules/
+
+# The patterns above are build output folders, but Java packages can share their names (gym.port.out)
+!**/src/**/out/
+!**/src/**/bin/
+!**/src/**/build/
