@@ -1,6 +1,6 @@
 # Analysis sketches (report §6)
 
-> **Bootstrap draft (GenAI, prompts #6–7 in [genai-prompts.md](../genai-prompts.md)).** The Systems Analyst should challenge these, redraw them by hand if preferred (the spec allows photographed sketches), and write the report text in our own words.
+> **Bootstrap draft (GenAI, prompts #6–7 in [genai-prompts.md](../genai-prompts.md)).** The Systems Analyst should challenge these, redraw them by hand (the spec allows photographed sketches, and photos of our rough work go in [../sketches](../sketches/README.md)), and write the report text in our own words.
 
 | Required by §6 | Diagram |
 | --- | --- |
