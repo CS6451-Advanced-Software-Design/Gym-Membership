@@ -2,7 +2,7 @@
 
 CS6451 Advanced Software Design, Team-Based Assignment Part 1 (Brightspace Group 1), University of Limerick, Autumn 2026/27.
 
-A monolithic (package-by-layer MVC + Hexagonal) business tier for a gym and fitness club: membership plans and billing, class bookings with capacity and waitlists, check-in, freezes, penalties, and referral credits. The front end is simulated with Postman and the data layer with file I/O behind repositories and DTOs.
+A monolithic (package-by-layer MVC + Hexagonal, with Interceptor) business tier for a gym and fitness club: membership plans and billing, class bookings with capacity and waitlists, check-in, freezes, penalties, and referral credits. The front end is simulated with Postman and the data layer with file I/O behind repositories and DTOs.
 
 **Deadline: 23:59 Sun 1 Nov 2026.**
 
@@ -29,7 +29,7 @@ See [report/roles.md](report/roles.md) for the full role split.
 | Doc | Purpose |
 | --- | --- |
 | [report/requirements](report/requirements/README.md) | Actors, use cases, business rules, quality attributes (report §4) |
-| [report/architecture](report/architecture/README.md) | MVC + Hexagonal, package diagram, hosting stack (report §5) |
+| [report/architecture](report/architecture/README.md) | MVC + Hexagonal + Interceptor, package diagram, hosting stack (report §5) |
 | [report/analysis](report/analysis/README.md) | Candidate objects, class, sequence, state chart and ER diagrams (report §6) |
 | [report/sketches](report/sketches/README.md) | Photos of our rough work and hand-drawn sketches (report §6). **Add photos as you draw** |
 | [report/tech-stack.md](report/tech-stack.md) | Java 21 + Spring Boot, Maven, tests, CI/CD, metrics, UML workbench, hosting stack (report §5, §8, §9, §10) |
@@ -38,6 +38,31 @@ See [report/roles.md](report/roles.md) for the full role split.
 | [report/roles.md](report/roles.md) | Roles and package ownership (report §3) |
 | [report/diary.md](report/diary.md) | Weekly diary, Weeks 4–12 (report §7). **Update every week** |
 | [report/genai-prompts.md](report/genai-prompts.md) | Every GenAI prompt used (report §13). **Log prompts as you go** |
+
+## Patterns
+
+Only patterns the code really has are listed as in place, each with where to find it. Details in [report/architecture](report/architecture/README.md).
+
+**In place**
+
+| Pattern | Kind | Where |
+| --- | --- | --- |
+| Model View Controller | Architectural (lectures) | `controller` (controllers, `ErrorHandler`), `dto` (the JSON view), `domain` + `service` (the model) |
+| Hexagonal (Ports and Adapters) | Architectural (self-researched) | `port.in`, `port.out`, `adapter.*`. `ArchitectureTest` fails the build if a dependency points outwards |
+| Interceptor | Architectural (lectures, POSA2) | `interceptor` (`UseCaseInterceptor`, `UseCaseContext`, `UseCaseDispatcher`, `UseCaseInterception`), with `adapter.logging.LoggingInterceptor` as the out-of-band service, registered in `InterceptorConfiguration` |
+| Repository | Design | `port.out.Repository<T, ID>`, implemented by `adapter.persistence.JsonFileRepository` |
+| Proxy (dynamic) | Design (GoF) | `UseCaseInterception` wraps every `port.in` use case so each call reaches the interceptors |
+| Dependency Injection | Design | Spring constructor injection throughout. The `Clock` bean in `GymApplication` lets tests fix the date |
+
+**Planned** (from [report/roles.md](report/roles.md), each with a test that exercises the pattern)
+
+| Pattern | Kind | Where | Owner |
+| --- | --- | --- | --- |
+| State | Design (GoF) | `Membership` lifecycle: Trial, Active, Frozen, Lapsed, Cancelled | Dhruv |
+| Factory | Design (GoF) | Plan creation (`MonthlyPlan`, `AnnualPlan`, `StudentPlan`) | Dhruv |
+| Strategy | Design (GoF) | `DiscountPolicy` and pricing in Billing | Chirag |
+| Command | Design (GoF) | Book and cancel a class, with undo | Bharat |
+| Observer | Design (GoF) | Waitlist promotion in Booking, and member notifications | Bharat, DineshReddy |
 
 ## Diagrams
 
