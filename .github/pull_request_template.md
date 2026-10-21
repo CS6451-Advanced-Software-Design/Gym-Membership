@@ -4,4 +4,4 @@
 
 ## Checklist
 - [ ] Tests added or updated
-- [ ] Any GenAI prompts logged in `docs/genai-prompts.md`
+- [ ] Any GenAI prompts logged in `report/genai-prompts.md`

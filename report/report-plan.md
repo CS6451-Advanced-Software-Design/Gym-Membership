@@ -28,5 +28,5 @@ These are cheap now and impossible to reconstruct in the last week:
 
 - Commit every week under your own account, so the history and the diary agree. A burst of commits on the last day contradicts the diary.
 - Log every GenAI prompt in the same PR that uses its output.
-- Keep the PMD and CK reports from **before** each refactoring (CI artifacts or a copy in `docs/metrics/`). The before numbers are the evidence.
+- Keep the PMD and CK reports from **before** each refactoring (CI artifacts or a copy in `report/metrics/`). The before numbers are the evidence.
 - Each pattern owner writes a test that exercises the pattern itself (e.g. a state transition is refused, the best discount wins, a waitlisted member is promoted).

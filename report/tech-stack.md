@@ -9,7 +9,7 @@
 | Language | Java 21 (LTS) | Matches the lecture examples, and everyone can read it |
 | Framework | Spring Boot 4.1.x (Spring Web starter) | MVC/REST controllers and dependency injection out of the box. Maps directly onto our `controller / port / service / domain / adapter` packages |
 | Build | Maven, through the Maven wrapper (`./mvnw`) | Standard, and the CI and metrics plugins below plug straight in. The wrapper means nobody has to install Maven |
-| Front end | Postman collection (committed in the repo) | The spec allows a simulated front end, so the effort goes into the business tier |
+| Front end | Postman collection (committed in `code/postman/`) | The spec allows a simulated front end, so the effort goes into the business tier |
 | Persistence | JSON files behind the `Repository<T, ID>` port (Jackson), with DTOs | The spec allows file I/O plus DTOs. No ORM, since the UI and ORM earn no added-value marks, and the port can be swapped for in-memory fakes in tests |
 | Tests | JUnit 5 + Mockito for business rules, MockMvc for a few controller tests | §8 needs 2+ automated tests. Unit-test every business rule without I/O |
 | CI/CD | GitHub Actions: build → test → coverage → package the jar as a build artifact | §9 added value. Set up in Iteration 1, not at the end. **A failing test fails the build and blocks the merge**: no `continue-on-error`, no skipped tests |
@@ -33,7 +33,7 @@ Generate it once at [start.spring.io](https://start.spring.io) (or the same wiza
 
 Don't add JPA or a database driver: the data lives in JSON files.
 
-Each member needs a **JDK 21** locally, e.g. `brew install --cask temurin@21` on macOS, or [SDKMAN](https://sdkman.io) (pick a `21.x-tem` build from `sdk list java`). Then `./mvnw spring-boot:run` starts the app on http://localhost:8080 and `./mvnw verify` runs the build and tests.
+Each member needs a **JDK 21** locally, e.g. `brew install --cask temurin@21` on macOS, or [SDKMAN](https://sdkman.io) (pick a `21.x-tem` build from `sdk list java`). Then, from the `code/` folder, `./mvnw spring-boot:run` starts the app on http://localhost:8080 and `./mvnw verify` runs the build and tests.
 
 ## Hosting stack (report §5)
 
@@ -79,7 +79,7 @@ Build and CI (GitHub Actions on every pull request):
 | --- | --- |
 | Web server + application server | Tomcat, embedded in the Spring Boot jar. `java -jar gym-membership.jar` starts everything |
 | Business tier | `service` and `domain` packages |
-| EIS / database | JSON files in a `data/` folder, accessed only through `adapter.persistence` |
+| EIS / database | JSON files in a `code/data/` folder, accessed only through `adapter.persistence` |
 | Message bus | Spring's in-process `ApplicationEventPublisher`. It also carries the Observer pattern for waitlist promotion and payment notifications |
 | Client | Postman, calling `http://localhost:8080` |
 

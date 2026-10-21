@@ -15,21 +15,28 @@ A monolithic (package-by-layer MVC + Hexagonal) business tier for a gym and fitn
 | DineshReddy Mogili | @sanjuD1603 | Documentation Manager, Technical Lead + DevOps. Owns Member |
 | Dhruv Punj | @DHRUVx22 | Business Analyst, Systems Analyst. Owns Membership |
 
-See [docs/roles.md](docs/roles.md) for the full role split.
+See [report/roles.md](report/roles.md) for the full role split.
+
+## Repository layout
+
+| Folder | What lives there |
+| --- | --- |
+| [report/](report) | Everything for the report: write-ups, diagrams, diary, GenAI log, plans |
+| [code/](code) | Everything that builds and runs: the Spring Boot project, Postman collection, JSON data |
 
 ## Documents
 
 | Doc | Purpose |
 | --- | --- |
-| [docs/requirements](docs/requirements/README.md) | Actors, use cases, business rules, quality attributes (report §4) |
-| [docs/architecture](docs/architecture/README.md) | MVC + Hexagonal, package diagram, hosting stack (report §5) |
-| [docs/analysis](docs/analysis/README.md) | Candidate objects, class, sequence, state chart and ER diagrams (report §6) |
-| [docs/tech-stack.md](docs/tech-stack.md) | Java 21 + Spring Boot, Maven, tests, CI/CD, metrics, UML workbench, hosting stack (report §5, §8, §9, §10) |
-| [docs/sample-project-lessons.md](docs/sample-project-lessons.md) | What past submissions did well and where they lost marks |
-| [docs/report-plan.md](docs/report-plan.md) | Owner, evidence and quality bar for every report section (§1–14) |
-| [docs/roles.md](docs/roles.md) | Roles and package ownership (report §3) |
-| [docs/diary.md](docs/diary.md) | Weekly diary, Weeks 4–12 (report §7). **Update every week** |
-| [docs/genai-prompts.md](docs/genai-prompts.md) | Every GenAI prompt used (report §13). **Log prompts as you go** |
+| [report/requirements](report/requirements/README.md) | Actors, use cases, business rules, quality attributes (report §4) |
+| [report/architecture](report/architecture/README.md) | MVC + Hexagonal, package diagram, hosting stack (report §5) |
+| [report/analysis](report/analysis/README.md) | Candidate objects, class, sequence, state chart and ER diagrams (report §6) |
+| [report/tech-stack.md](report/tech-stack.md) | Java 21 + Spring Boot, Maven, tests, CI/CD, metrics, UML workbench, hosting stack (report §5, §8, §9, §10) |
+| [report/sample-project-lessons.md](report/sample-project-lessons.md) | What past submissions did well and where they lost marks |
+| [report/report-plan.md](report/report-plan.md) | Owner, evidence and quality bar for every report section (§1–14) |
+| [report/roles.md](report/roles.md) | Roles and package ownership (report §3) |
+| [report/diary.md](report/diary.md) | Weekly diary, Weeks 4–12 (report §7). **Update every week** |
+| [report/genai-prompts.md](report/genai-prompts.md) | Every GenAI prompt used (report §13). **Log prompts as you go** |
 
 ## Working agreement
 
@@ -37,5 +44,5 @@ See [docs/roles.md](docs/roles.md) for the full role split.
 - Conventional commit messages, e.g. `feat(booking): add waitlist promotion`.
 - Commit under your own GitHub account, **every week**. The commit history is marked evidence of equal contribution (report §7 and §8) and has to agree with the diary.
 - Only claim in the report what the code shows. Every pattern, test and pipeline mentioned must be findable in the repo.
-- Log any GenAI prompt in `docs/genai-prompts.md` in the same PR that uses its output.
+- Log any GenAI prompt in `report/genai-prompts.md` in the same PR that uses its output.
 - Report prose must be in our own words. GenAI may bootstrap diagrams and code only.
