@@ -31,6 +31,7 @@ See [report/roles.md](report/roles.md) for the full role split.
 | [report/requirements](report/requirements/README.md) | Actors, use cases, business rules, quality attributes (report §4) |
 | [report/architecture](report/architecture/README.md) | MVC + Hexagonal + Interceptor, package diagram, hosting stack (report §5) |
 | [report/analysis](report/analysis/README.md) | Candidate objects, class, sequence, state chart and ER diagrams (report §6) |
+| [report/sketches](report/sketches/README.md) | Photos of our rough work and hand-drawn sketches (report §6). **Add photos as you draw** |
 | [report/tech-stack.md](report/tech-stack.md) | Java 21 + Spring Boot, Maven, tests, CI/CD, metrics, UML workbench, hosting stack (report §5, §8, §9, §10) |
 | [report/sample-project-lessons.md](report/sample-project-lessons.md) | What past submissions did well and where they lost marks |
 | [report/report-plan.md](report/report-plan.md) | Owner, evidence and quality bar for every report section (§1–14) |
