@@ -2,7 +2,7 @@
 
 CS6451 Advanced Software Design, Team-Based Assignment Part 1 (Brightspace Group 1), University of Limerick, Autumn 2026/27.
 
-A monolithic (package-by-layer MVC + Hexagonal) business tier for a gym and fitness club: membership plans and billing, class bookings with capacity and waitlists, check-in, freezes, penalties, and referral credits. The front end is simulated with Postman and the data layer with file I/O behind repositories and DTOs.
+A monolithic (package-by-layer MVC + Hexagonal, with Interceptor) business tier for a gym and fitness club: membership plans and billing, class bookings with capacity and waitlists, check-in, freezes, penalties, and referral credits. The front end is simulated with Postman and the data layer with file I/O behind repositories and DTOs.
 
 **Deadline: 23:59 Sun 1 Nov 2026.**
 
@@ -29,7 +29,7 @@ See [report/roles.md](report/roles.md) for the full role split.
 | Doc | Purpose |
 | --- | --- |
 | [report/requirements](report/requirements/README.md) | Actors, use cases, business rules, quality attributes (report §4) |
-| [report/architecture](report/architecture/README.md) | MVC + Hexagonal, package diagram, hosting stack (report §5) |
+| [report/architecture](report/architecture/README.md) | MVC + Hexagonal + Interceptor, package diagram, hosting stack (report §5) |
 | [report/analysis](report/analysis/README.md) | Candidate objects, class, sequence, state chart and ER diagrams (report §6) |
 | [report/tech-stack.md](report/tech-stack.md) | Java 21 + Spring Boot, Maven, tests, CI/CD, metrics, UML workbench, hosting stack (report §5, §8, §9, §10) |
 | [report/sample-project-lessons.md](report/sample-project-lessons.md) | What past submissions did well and where they lost marks |

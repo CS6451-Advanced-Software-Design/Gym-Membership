@@ -33,7 +33,8 @@ gym/
 +- port/out/     Repository<T, ID>, MembershipRepository, GymClassRepository, ..., PaymentGateway, NotificationSender
 +- service/      MembershipService, BookingService, BillingService, MemberService
 +- domain/       Member, Membership, Plan, GymClass, Booking, Waitlist, Charge, Invoice, ...
-+- adapter/      persistence (JSON files), payment, notification
++- adapter/      persistence (JSON files), payment, notification, logging
++- interceptor/  Interceptor pattern around every use case (shared, see architecture/README.md)
 ```
 
 Dependencies point inwards towards `domain`: controller → port.in ← service → port.out ← adapter. The business rules live in `service` and `domain`, not in the controllers or adapters.
