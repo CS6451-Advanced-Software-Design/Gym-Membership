@@ -39,7 +39,7 @@ Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 f
 
 | Member | Contributions | Issues arising | Plan for next week |
 | --- | --- | --- | --- |
-| Chirag | Added a diagram overview to the README. Set up the Spring Boot 4.1 skeleton: the shared `Repository<T, ID>` port with a JSON file adapter, domain exceptions mapped to problem responses, ArchUnit tests that enforce the Hexagonal dependency rule, and GitHub Actions CI that fails on any test failure. Logged GenAI prompts #19–21 | About 1.5 weeks left and only the skeleton exists. Bharat and DineshReddy have no commits yet | Build the Billing feature with the Strategy pattern and its tests. Help the others start their features |
+| Chirag | Added a diagram overview to the README. Set up the Spring Boot 4.1 skeleton: the shared `Repository<T, ID>` port with a JSON file adapter, domain exceptions mapped to problem responses, ArchUnit tests that enforce the Hexagonal dependency rule, and GitHub Actions CI that fails on any test failure. Logged GenAI prompts #19–22 | About 1.5 weeks left and only the skeleton exists. Bharat and DineshReddy have no commits yet | Build the Billing feature with the Strategy pattern and its tests. Help the others start their features |
 | Bharat | | | |
 | DineshReddy | | | |
 | Dhruv | | | |
