@@ -13,7 +13,7 @@
 | Persistence | JSON files behind the `Repository<T, ID>` port (Jackson), with DTOs | The spec allows file I/O plus DTOs. No ORM, since the UI and ORM earn no added-value marks, and the port can be swapped for in-memory fakes in tests |
 | Tests | JUnit 5 + Mockito for business rules, MockMvc for a few controller tests | §8 needs 2+ automated tests. Unit-test every business rule without I/O |
 | CI/CD | GitHub Actions: build → test → coverage → package the jar as a build artifact | §9 added value. Set up in Iteration 1, not at the end. **A failing test fails the build and blocks the merge**: no `continue-on-error`, no skipped tests |
-| Metrics | JaCoCo (coverage), PMD (code smells), CK or SonarCloud (coupling, cohesion, complexity) | §9 needs metrics that *lead to* refactoring. Keep the report from **before** each refactoring, then record the before and after numbers in a table |
+| Metrics | JaCoCo (coverage), PMD (code smells), CK (coupling, cohesion), SonarQube Cloud (whole-codebase complexity, duplication, smells, maintainability rating, once the features are implemented) | §9 needs metrics that *lead to* refactoring. Keep the report from **before** each refactoring, then record the before and after numbers in a table |
 | Architecture test | ArchUnit | Proves the Hexagonal dependency rule in CI (`domain` imports nothing from Spring web, Jackson or `java.io`; adapters depend on ports, never the reverse). The §8 evidence that Hexagonal is real, not just a diagram |
 | LOC and authorship | `cloc`, `git blame` | §7 tables are generated, never estimated. Name the tool in the report |
 | UML workbench | Visual Paradigm (UL licence), or StarUML as a fallback | §10 must be drawn in a workbench, not Word or PowerPoint. Visual Paradigm can reverse-engineer the code into package and class diagrams |
@@ -107,7 +107,7 @@ Free-tier terms change often. These were checked on 7 Oct 2026.
 | --- | --- |
 | GitHub Actions + `actions/setup-java` (Temurin 21) | CI on every pull request: `./mvnw verify` (build, tests, JaCoCo coverage) |
 | Dependabot (`.github/dependabot.yml`) | Opens pull requests when Maven dependencies or GitHub Actions versions go out of date |
-| PMD, SonarCloud (free for public repos) | Code smells, complexity and coupling numbers that drive refactoring |
+| PMD, [SonarQube Cloud](https://docs.sonarsource.com/sonarqube-cloud/) (formerly SonarCloud. Its Free plan analyses unlimited public projects, checked 21 Oct 2026) | Code smells, complexity and coupling numbers that drive refactoring |
 | [OpenRewrite](https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition) (`rewrite-spring`) | Automated Spring Boot upgrades, run from the command line without changing `pom.xml` |
 | Spring Boot Actuator | `/actuator/health` and `/actuator/info` to check the app is up after a deploy |
 | CD job (optional) | Build the jar as an Actions artifact, push a Buildpacks image to GitHub Container Registry (GHCR), deploy to Azure or DigitalOcean |
