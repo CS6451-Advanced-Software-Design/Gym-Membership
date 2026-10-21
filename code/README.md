@@ -30,6 +30,8 @@ Package by layer with Hexagonal ports and adapters. The reasoning is in [report/
 | `gym.service` | Use-case implementations | `port.in`, `port.out`, `domain` |
 | `gym.domain` | Domain model, business rules, `NotFoundException`, `RuleViolationException` | The JDK only |
 | `gym.adapter.persistence` | `JsonFileRepository` and each feature's JSON repository | `port.out`, `domain` |
+| `gym.adapter.logging` | `LoggingInterceptor` and other out-of-band services | `interceptor` |
+| `gym.interceptor` | The Interceptor pattern: interceptor, context, dispatcher, proxy | Nothing in `gym`, so it works with any use case |
 
 `ArchitectureTest` checks these rules, so a wrong import fails the build. If it fails, fix the dependency rather than the test.
 
@@ -44,3 +46,10 @@ Taking Booking as the example:
 5. `service`: `BookingService implements BookClassUseCase`. Inject the `java.time.Clock` bean instead of calling `now()`, so tests can fix the date.
 6. `dto` and `controller`: `BookingRequest`, `BookingResponse` and `BookingController`, which calls `BookClassUseCase`.
 7. Tests: unit-test the rules in `domain` and `service` with an in-memory fake of the repository port, plus a test for your design pattern.
+
+## Adding an out-of-band service
+
+Every call to a `port.in` use case already passes through the Interceptor pattern ([report/architecture](../report/architecture/README.md#pattern-3-interceptor-covered-in-lectures-week-7)), so logging, timing or auditing never goes into a controller or service:
+
+1. Write a class in `adapter/` that implements `UseCaseInterceptor` and overrides `onBefore`, `onAfter` or `onFailure`. `UseCaseContext` gives you the use case, arguments, result, failure and elapsed time.
+2. Register it in `InterceptorConfiguration` with a priority. Lower runs first on the way in and last on the way out.
