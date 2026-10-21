@@ -59,7 +59,7 @@ Only patterns the code really has are listed as in place, each with where to fin
 | Pattern | Kind | Where | Owner |
 | --- | --- | --- | --- |
 | State | Design (GoF) | `Membership` lifecycle: Trial, Active, Frozen, Lapsed, Cancelled | Dhruv |
-| Factory | Design (GoF) | Creating `Plan`s | Dhruv |
+| Factory | Design (GoF) | Plan creation (`MonthlyPlan`, `AnnualPlan`, `StudentPlan`) | Dhruv |
 | Strategy | Design (GoF) | `DiscountPolicy` and pricing in Billing | Chirag |
 | Command | Design (GoF) | Book and cancel a class, with undo | Bharat |
 | Observer | Design (GoF) | Waitlist promotion in Booking, and member notifications | Bharat, DineshReddy |
