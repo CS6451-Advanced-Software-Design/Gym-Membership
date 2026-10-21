@@ -39,6 +39,31 @@ See [report/roles.md](report/roles.md) for the full role split.
 | [report/diary.md](report/diary.md) | Weekly diary, Weeks 4–12 (report §7). **Update every week** |
 | [report/genai-prompts.md](report/genai-prompts.md) | Every GenAI prompt used (report §13). **Log prompts as you go** |
 
+## Patterns
+
+Only patterns the code really has are listed as in place, each with where to find it. Details in [report/architecture](report/architecture/README.md).
+
+**In place**
+
+| Pattern | Kind | Where |
+| --- | --- | --- |
+| Model View Controller | Architectural (lectures) | `controller` (controllers, `ErrorHandler`), `dto` (the JSON view), `domain` + `service` (the model) |
+| Hexagonal (Ports and Adapters) | Architectural (self-researched) | `port.in`, `port.out`, `adapter.*`. `ArchitectureTest` fails the build if a dependency points outwards |
+| Interceptor | Architectural (lectures, POSA2) | `interceptor` (`UseCaseInterceptor`, `UseCaseContext`, `UseCaseDispatcher`, `UseCaseInterception`), with `adapter.logging.LoggingInterceptor` as the out-of-band service, registered in `InterceptorConfiguration` |
+| Repository | Design | `port.out.Repository<T, ID>`, implemented by `adapter.persistence.JsonFileRepository` |
+| Proxy (dynamic) | Design (GoF) | `UseCaseInterception` wraps every `port.in` use case so each call reaches the interceptors |
+| Dependency Injection | Design | Spring constructor injection throughout. The `Clock` bean in `GymApplication` lets tests fix the date |
+
+**Planned** (from [report/roles.md](report/roles.md), each with a test that exercises the pattern)
+
+| Pattern | Kind | Where | Owner |
+| --- | --- | --- | --- |
+| State | Design (GoF) | `Membership` lifecycle: Trial, Active, Frozen, Lapsed, Cancelled | Dhruv |
+| Factory | Design (GoF) | Creating `Plan`s | Dhruv |
+| Strategy | Design (GoF) | `DiscountPolicy` and pricing in Billing | Chirag |
+| Command | Design (GoF) | Book and cancel a class, with undo | Bharat |
+| Observer | Design (GoF) | Waitlist promotion in Booking, and member notifications | Bharat, DineshReddy |
+
 ## Diagrams
 
 The current diagrams, in report order. Each one is explained in the doc it links to.
