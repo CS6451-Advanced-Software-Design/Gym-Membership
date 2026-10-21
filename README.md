@@ -38,6 +38,46 @@ See [report/roles.md](report/roles.md) for the full role split.
 | [report/diary.md](report/diary.md) | Weekly diary, Weeks 4–12 (report §7). **Update every week** |
 | [report/genai-prompts.md](report/genai-prompts.md) | Every GenAI prompt used (report §13). **Log prompts as you go** |
 
+## Diagrams
+
+The current diagrams, in report order. Each one is explained in the doc it links to.
+
+### Use cases (report §4)
+
+What each actor can do in the system. Details in [report/requirements](report/requirements/README.md).
+
+![Use case diagram](report/requirements/use-case-diagram.png)
+
+### Packages (report §5)
+
+The MVC + Hexagonal layers. Every dependency points towards `domain`. Details in [report/architecture](report/architecture/README.md).
+
+![Package diagram](report/architecture/package-diagram.png)
+
+### Classes (report §6)
+
+The domain classes, with pre- and postconditions on the interfaces. Details in [report/analysis](report/analysis/README.md).
+
+![Class diagram](report/analysis/class-diagram.png)
+
+### Booking a class (report §6)
+
+The UC2 sequence: the member gets a place, or joins the waitlist when the class is full.
+
+![UC2 sequence diagram](report/analysis/sequence-book-class.png)
+
+### Membership lifecycle (report §6)
+
+The states a `Membership` moves through, which the State pattern implements.
+
+![Membership state chart](report/analysis/membership-statechart.png)
+
+### Data (report §6)
+
+The entities stored in the JSON files, with cardinality.
+
+![ER diagram](report/analysis/er-diagram.png)
+
 ## Working agreement
 
 - Work on a branch per task and open a pull request. Another member reviews before merge.
