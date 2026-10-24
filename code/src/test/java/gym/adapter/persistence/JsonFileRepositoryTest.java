@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import gym.domain.Money;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -16,6 +17,9 @@ import tools.jackson.databind.json.JsonMapper;
 class JsonFileRepositoryTest {
 
     record Item(String id, String name) {
+    }
+
+    record Priced(String id, Money price) {
     }
 
     @TempDir
@@ -64,5 +68,15 @@ class JsonFileRepositoryTest {
         JsonFileRepository<Item, String> restarted = new JsonFileRepository<>(file, Item.class, Item::id, mapper);
 
         assertTrue(restarted.findAll().isEmpty());
+    }
+
+    @Test
+    void moneyKeepsItsValueThroughTheFile() {
+        Path prices = directory.resolve("prices.json");
+        new JsonFileRepository<>(prices, Priced.class, Priced::id, mapper).save(new Priced("monthly", Money.euros("45")));
+
+        JsonFileRepository<Priced, String> restarted = new JsonFileRepository<>(prices, Priced.class, Priced::id, mapper);
+
+        assertEquals(Optional.of(new Priced("monthly", Money.euros(45))), restarted.findById("monthly"));
     }
 }

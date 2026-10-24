@@ -26,14 +26,28 @@ Package by layer with Hexagonal ports and adapters. The reasoning is in [report/
 | `gym.controller` | REST controllers, `ErrorHandler` | `port.in`, `dto`, `domain` |
 | `gym.dto` | Request and response records | `domain` |
 | `gym.port.in` | Use-case interfaces | `domain` |
-| `gym.port.out` | `Repository<T, ID>` and other outbound interfaces | `domain` |
+| `gym.port.out` | `Repository<T, ID>`, `PaymentGateway`, `NotificationSender` | `domain` |
 | `gym.service` | Use-case implementations | `port.in`, `port.out`, `domain` |
-| `gym.domain` | Domain model, business rules, `NotFoundException`, `RuleViolationException` | The JDK only |
+| `gym.domain` | Domain model, business rules, `Money`, `Notification`, `NotFoundException`, `RuleViolationException` | The JDK only |
 | `gym.adapter.persistence` | `JsonFileRepository` and each feature's JSON repository | `port.out`, `domain` |
+| `gym.adapter.payment` | `FakePaymentGateway`, the simulated card provider | `port.out`, `domain` |
+| `gym.adapter.notification` | `EventNotificationSender` and `NotificationLog`, delivering notifications over Spring's event bus | `port.out`, `domain` |
 | `gym.adapter.logging` | `LoggingInterceptor` and other out-of-band services | `interceptor` |
 | `gym.interceptor` | The Interceptor pattern: interceptor, context, dispatcher, proxy | Nothing in `gym`, so it works with any use case |
 
 `ArchitectureTest` checks these rules, so a wrong import fails the build. If it fails, fix the dependency rather than the test.
+
+## Shared building blocks
+
+Use these instead of writing your own:
+
+| Need | Use |
+| --- | --- |
+| A price, fee, discount or credit | `domain.Money`: always 2 decimal places, rounded half up. `Money.euros("45")`, `plus`, `minus`, `percent(15)`, `proRata(12, 30)`, `min` |
+| Take a payment | Inject `port.out.PaymentGateway` and call `charge(memberId, amount)`. It returns `false` when the card is declined. List member ids under `gym.payment.declined-members` in application.properties to demo a decline |
+| Tell a member something | Inject `port.out.NotificationSender` and call `send(new Notification(memberId, subject, message))`. For now `NotificationLog` writes it to the log |
+| The current time | Inject the `java.time.Clock` bean |
+| A repository in a unit test | Extend `gym.support.InMemoryRepository` (test sources): no files, no Spring |
 
 ## Adding your feature
 
@@ -45,7 +59,7 @@ Taking Booking as the example:
 4. `port.in`: `BookClassUseCase`, taking ids and values rather than DTOs.
 5. `service`: `BookingService implements BookClassUseCase`. Inject the `java.time.Clock` bean instead of calling `now()`, so tests can fix the date.
 6. `dto` and `controller`: `BookingRequest`, `BookingResponse` and `BookingController`, which calls `BookClassUseCase`.
-7. Tests: unit-test the rules in `domain` and `service` with an in-memory fake of the repository port, plus a test for your design pattern.
+7. Tests: unit-test the rules in `domain` and `service` with an in-memory fake of the repository port (extend `gym.support.InMemoryRepository`), plus a test for your design pattern.
 
 ## Adding an out-of-band service
 
