@@ -41,10 +41,11 @@ These make the system "compute intense" rather than CRUD. All values are placeho
 
 **Membership (M)**
 - **BR-M1:** Plans are Monthly (€45), Annual (€450, paid upfront), Student (€30/month, needs a valid student ID), and Off-Peak (€30/month, check-in only 10:00–16:00 on weekdays).
-- **BR-M2:** A new member starts a 7-day Trial with a limit of 2 class bookings, then becomes Active once the first payment succeeds.
+- **BR-M2:** A new member pays a pro-rated first charge at sign-up and starts a 7-day Trial with a limit of 2 class bookings. When the trial ends, the membership becomes Active if that payment succeeded, or Lapsed if it failed. Annual plans are paid upfront and start Active, with no Trial.
 - **BR-M3:** A membership can be frozen for 1–3 months, at most once per 12 months. It is not billed while frozen, and the end date moves forward by the freeze length.
 - **BR-M4:** Two failed payments in a row make the membership Lapsed, which blocks check-in and booking. Paying the arrears restores it to Active.
 - **BR-M5:** Annual plans can't be cancelled within the first 6 months without a €50 early-exit fee.
+- **BR-M6:** A membership that stays Lapsed for 60 days without the arrears being paid is cancelled automatically, with a final bill.
 
 **Booking (B)**
 - **BR-B1:** Each class has a capacity. Once it is full, new requests join a first-come, first-served waitlist.

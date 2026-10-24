@@ -59,8 +59,10 @@ These are analysis **sketches**, so they show the main classes and only the attr
 - [x] State chart transitions annotated as `event [guard] / action`
 - [x] ER diagram with crow's foot cardinality
 
-## Open questions for the team
+## Decisions on the open questions (24 Oct 2026, Business Analyst)
 
-- Does a Trial membership pay at sign-up (UC1, step 6) or only when the trial ends (BR-M2)? The state chart assumes the trial becomes Active only once a payment has gone through.
-- Should `Lapsed` time out to `Cancelled` automatically (e.g. after 60 days)? Not in the rules yet.
-- Are family memberships in scope (UC1 open issue)? If so, `Member` needs a payer association.
+- **Trial payment:** a Trial member pays a pro-rated first charge at sign-up (UC1, step 6), and the trial becomes Active when the trial ends and that payment has gone through. If it failed, the membership goes to Lapsed. An Annual plan is paid upfront for the year, so it skips the Trial and starts Active. Recorded in BR-M2.
+- **Lapsed timeout:** a membership that stays Lapsed for 60 days without the arrears being paid is cancelled automatically, with a final bill. Recorded as BR-M6.
+- **Family memberships:** out of scope for Part 1. Each member pays for their own membership, so `Member` has no payer association. The Family discount (BR-P2) still applies to the second and later members of a family.
+
+The state chart shows all three decisions, and every state can now reach Cancelled.

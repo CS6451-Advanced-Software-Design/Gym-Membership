@@ -44,6 +44,6 @@
 | Priority | Top |
 | Performance | Confirmation in under 2 seconds |
 | Frequency | About 20/day |
-| Open issues | Family memberships: one payer for several members? |
+| Open issues | None. Family memberships (one payer for several members) were ruled out of scope on 24 Oct 2026, see [analysis](../../analysis/README.md#decisions-on-the-open-questions-24-oct-2026-business-analyst) |
 | Superordinates | Manage Memberships |
 | Subordinates | Calculate Charges, Apply Referral Credit |
