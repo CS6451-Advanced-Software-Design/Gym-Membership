@@ -8,7 +8,7 @@
 
 | Diagram | Purpose |
 | --- | --- |
-| ![Package diagram](package-diagram.png) | The required high-level package diagram. Every dependency points towards `domain` |
+| ![Package diagram](package-diagram.png) | The required high-level package diagram: every package in the skeleton, with `port.in` and `port.out` split, the four driven adapters, and the Interceptor wrapping `port.in`. Every dependency points towards `domain` |
 
 ## Pattern 1: MVC (covered in lectures)
 
