@@ -23,9 +23,9 @@
 | UC3 | Cancel Booking | Member | `<<extend>>` Apply Late-Cancellation Fee (less than 2 hours before the class); `<<include>>` Promote from Waitlist |
 | UC4 | Check In | Member, Front Desk Staff | `<<include>>` Verify Membership Status |
 | UC5 | Freeze / Unfreeze Membership | Member, Front Desk Staff | |
-| UC6 | Cancel Membership | Member, Front Desk Staff | `<<include>>` Calculate Charges (final bill) |
+| UC6 | Cancel Membership | Member, Front Desk Staff, Payment Gateway | `<<include>>` Calculate Charges (final bill); `<<extend>>` Charge Early-Exit Fee (Annual plan cancelled within 6 months, BR-M5) |
 | UC7 | Run Monthly Billing | Clock, Payment Gateway | `<<include>>` Calculate Charges |
-| UC8 | Record Attendance | Instructor | Records no-shows, which BR-B4 penalises |
+| UC8 | Record Attendance | Instructor | `<<extend>>` Apply No-Show Penalty (the member did not attend, BR-B4) |
 | UC9 | Manage Plans and Prices | Manager | |
 | UC10 | Manage Class Schedule | Manager, Instructor | |
 | UC11 | View Invoices | Member | |
