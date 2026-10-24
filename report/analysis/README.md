@@ -40,17 +40,18 @@ Found by noun identification (Lecture B method) over [UC1](../requirements/use-c
 
 ## Kept deliberately simple
 
-These are analysis **sketches**, so they show only the main classes and a few attributes and operations each. Design patterns (State for `Membership`, Strategy for `DiscountPolicy`, Observer for `Waitlist`, Factory for `Plan`) are added in the design and implementation iterations, not here.
+These are analysis **sketches**, so they show the main classes and only the attributes and operations the business rules need. The class diagram already shows where two patterns will go, because the rules call for them: the `MembershipState` hierarchy (State, from the state chart) and `PlanFactory` (Factory, one place to create the four plans). The other patterns (Strategy behind `DiscountPolicy`, Command for bookings, Observer for `Waitlist`) are added in the design and implementation iterations.
 
 ## Checklist against the §6 marking criteria
 
-- [x] Inheritance: `Plan` → `MonthlyPlan`, `AnnualPlan`, `StudentPlan`
-- [x] Realisation: `LoyaltyDiscount` implements `DiscountPolicy`
-- [x] Composition: `GymClass ◆ Waitlist`
+- [x] Inheritance: `Plan` → `MonthlyPlan`, `AnnualPlan`, `StudentPlan`, `OffPeakPlan` (all four BR-M1 plans), and `MembershipState` → the five states
+- [x] Realisation: `CorporateDiscount`, `FamilyDiscount` and `LoyaltyDiscount` implement `DiscountPolicy` (BR-P2)
+- [x] Composition: `GymClass ◆ Waitlist`, `Membership ◆ MembershipState`, `Membership ◆ Freeze`
 - [x] Aggregation: `Invoice ◇ Charge`
-- [x] Associations with multiplicity: `Member`–`Membership`, `Member`–`Booking`, `Booking` → `GymClass`, `Membership` → `Plan`
-- [x] Dependencies: `Invoice` uses `DiscountPolicy`, `Membership` uses `PaymentGateway`
+- [x] Associations with multiplicity: `Member`–`Membership`, `Member`–`Booking`, `Booking` → `GymClass`, `Membership` → `Plan`, `Instructor`–`GymClass`, `Membership`–`Invoice`, and the reflexive referral on `Member` (BR-P3)
+- [x] Dependencies: `Invoice` uses `DiscountPolicy`, `PlanFactory` creates `Plan`. `PaymentGateway` is a `port.out` interface called by the services, so no domain class depends on it (the Hexagonal rule)
 - [x] Visibility: `+`, `-`, `#`
+- [x] Enumerations: `PlanType`, `BookingStatus`, `ChargeType`
 - [x] Interfaces with pre/postconditions: `DiscountPolicy`, `PaymentGateway`
 - [x] No duplicated attributes or operations
 - [x] Sequence diagram contains `Membership`, the object with the state chart
