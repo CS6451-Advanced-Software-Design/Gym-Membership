@@ -4,7 +4,7 @@ import { defineRailway, github, project, service, volume } from "railway/iac";
 // `railway config apply`. Railway builds code/Dockerfile and redeploys on every merge to main.
 export default defineRailway(() => {
   // The JSON files the app stores its data in. A volume keeps them across redeploys and restarts
-  const data = volume("gym-data", { sizeMB: 500 });
+  const data = volume("gym-data", { sizeMB: 500, region: "iad" });
 
   const gym = service("gym-membership", {
     source: github("CS6451-Advanced-Software-Design/Gym-Membership", { branch: "main", rootDirectory: "/code" }),
@@ -16,6 +16,8 @@ export default defineRailway(() => {
     healthcheck: "/actuator/health",
     healthcheckTimeout: 120,
     volumeMounts: { "/data": data },
+    // JSON logs, so Railway colours each line by level and can filter on fields such as useCase and outcome
+    env: { LOGGING_STRUCTURED_FORMAT_CONSOLE: "logstash" },
   });
 
   return project("gym-membership", {
