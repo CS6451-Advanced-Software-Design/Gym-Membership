@@ -1,0 +1,13 @@
+[
+  {
+    "id": "d8776f63-41dc-4555-8a76-5c408cb8b6da",
+    "membershipId": "ms-ann",
+    "period": "2026-11",
+    "charges": [
+      { "type": "PLAN_FEE", "amount": 45.00, "date": "2026-11-01" }
+    ],
+    "discount": 6.75,
+    "total": 38.25,
+    "status": "PAID"
+  }
+]
