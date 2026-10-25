@@ -9,7 +9,7 @@
 | Language | Java 21 (LTS) | Matches the lecture examples, and everyone can read it |
 | Framework | Spring Boot 4.1.x (Spring Web starter) | MVC/REST controllers and dependency injection out of the box. Maps directly onto our `controller / port / service / domain / adapter` packages |
 | Build | Maven, through the Maven wrapper (`./mvnw`) | Standard, and the CI and metrics plugins below plug straight in. The wrapper means nobody has to install Maven |
-| Front end | Postman, in a public [workspace](https://www.postman.com/spaceflight-geoscientist-47956182/workspace/gym-membership) with its source in `code/postman/`: one collection generated from the Javadoc (springdoc-openapi → OpenAPI spec → Postman), with every endpoint documented and a real example response for each | The spec allows a simulated front end, so the effort goes into the business tier. Generating the docs from the code keeps them from drifting |
+| Front end | Postman, in a public [workspace](https://www.postman.com/chiragagg5k/workspace/gym-membership) with its source in `code/postman/`: one collection generated from the Javadoc (springdoc-openapi → OpenAPI spec → Postman), with every endpoint documented and a real example response for each | The spec allows a simulated front end, so the effort goes into the business tier. Generating the docs from the code keeps them from drifting |
 | Persistence | JSON files behind the `Repository<T, ID>` port (Jackson), with DTOs | The spec allows file I/O plus DTOs. No ORM, since the UI and ORM earn no added-value marks, and the port can be swapped for in-memory fakes in tests |
 | Tests | JUnit 5 + Mockito for business rules, MockMvc for a few controller tests | §8 needs 2+ automated tests. Unit-test every business rule without I/O |
 | CI/CD | GitHub Actions: build → test → coverage → package the jar as a build artifact | §9 added value. Set up in Iteration 1, not at the end. **A failing test fails the build and blocks the merge**: no `continue-on-error`, no skipped tests |
@@ -71,9 +71,11 @@ A single Spring Boot jar, deployed as one unit. This is the monolith.
 
 Build and CI (GitHub Actions on every pull request):
 
-  ./mvnw verify --> compile --> JUnit 5 + Mockito --> JaCoCo + PMD --> gym-membership.jar
-                                                                         (build artifact)
-  then Metrics: CK --> coverage, PMD and CK summary as a PR comment --> metrics artifact
+  in parallel, each ./mvnw verify with one kind of test, recording its coverage:
+    Unit tests         (*Test, Surefire)  + PMD + gym-membership.jar (build artifact)
+    Integration tests  (*IT, Failsafe)
+    End-to-end tests   (*E2E, Failsafe: the app on a real port, over HTTP)
+  then Metrics: merge the coverage --> CK --> summary as a PR comment --> metrics artifact
 ```
 
 | Tier | What we use |
@@ -106,7 +108,7 @@ Free-tier terms change often. These were checked on 7 Oct 2026.
 
 | Tool | Job |
 | --- | --- |
-| GitHub Actions + `actions/setup-java` (Temurin 21) | CI on every pull request, as two jobs: **Build and test** (`./mvnw verify`: build, tests, JaCoCo coverage, PMD) and **Metrics** (CK, a summary posted on the pull request, and a `metrics` artifact kept for every run) |
+| GitHub Actions + `actions/setup-java` (Temurin 21) | CI on every pull request: **Unit tests**, **Integration tests** and **End-to-end tests** in parallel, each `./mvnw verify` with one kind of test and its JaCoCo coverage, then **Metrics** (merged coverage, PMD, CK, a summary posted on the pull request, and a `metrics` artifact kept for every run) |
 | Dependabot (`.github/dependabot.yml`) | Opens pull requests when Maven dependencies or GitHub Actions versions go out of date |
 | PMD, [SonarQube Cloud](https://docs.sonarsource.com/sonarqube-cloud/) (formerly SonarCloud. Its Free plan analyses unlimited public projects, checked 21 Oct 2026) | Code smells, complexity and coupling numbers that drive refactoring |
 | [OpenRewrite](https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition) (`rewrite-spring`) | Automated Spring Boot upgrades, run from the command line without changing `pom.xml` |
