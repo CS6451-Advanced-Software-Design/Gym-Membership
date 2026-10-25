@@ -14,3 +14,4 @@ Keep each photo under about 2 MB, so the report PDF stays small.
 
 | Date | Photo | Drawn by | What it shows | What changed afterwards |
 | --- | --- | --- | --- | --- |
+| 2026-10-25 | [Hexagon, first draft](2026-10-25-hexagon-chirag.jpg) | Chirag | Notes on the three parts of Hexagonal (domain, ports, adapters) and a hand drawing of the hexagon: domain inside the service layer, `port.in` and `port.out` on opposite edges, the controller reaching `port.in` through the interceptor, logging out of band, and the payment and notification adapters implementing `port.out` | Nothing redrawn yet. It explains the layers behind the clean package diagram in [../architecture](../architecture/README.md) for §5. The layout was copied from a GenAI reference page (prompt #29) |
