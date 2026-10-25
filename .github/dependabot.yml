@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # The workflow pins every action to a commit SHA. This opens a pull request when a new release comes out
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: maven
+    directory: /code
+    schedule:
+      interval: weekly
