@@ -1,7 +1,7 @@
 name: Release
 
-# Pushing a tag such as v0.2.0 builds that commit and attaches the runnable jar and the OpenAPI spec to its
-# GitHub release. A release written by hand beforehand keeps its notes; otherwise the notes list the merged PRs
+# Pushing a tag such as v0.2.0 builds that commit and attaches the runnable jar, the OpenAPI spec and the report PDF
+# to its GitHub release. A release written by hand beforehand keeps its notes; otherwise the notes list the merged PRs
 on:
   push:
     tags: ['v*']
@@ -36,6 +36,15 @@ jobs:
       # Every kind of test runs again, so a release is never cut from a commit that fails them
       - run: ./mvnw -B verify
 
+      - uses: ./.github/actions/setup-report
+
+      # The report as it stands at this tag, named after the version so downloads from different releases don't clash
+      - name: Build the report
+        working-directory: .
+        run: |
+          report/pdf/build.sh
+          cp report/pdf/out/report.pdf "report-$GITHUB_REF_NAME.pdf"
+
       - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
@@ -43,4 +52,5 @@ jobs:
           if ! gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
             gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" --generate-notes
           fi
-          gh release upload "$GITHUB_REF_NAME" "target/gym-membership-${GITHUB_REF_NAME#v}.jar" postman/specs/openapi.yaml --clobber
+          gh release upload "$GITHUB_REF_NAME" "target/gym-membership-${GITHUB_REF_NAME#v}.jar" postman/specs/openapi.yaml \
+            "../report-$GITHUB_REF_NAME.pdf" --clobber

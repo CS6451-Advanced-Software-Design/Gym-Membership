@@ -1,0 +1,56 @@
+name: Report
+
+# Builds the report PDF from report/sections on every change to the report, so each PR shows the real page count.
+# Fails if a section goes over the spec's page limit. On main, the PDF also replaces the one on the report-latest
+# release, which the README links to
+on:
+  pull_request:
+    paths: ['report/**', '.github/workflows/report.yml', '.github/actions/setup-report/**']
+  push:
+    branches: [main]
+    paths: ['report/**', '.github/workflows/report.yml', '.github/actions/setup-report/**']
+
+concurrency:
+  group: report-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    name: Report PDF
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup-report
+
+      - name: Build
+        run: |
+          set -o pipefail
+          report/pdf/build.sh | tee summary.md
+          cat summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: report
+          path: report/pdf/out/report.pdf
+
+      # Moves the report-latest tag to this commit and replaces the PDF on its release, so the link never goes stale
+      - name: Publish the latest draft
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes="The report as it stands on main, rebuilt on every merge that changes report/. Built from $GITHUB_SHA. The submitted version is attached to the v1.0.0 release."
+          if gh release view report-latest > /dev/null 2>&1; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/report-latest" -f sha="$GITHUB_SHA" -F force=true > /dev/null
+            gh release edit report-latest --notes "$notes"
+          else
+            gh release create report-latest --target "$GITHUB_SHA" --prerelease --latest=false \
+              --title 'Report: latest draft' --notes "$notes"
+          fi
+          gh release upload report-latest report/pdf/out/report.pdf --clobber

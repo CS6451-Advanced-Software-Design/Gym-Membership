@@ -90,7 +90,7 @@ Each iteration ends with a release on GitHub. Set the new version in `pom.xml` t
 git tag v0.2.0 origin/main && git push origin v0.2.0
 ```
 
-The [Release workflow](../.github/workflows/release.yml) checks that the tag matches `pom.xml`, runs every test, and attaches the runnable jar and `openapi.yaml` to the release. To write the notes yourself, create the release with `gh release create` before the workflow finishes; otherwise it lists the merged PRs.
+The [Release workflow](../.github/workflows/release.yml) checks that the tag matches `pom.xml`, runs every test, and attaches the runnable jar, `openapi.yaml` and the report PDF to the release. To write the notes yourself, create the release with `gh release create` before the workflow finishes; otherwise it lists the merged PRs.
 
 ## Packages
 
