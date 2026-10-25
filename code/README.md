@@ -5,7 +5,7 @@ Everything that builds and runs lives here. The report material is in [../report
 | Path | What goes there |
 | --- | --- |
 | `pom.xml`, `mvnw`, `src/` | The Spring Boot project (see [tech-stack.md](../report/tech-stack.md#setting-up-the-project)) |
-| `postman/` | The Postman collection, our simulated front end |
+| `postman/` | Our simulated front end: the OpenAPI spec and the Postman collection generated from it, see [Postman](#postman) |
 | `data/` | The JSON files behind the repository adapters, created when the app first saves something. Not committed |
 
 ## Running it
@@ -17,6 +17,30 @@ You need a JDK 21 or newer. Maven comes with the wrapper. From this folder:
 | `./mvnw verify` | Compiles, runs every test and builds `target/gym-membership-*.jar`. CI runs the same command on every pull request |
 | `./mvnw verify`, then open `target/site/jacoco/index.html` and `target/reports/pmd.html` | Coverage and PMD reports. CI also runs CK and keeps all three as the `metrics` artifact of every run, with a summary on the run page |
 | `./mvnw spring-boot:run` | Starts the app on http://localhost:8080. Check http://localhost:8080/actuator/health returns `UP` |
+
+## Postman
+
+Postman is our front end. Everything is in the public [Gym Membership workspace](https://www.postman.com/spaceflight-geoscientist-47956182/workspace/gym-membership), and its source is in `postman/`:
+
+| Path | What it is | How it changes |
+| --- | --- | --- |
+| `specs/openapi.yaml` | The OpenAPI spec | Generated from the Javadoc on the controllers and DTOs, never edited by hand. `OpenApiSpecTest` fails the build when it's out of date |
+| `collections/Gym Membership API` | Every endpoint, ready to send, with its docs, fields and real example responses | Generated from the spec, never edited by hand |
+| `environments/local.environment.yaml` | `baseUrl` for the app on this machine | By hand |
+| `environments/mock.environment.yaml` | `baseUrl` for the workspace's public mock server, which answers every request with its saved example, so the API can be tried without the app. Add the header `x-mock-response-code: 404` to get an error example instead | By hand |
+
+The app also serves the spec at http://localhost:8080/v3/api-docs and a browsable version at http://localhost:8080/swagger-ui.html, built from the same Javadoc:
+
+![Swagger UI showing the API overview, the Billing description and both endpoints](../report/screenshots/swagger-ui.png)
+
+**Documenting an endpoint.** Write Javadoc on the controller method (first sentence is the summary, then the details, `@param` and `@return`), on its controller class (the folder description) and on the request and response records (`@param` for each field). Declare each error response with `@ApiResponse` on the method, and add a real example response as `src/main/resources/openapi/examples/<method>-<status>.json`. Then regenerate:
+
+```
+./mvnw test -Dtest=OpenApiSpecTest -Dopenapi.write=true
+postman spec sync collection postman/specs/openapi.yaml --force
+```
+
+**Trying it.** Pick the **mock** environment in Postman and send any request in **Gym Membership API**, or start the app and pick **local** to call the real thing. The business rules are tested in JUnit, so the collection has no tests of its own.
 
 ## Packages
 
