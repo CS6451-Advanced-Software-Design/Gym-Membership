@@ -16,7 +16,9 @@ class Member {
   -name: String
   -email: String
   -studentId: String
-  -noShowsLast30Days: int
+  -employer: String
+  -familyId: String
+  -/noShowsLast30Days: int
   +isSuspended(): boolean
 }
 
@@ -24,18 +26,29 @@ class Membership {
   -startDate: LocalDate
   -endDate: LocalDate
   -failedPayments: int
+  -trialBookingsUsed: int
+  -lapsedSince: LocalDate
   +canBook(c: GymClass): boolean
   +canCheckIn(at: LocalDateTime): boolean
   +freeze(months: int)
   +unfreeze()
+  +endTrial()
   +recordPayment(paid: boolean)
+  +payArrears()
   +cancel()
+  +expire(today: LocalDate)
 }
 
 abstract class MembershipState {
-  +canBook(): boolean
+  +canBook(m: Membership): boolean
+  +canCheckIn(m: Membership): boolean
   +freeze(m: Membership, months: int)
+  +unfreeze(m: Membership)
+  +endTrial(m: Membership)
+  +recordPayment(m: Membership, paid: boolean)
+  +payArrears(m: Membership)
   +cancel(m: Membership)
+  +expire(m: Membership, today: LocalDate)
 }
 class TrialState
 class ActiveState
@@ -126,8 +139,16 @@ interface PaymentGateway <<interface>> {
   +charge(m: Member, amount: Money): boolean
 }
 
-' --- Membership lifecycle
-Member "1" -- "1..*" Membership : holds >
+interface NotificationSender <<interface>> {
+  +send(n: Notification)
+}
+class Notification {
+  -memberId: String
+  -subject: String
+  -message: String
+}
+
+Member "1" -- "0..*" Membership : holds >
 Member "0..1" -- "0..*" Member : referred by <
 Membership "*" --> "1" Plan : on >
 Membership "1" *-- "1" MembershipState : state >
@@ -144,7 +165,6 @@ Plan <|-- OffPeakPlan
 PlanFactory ..> Plan : creates
 PlanFactory ..> PlanType
 
-' --- Booking
 Member "1" -- "0..*" Booking : makes >
 Booking "0..*" --> "1" GymClass : for >
 Instructor "1" -- "0..*" GymClass : teaches >
@@ -152,14 +172,15 @@ GymClass "1" *-- "1" Waitlist
 Waitlist o-- "0..*" Member : {ordered}
 Booking ..> BookingStatus
 
-' --- Billing
 Membership "1" -- "0..*" Invoice : billed by >
-Invoice "1" o-- "1..*" Charge
+Invoice "0..1" o-- "1..*" Charge
+Membership "1" -- "0..*" Charge : incurs >
 Charge ..> ChargeType
 Invoice ..> DiscountPolicy : best one wins
 DiscountPolicy <|.. CorporateDiscount
 DiscountPolicy <|.. FamilyDiscount
 DiscountPolicy <|.. LoyaltyDiscount
+NotificationSender ..> Notification
 
 note bottom of DiscountPolicy
   pre: amount >= 0
@@ -169,6 +190,14 @@ note bottom of PaymentGateway
   port.out, called by the services.
   pre: amount > 0
   post: charged exactly once, or not at all
+end note
+note bottom of NotificationSender
+  port.out, called by the services.
+  Not stored, so no ER entity
+end note
+note bottom of Member
+  /noShowsLast30Days is derived
+  from Bookings with status NO_SHOW
 end note
 note right of MembershipState
   State pattern: the

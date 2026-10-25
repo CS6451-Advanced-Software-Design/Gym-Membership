@@ -14,6 +14,8 @@ entity MEMBER {
   name
   email
   student_id
+  employer
+  family_id
   referred_by <<FK>>
 }
 
@@ -33,6 +35,8 @@ entity MEMBERSHIP {
   start_date
   end_date
   failed_payments
+  trial_bookings_used
+  lapsed_since
 }
 
 entity FREEZE {
@@ -54,7 +58,8 @@ entity INVOICE {
 entity CHARGE {
   * charge_id <<PK>>
   --
-  invoice_id <<FK>>
+  membership_id <<FK>>
+  invoice_id <<FK>> (null until invoiced)
   type
   amount
 }
@@ -95,7 +100,8 @@ PLAN ||--o{ MEMBERSHIP : "is taken in"
 MEMBER |o--o{ MEMBER : refers
 MEMBERSHIP ||--o{ FREEZE : has
 MEMBERSHIP ||--o{ INVOICE : "billed by"
-INVOICE ||--|{ CHARGE : contains
+INVOICE |o--|{ CHARGE : contains
+MEMBERSHIP ||--o{ CHARGE : incurs
 MEMBER ||--o{ BOOKING : makes
 GYM_CLASS ||--o{ BOOKING : "is booked by"
 INSTRUCTOR ||--o{ GYM_CLASS : teaches
