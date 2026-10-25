@@ -72,7 +72,7 @@ The current diagrams, in report order. Each one is explained in the doc it links
 
 What each actor can do in the system. Details in [report/requirements](report/requirements/README.md).
 
-![Use case diagram](report/requirements/use-case-diagram.png)
+<p align="center"><img src="report/requirements/use-case-diagram.png" alt="Use case diagram" width="480"></p>
 
 ### Packages (report §5)
 
@@ -102,7 +102,7 @@ The states a `Membership` moves through, which the State pattern implements.
 
 The entities stored in the JSON files, with cardinality.
 
-![ER diagram](report/analysis/er-diagram.png)
+<p align="center"><img src="report/analysis/er-diagram.png" alt="ER diagram" width="680"></p>
 
 ## Working agreement
 
