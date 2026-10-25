@@ -6,7 +6,7 @@ A monolithic (package-by-layer MVC + Hexagonal, with Interceptor) business tier 
 
 **Deadline: 23:59 Sun 1 Nov 2026.**
 
-**Try it:** the public [Postman workspace](https://www.postman.com/chiragagg5k/workspace/gym-membership) has every endpoint, documented from the code, ready to send. Pick the **mock** environment to try it without running anything, or **local** against the app. See [code/README.md](code/README.md#postman).
+**Try it:** the public [Postman workspace](https://www.postman.com/spaceflight-geoscientist-47956182/workspace/gym-membership) has every endpoint, documented from the code, ready to send. Pick the **mock** environment to try it without running anything, or **local** against the app. See [code/README.md](code/README.md#postman).
 
 ![The monthly billing run in Postman: its docs, generated from the Javadoc, above the live response](report/screenshots/postman.png)
 
