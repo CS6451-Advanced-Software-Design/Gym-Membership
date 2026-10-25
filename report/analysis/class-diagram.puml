@@ -28,8 +28,9 @@ class Membership {
   -failedPayments: int
   -trialBookingsUsed: int
   -lapsedSince: LocalDate
-  +canBook(c: GymClass): boolean
+  +canBook(): boolean
   +canCheckIn(at: LocalDateTime): boolean
+  +recordBooking()
   +freeze(months: int)
   +unfreeze()
   +endTrial()
@@ -37,11 +38,13 @@ class Membership {
   +payArrears()
   +cancel()
   +expire(today: LocalDate)
+  +checkOn(today: LocalDate)
 }
 
 abstract class MembershipState {
   +canBook(m: Membership): boolean
   +canCheckIn(m: Membership): boolean
+  +recordBooking(m: Membership)
   +freeze(m: Membership, months: int)
   +unfreeze(m: Membership)
   +endTrial(m: Membership)
@@ -49,6 +52,7 @@ abstract class MembershipState {
   +payArrears(m: Membership)
   +cancel(m: Membership)
   +expire(m: Membership, today: LocalDate)
+  +checkOn(m: Membership, today: LocalDate)
 }
 class TrialState
 class ActiveState
@@ -62,9 +66,12 @@ class Freeze {
 }
 
 abstract class Plan {
-  #monthlyPrice: Money
-  +priceFor(month: YearMonth): Money
-  +allows(c: GymClass): boolean
+  +price(): Money
+  +hasTrial(): boolean
+  +endDate(start: LocalDate): LocalDate
+  +allowsCheckIn(at: LocalDateTime): boolean
+  +allowsClassAt(start: LocalDateTime): boolean
+  +checkEligible(m: Member)
 }
 class MonthlyPlan
 class AnnualPlan
@@ -72,7 +79,8 @@ class StudentPlan
 class OffPeakPlan
 
 class PlanFactory {
-  +create(type: PlanType): Plan
+  +{static} create(type: PlanType): Plan
+  +{static} all(): List<Plan>
 }
 enum PlanType {
   MONTHLY
