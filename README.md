@@ -59,7 +59,7 @@ Each pattern is listed with its roles (as named in the lectures, GoF or POSA2) a
 |  | View | the JSON responses in `dto`, e.g. [`InvoiceResponse`](code/src/main/java/gym/dto/InvoiceResponse.java) |
 |  | Controller | [`BillingController`](code/src/main/java/gym/controller/BillingController.java), with [`ErrorHandler`](code/src/main/java/gym/controller/ErrorHandler.java) for errors |
 | **Hexagonal (Ports and Adapters)**<br>Architectural (self-researched) | Inbound port | `port.in`, e.g. [`RunMonthlyBillingUseCase`](code/src/main/java/gym/port/in/RunMonthlyBillingUseCase.java) |
-|  | Driving adapter | [`BillingController`](code/src/main/java/gym/controller/BillingController.java) |
+|  | Driving adapter | [`BillingController`](code/src/main/java/gym/controller/BillingController.java) for Postman, [`BillingJob`](code/src/main/java/gym/controller/BillingJob.java) for the clock |
 |  | Outbound port | `port.out`, e.g. [`ChargeRepository`](code/src/main/java/gym/port/out/ChargeRepository.java), [`PaymentGateway`](code/src/main/java/gym/port/out/PaymentGateway.java) |
 |  | Driven adapter | `adapter.*`, e.g. [`JsonFileChargeRepository`](code/src/main/java/gym/adapter/persistence/JsonFileChargeRepository.java), [`FakePaymentGateway`](code/src/main/java/gym/adapter/payment/FakePaymentGateway.java) |
 |  | Checked by | [`ArchitectureTest`](code/src/test/java/gym/ArchitectureTest.java), which fails the build if a dependency points outwards |
