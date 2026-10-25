@@ -15,7 +15,7 @@ You need a JDK 21 or newer. Maven comes with the wrapper. From this folder:
 | Command | What it does |
 | --- | --- |
 | `./mvnw verify` | Compiles, runs every test and builds `target/gym-membership-*.jar`. CI runs the same command on every pull request |
-| `./mvnw verify`, then open `target/site/jacoco/index.html` and `target/reports/pmd.html` | Coverage and PMD reports. CI also runs CK and keeps all three as the `metrics` artifact of every run, with a summary on the run page |
+| `./mvnw verify`, then open `target/site/jacoco/index.html` and `target/reports/pmd.html` | Coverage and PMD reports. CI also runs CK, keeps all three as the `metrics` artifact of every run, and posts a summary as a comment on the pull request |
 | `./mvnw spring-boot:run` | Starts the app on http://localhost:8080. Check http://localhost:8080/actuator/health returns `UP` |
 
 ## Postman
