@@ -6,7 +6,7 @@ Everything that builds and runs lives here. The report material is in [../report
 | --- | --- |
 | `pom.xml`, `mvnw`, `src/` | The Spring Boot project (see [tech-stack.md](../report/tech-stack.md#setting-up-the-project)) |
 | `postman/` | The Postman collection, our simulated front end |
-| `data/` | The JSON files behind the repository adapters, created when the app first saves something |
+| `data/` | The JSON files behind the repository adapters, created when the app first saves something. Not committed |
 
 ## Running it
 
@@ -48,6 +48,10 @@ Use these instead of writing your own:
 | Tell a member something | Inject `port.out.NotificationSender` and call `send(new Notification(memberId, subject, message))`. For now `NotificationLog` writes it to the log |
 | The current time | Inject the `java.time.Clock` bean |
 | A repository in a unit test | Extend `gym.support.InMemoryRepository` (test sources): no files, no Spring |
+| Members and memberships | `domain.Member`, `domain.Membership` (with `PlanType` and `MembershipStatus`) and their `MemberRepository` and `MembershipRepository` ports, stored in members.json and memberships.json. They only hold data so far: Member and Membership add their behaviour, State and Factory on top |
+| Charge a fee or penalty | Inject `port.in.RecordChargeUseCase` and call `record(membershipId, ChargeType.NO_SHOW, Money.euros(5))`. It goes on the next invoice. `creditReferral(membershipId)` gives the referrer €20 and applies the yearly cap |
+| Bill a sign-up or a cancellation | Inject `port.in.CalculateChargesUseCase`: `billFirstMonth(membershipId, joined)` in UC1, `billFinal(membershipId)` in UC6 and UC13. Both take the payment and return the `Invoice`, whose `status` says whether it was paid |
+| Pay arrears | Inject `port.in.PayArrearsUseCase` and call `payArrears(membershipId)` in UC14. An empty list means the card was declined, so the membership stays Lapsed |
 
 ## Adding your feature
 
