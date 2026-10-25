@@ -112,12 +112,19 @@ class Waitlist {
 
 class Invoice {
   -period: YearMonth
-  +total(): Money
+  -discount: Money
+  -total: Money
+  -status: InvoiceStatus
+}
+enum InvoiceStatus {
+  PAID
+  UNPAID
 }
 
 class Charge {
   -amount: Money
   -type: ChargeType
+  -date: LocalDate
 }
 enum ChargeType {
   PLAN_FEE
@@ -176,6 +183,7 @@ Membership "1" -- "0..*" Invoice : billed by >
 Invoice "0..1" o-- "1..*" Charge
 Membership "1" -- "0..*" Charge : incurs >
 Charge ..> ChargeType
+Invoice ..> InvoiceStatus
 Invoice ..> DiscountPolicy : best one wins
 DiscountPolicy <|.. CorporateDiscount
 DiscountPolicy <|.. FamilyDiscount
