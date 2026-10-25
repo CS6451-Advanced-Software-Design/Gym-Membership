@@ -36,7 +36,6 @@ package gym.adapter <<driven adapters>> {
 
 gym.controller ..> gym.dto : uses
 gym.controller ..> gym.port.in : calls
-gym.interceptor .> gym.port.in : wraps at\nrun time
 gym.service ..> gym.port.in : implements
 gym.service ..> gym.port.out : uses
 gym.service ..> gym.domain : uses
@@ -45,6 +44,8 @@ gym.port.out ..> gym.domain
 persistence ..> gym.port.out : implements
 payment ..> gym.port.out : implements
 notification ..> gym.port.out : implements
+payment ..> gym.domain : uses
+notification ..> gym.domain : uses
 logging ..> gym.interceptor : implements
 
 note right of gym.domain
@@ -54,6 +55,7 @@ end note
 note left of gym.interceptor
   Dynamic proxy around every
   port.in use case. Imports no
-  business package
+  business package: wired to
+  port.in at run time
 end note
 @enduml
