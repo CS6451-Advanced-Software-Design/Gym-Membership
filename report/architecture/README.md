@@ -29,8 +29,8 @@ Source: Cockburn, A. (2005) *The Hexagonal (Ports & Adapters) Architecture*, HaT
 | Hexagonal element | Our classes | Package |
 | --- | --- | --- |
 | Application (inside the hexagon) | Domain model + use-case services | `domain`, `service` |
-| Driving (inbound) port | `SignUpUseCase`, `BookClassUseCase`, `RunBillingUseCase`, ... | `port.in` |
-| Driving (inbound) adapter | REST controllers (Postman), `BillingJob` (clock), JUnit tests | `controller` |
+| Driving (inbound) port | `SignUpUseCase`, `BookClassUseCase`, `RunMonthlyBillingUseCase`, ... | `port.in` |
+| Driving (inbound) adapter | REST controllers (Postman), `BillingJob` (clock: 06:00 on the 1st of every month), JUnit tests | `controller` |
 | Driven (outbound) port | `Repository<T, ID>` and its bindings, `PaymentGateway`, `NotificationSender` | `port.out` |
 | Driven (outbound) adapter | `JsonFile*Repository`, `FakePaymentGateway`, `EventNotificationSender` | `adapter.*` |
 
@@ -109,7 +109,7 @@ From [tech-stack.md](../tech-stack.md#hosting-stack-report-5):
 ```
 gym/
 +- GymApplication
-+- controller/              inbound adapters: MembershipController, BookingController, BillingController, MemberController
++- controller/              inbound adapters: MembershipController, BookingController, BillingController, MemberController, BillingJob
 +- dto/                     request and response records (MVC view)
 +- port/in/                 use-case interfaces: SignUpUseCase, BookClassUseCase, ...
 +- port/out/                Repository<T, ID>, MembershipRepository, GymClassRepository, ..., PaymentGateway, NotificationSender
