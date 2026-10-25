@@ -53,8 +53,8 @@ public class OpenApiConfiguration {
                         .version("1.0")
                         .description(DESCRIPTION))
                 .servers(List.of(
-                        new Server().url("http://localhost:8080").description("The app started with ./mvnw spring-boot:run"),
-                        new Server().url(PRODUCTION).description("The live app on Railway, deployed from main")));
+                        new Server().url(PRODUCTION).description("The live app on Railway, deployed from main"),
+                        new Server().url("http://localhost:8080").description("The app started with ./mvnw spring-boot:run")));
     }
 
     /**

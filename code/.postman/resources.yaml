@@ -5,6 +5,7 @@ cloudResources:
   environments:
     ../postman/environments/local.environment.yaml: 26816728-b1e91ca4-4576-46a1-a760-6772771e1fbd
     ../postman/environments/mock.environment.yaml: 26816728-bca93d11-a306-4b5c-998e-d74464a8c4d6
+    ../postman/environments/production.environment.yaml: 26816728-06c8ea7c-b04e-43e9-9c1c-c93e98d6f1ba
   specs:
     ../postman/specs/openapi.yaml: 1fc570f6-e9f5-4207-bc7f-c17281e9a417
 workspace:
