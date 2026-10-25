@@ -106,8 +106,6 @@ jobs:
             echo "| **WMC**: Weighted Methods per Class | The total cyclomatic complexity of its methods | More branches, so harder to understand and test |"
             echo "| **RFC**: Response For a Class | Its methods plus the methods they call | A call into it can set off more behaviour |"
             echo "| **LOC**: Lines Of Code | Its size, without blank lines and comments | More to read and maintain |"
-            echo
-            echo "Every report is in the \`metrics\` artifact of [this run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)."
           } > "$RUNNER_TEMP/metrics.md"
           cat "$RUNNER_TEMP/metrics.md" >> "$GITHUB_STEP_SUMMARY"
 
