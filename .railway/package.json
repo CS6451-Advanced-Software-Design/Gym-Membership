@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "description": "The Railway SDK that railway.ts is written against",
+  "type": "module",
+  "devDependencies": {
+    "railway": "3.16.0"
+  }
+}
