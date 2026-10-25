@@ -90,6 +90,8 @@ jobs:
             echo "### PMD"
             echo "Violations: **$(grep -c '<violation' target/pmd.xml || true)**"
             echo
+            echo "Places where the code breaks a design or best-practice rule in \`code/pmd-ruleset.xml\`, e.g. a class doing too much (\`GodClass\`) or a caught exception losing its cause."
+            echo
             echo "### CK: the 5 most coupled classes"
             echo "| Class | CBO | WMC | RFC | LOC |"
             echo "| --- | --- | --- | --- | --- |"
@@ -97,6 +99,13 @@ jobs:
                      { print $column["cbo"] "|" $column["class"] "|" $column["wmc"] "|" $column["rfc"] "|" $column["loc"] }' target/ck/class.csv \
               | sort -t'|' -k1,1nr | head -5 \
               | awk -F'|' '{ print "| `" $2 "` | " $1 " | " $3 " | " $4 " | " $5 " |" }'
+            echo
+            echo "| Metric | Measures | Higher means |"
+            echo "| --- | --- | --- |"
+            echo "| **CBO**: Coupling Between Objects | How many other classes it uses or is used by | A change elsewhere is more likely to break it |"
+            echo "| **WMC**: Weighted Methods per Class | The total cyclomatic complexity of its methods | More branches, so harder to understand and test |"
+            echo "| **RFC**: Response For a Class | Its methods plus the methods they call | A call into it can set off more behaviour |"
+            echo "| **LOC**: Lines Of Code | Its size, without blank lines and comments | More to read and maintain |"
             echo
             echo "Every report is in the \`metrics\` artifact of [this run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)."
           } > "$RUNNER_TEMP/metrics.md"
