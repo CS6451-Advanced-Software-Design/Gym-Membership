@@ -45,6 +45,7 @@ Postman is our front end. Everything is in the public [Gym Membership workspace]
 | `specs/openapi.yaml` | The OpenAPI spec | Generated from the Javadoc on the controllers and DTOs, never edited by hand. `OpenApiSpecIT` fails the build when it's out of date |
 | `collections/Gym Membership API` | Every endpoint, ready to send, with its docs, fields and real example responses | Generated from the spec, never edited by hand |
 | `environments/local.environment.yaml` | `baseUrl` for the app on this machine | By hand |
+| `environments/production.environment.yaml` | `baseUrl` for the live app on Railway, https://gym-membership-production-a725.up.railway.app | By hand |
 | `environments/mock.environment.yaml` | `baseUrl` for the workspace's public mock server, which answers every request with its saved example, so the API can be tried without the app. Add the header `x-mock-response-code: 404` to get an error example instead | By hand |
 
 The app also serves the spec at http://localhost:8080/v3/api-docs and a browsable version at http://localhost:8080/swagger-ui.html, built from the same Javadoc:
@@ -59,6 +60,26 @@ postman spec sync collection postman/specs/openapi.yaml --force
 ```
 
 **Trying it.** Pick the **mock** environment in Postman and send any request in **Gym Membership API**, or start the app and pick **local** to call the real thing. The business rules are tested in JUnit, so the collection has no tests of its own.
+
+## Deploying
+
+The app runs on [Railway](https://gym-membership-production-a725.up.railway.app/swagger-ui.html) and redeploys on every merge to `main`:
+
+| Path | What it is |
+| --- | --- |
+| `code/Dockerfile` | Builds the jar with Maven, then runs it on a Java 21 JRE. Tests and reports are skipped, since CI already ran them |
+| `.railway/railway.ts` | The Railway project as code: the service built from `code/` on `main`, its health check on `/actuator/health`, and the `gym-data` volume mounted at `/data` for the JSON files |
+| `server.port=${PORT:8080}` | In `application.properties`, so the app listens on the port Railway gives it |
+
+To change the Railway setup, edit `.railway/railway.ts`, then from the repository root:
+
+```
+npm install --prefix .railway
+railway config plan    # preview the changes
+railway config apply   # apply them
+```
+
+Build and run the image locally with `docker build -t gym-membership code && docker run -p 8080:8080 gym-membership`.
 
 ## Packages
 
