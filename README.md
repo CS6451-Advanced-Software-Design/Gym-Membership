@@ -38,6 +38,8 @@ See [report/roles.md](report/roles.md) for the full role split.
 | [report/sketches](report/sketches/README.md) | Photos of our rough work and hand-drawn sketches (report §6). **Add photos as you draw** |
 | [report/tech-stack.md](report/tech-stack.md) | Java 21 + Spring Boot, Maven, tests, CI/CD, metrics, UML workbench, hosting stack (report §5, §8, §9, §10) |
 | [report/sample-project-lessons.md](report/sample-project-lessons.md) | What past submissions did well and where they lost marks |
+| [report/sections](report/sections) | **The report itself**: one Markdown file per section, in the spec's order. Write your sections here, in your own words. Each file starts with a comment saying what it needs and who owns it |
+| [report/pdf](report/pdf) | Builds the PDF: front cover, the blank marking scheme, contents and page numbers. Run `report/pdf/build.sh` (needs pandoc and Typst), or download it from the **Report** check on any PR. Student IDs for the cover go in `report/pdf/report.yaml` |
 | [report/report-plan.md](report/report-plan.md) | Owner, evidence and quality bar for every report section (§1–14) |
 | [report/roles.md](report/roles.md) | Roles and package ownership (report §3) |
 | [report/diary.md](report/diary.md) | Weekly diary, Weeks 4–12 (report §7). **Update every week** |

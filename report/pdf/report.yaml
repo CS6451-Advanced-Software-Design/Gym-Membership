@@ -1,0 +1,18 @@
+# What the front cover and the marking scheme show. Fill in every member's student ID
+title: Gym & Fitness Club Membership System
+module: CS6451 Advanced Software Design
+assignment: Team-Based Assignment Part 1
+lecturer: J.J. Collins
+group: Brightspace Group 1
+university: University of Limerick
+semester: Autumn 2026/27
+repository: https://github.com/CS6451-Advanced-Software-Design/Gym-Membership
+members:
+  - name: Chirag Aggarwal
+    id: '26253925'
+  - name: Bharat Doodi
+    id: ''
+  - name: DineshReddy Mogili
+    id: ''
+  - name: Dhruv Punj
+    id: ''
