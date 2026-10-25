@@ -1,0 +1,16 @@
+$kind: http-request
+description: "Runs the monthly billing. <p>Bills every active membership for one month and charges each member's card. The gym's clock starts this on the first of every month. For each membership that isn't cancelled: <ol> <li>It is skipped if it's frozen or already has an invoice for the month, so repeating a run never bills anyone twice.</li> <li>The monthly plan fee is added. Annual plans have no monthly fee, so an Annual member is billed only when penalties are waiting.</li> <li>Penalties and referral credits waiting since the last invoice are added.</li> <li>The best discount comes off the plan fee and the total is charged to the member's card.</li> <li>The member is told what was charged, or that the payment was declined.</li> </ol>"
+url: "{{baseUrl}}/billing-runs"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "period": "2026-11"
+    }
+settings: {}
+examples: ./.resources/Runs the monthly billing.resources/examples
+order: 1000

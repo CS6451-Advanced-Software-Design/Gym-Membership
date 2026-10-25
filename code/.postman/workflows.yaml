@@ -1,0 +1,6 @@
+workflows:
+  syncSpecToCollection:
+    - spec: ../postman/specs/openapi.yaml
+      collection: ../postman/collections/Gym Membership API
+      options:
+        folderStrategy: Tags

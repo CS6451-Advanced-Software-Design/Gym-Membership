@@ -1,0 +1,27 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/billing-runs"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "period": "2026-11"
+      }
+response:
+  statusCode: 400
+  statusText: Bad Request
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "Invalid request content.",
+        "instance": "/billing-runs"
+      }
+order: 2000

@@ -1,0 +1,7 @@
+name: local
+values:
+  - key: baseUrl
+    value: 'http://localhost:8080'
+    enabled: true
+    type: default
+    description: Where the app runs, started with ./mvnw spring-boot:run

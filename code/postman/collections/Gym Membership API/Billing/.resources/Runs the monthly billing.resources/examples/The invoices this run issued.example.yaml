@@ -1,0 +1,68 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/billing-runs"
+  method: POST
+  headers:
+    Accept: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "period": "2026-11"
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      [
+        {
+          "id": "d8776f63-41dc-4555-8a76-5c408cb8b6da",
+          "membershipId": "ms-ann",
+          "period": "2026-11",
+          "charges": [
+            {
+              "type": "PLAN_FEE",
+              "amount": 45,
+              "date": "2026-11-01T00:00:00.000Z"
+            }
+          ],
+          "discount": 6.75,
+          "total": 38.25,
+          "status": "PAID"
+        },
+        {
+          "id": "88cfd43b-deaf-4137-a4f4-6d1ad3879562",
+          "membershipId": "ms-cara",
+          "period": "2026-11",
+          "charges": [
+            {
+              "type": "PLAN_FEE",
+              "amount": 30,
+              "date": "2026-11-01T00:00:00.000Z"
+            }
+          ],
+          "discount": 3,
+          "total": 27,
+          "status": "PAID"
+        },
+        {
+          "id": "de8a97c8-bd32-4fee-aa08-fbaff25fda68",
+          "membershipId": "ms-eve",
+          "period": "2026-11",
+          "charges": [
+            {
+              "type": "PLAN_FEE",
+              "amount": 45,
+              "date": "2026-11-01T00:00:00.000Z"
+            }
+          ],
+          "discount": 0,
+          "total": 45,
+          "status": "UNPAID"
+        }
+      ]
+order: 1000

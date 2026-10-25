@@ -1,0 +1,12 @@
+$kind: collection
+description: |-
+  The REST API of a gym and fitness club: membership plans and billing, class bookings with waitlists, check-in, freezes, penalties and referral credits.
+
+  | Value | Format |
+  | --- | --- |
+  | Money | Euro, with two decimal places, e.g. `38.25` |
+  | Month | `YYYY-MM`, e.g. `2026-11` |
+  | Date | `YYYY-MM-DD`, e.g. `2026-11-01` |
+  | Error | An [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) problem response. Its `detail` says what went wrong |
+variables:
+  baseUrl: http://localhost:8080
