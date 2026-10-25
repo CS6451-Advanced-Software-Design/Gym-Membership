@@ -1,0 +1,7 @@
+name: production
+values:
+  - key: baseUrl
+    value: 'https://gym-membership-production-a725.up.railway.app'
+    enabled: true
+    type: default
+    description: The live app on Railway, deployed from main

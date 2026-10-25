@@ -17,3 +17,6 @@ node_modules/
 
 # JSON files the running app writes
 code/data/
+
+# The Railway SDK that .railway/railway.ts is checked against
+.railway/node_modules/

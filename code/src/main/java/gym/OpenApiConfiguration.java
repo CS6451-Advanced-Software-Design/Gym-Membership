@@ -30,6 +30,8 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 public class OpenApiConfiguration {
 
+    private static final String PRODUCTION = "https://gym-membership-production-a725.up.railway.app";
+
     private static final Pattern LINE_BREAK = Pattern.compile("\\s*\\R\\s*");
 
     private static final String DESCRIPTION = """
@@ -50,7 +52,9 @@ public class OpenApiConfiguration {
                         .title("Gym Membership")
                         .version("1.0")
                         .description(DESCRIPTION))
-                .servers(List.of(new Server().url("http://localhost:8080").description("The app started with ./mvnw spring-boot:run")));
+                .servers(List.of(
+                        new Server().url("http://localhost:8080").description("The app started with ./mvnw spring-boot:run"),
+                        new Server().url(PRODUCTION).description("The live app on Railway, deployed from main")));
     }
 
     /**

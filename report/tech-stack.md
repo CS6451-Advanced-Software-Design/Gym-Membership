@@ -92,17 +92,19 @@ Optionally, `./mvnw spring-boot:build-image` packages the app as a Docker image 
 
 ## Where to run it
 
-Running locally is enough for the walkthrough. A live deployment is optional, but it strengthens the CD part of §9. Because the data is JSON files on disk, a host must keep files across restarts:
+The app is deployed to **Railway**: https://gym-membership-production-a725.up.railway.app. Railway builds `code/Dockerfile` and redeploys on every merge to `main`, which is our CD. A volume keeps the JSON files across redeploys. The setup is in `.railway/railway.ts`, see [code/README.md](../code/README.md#deploying).
+
+Because the data is JSON files on disk, a host must keep files across restarts. The options we compared:
 
 | Option | Cost | Files survive a restart? |
 | --- | --- | --- |
 | **Local** (`java -jar`) | Free | Yes. **Default for development and the demo** |
 | Render free web service | Free | No. Ephemeral filesystem, no disks on the free plan, sleeps after 15 min idle ([Render](https://render.com/docs/free)) |
-| Railway | $5 one-off trial credit, then $1/month | Yes, but trial volumes are deleted 30 days after the credit runs out ([Railway](https://docs.railway.com/reference/pricing/free-trial)) |
+| **Railway** (chosen) | $5 one-off trial credit, then the Hobby plan at $5/month including $5 of usage ([Railway](https://docs.railway.com/pricing/plans)) | Yes, with a volume. Trial volumes are deleted 30 days after the credit runs out. **What we use**: the least setup, and it deploys from GitHub on every merge |
 | Koyeb, Fly.io | Card needed / no free tier for new users | Koyeb's free tier has no volumes |
 | **Azure for Students** ($100, no card) or **DigitalOcean** ($200 via the GitHub Student Developer Pack) | Free with student credits | Yes, on a small VM or App Service. **Best choice if we deploy** |
 
-Free-tier terms change often. These were checked on 7 Oct 2026.
+Free-tier terms change often. These were checked on 7 Oct 2026, and Railway's again on 25 Oct 2026.
 
 ## Keeping it maintained (report §9)
 
@@ -113,7 +115,7 @@ Free-tier terms change often. These were checked on 7 Oct 2026.
 | PMD, [SonarQube Cloud](https://docs.sonarsource.com/sonarqube-cloud/) (formerly SonarCloud. Its Free plan analyses unlimited public projects, checked 21 Oct 2026) | Code smells, complexity and coupling numbers that drive refactoring |
 | [OpenRewrite](https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition) (`rewrite-spring`) | Automated Spring Boot upgrades, run from the command line without changing `pom.xml` |
 | Spring Boot Actuator | `/actuator/health` and `/actuator/info` to check the app is up after a deploy |
-| CD job (optional) | Build the jar as an Actions artifact, push a Buildpacks image to GitHub Container Registry (GHCR), deploy to Azure or DigitalOcean |
+| Railway | CD: builds `code/Dockerfile` and redeploys on every merge to `main`, with `/actuator/health` as its health check. Set up as code in `.railway/railway.ts` |
 
 ## Package structure
 

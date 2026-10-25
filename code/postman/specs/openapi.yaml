@@ -14,6 +14,8 @@ info:
 servers:
 - url: http://localhost:8080
   description: The app started with ./mvnw spring-boot:run
+- url: https://gym-membership-production-a725.up.railway.app
+  description: "The live app on Railway, deployed from main"
 tags:
 - name: Billing
   description: "Charges members for their memberships and shows them what they paid.\
