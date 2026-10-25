@@ -50,7 +50,7 @@ Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 f
 
 | Member | Contributions | Issues arising | Plan for next week |
 | --- | --- | --- | --- |
-| Chirag | | | |
+| Chirag | Built the Billing feature across every layer: charges and invoices per membership (BR-P1), the Strategy pattern for discounts where the best one wins (BR-P2), referral credits capped at €60 a year (BR-P3), pro-rated first bills (BR-P4), no billing while frozen (BR-M3), the early-exit fee (BR-M5) and paying arrears (UC14). Added bare `Member` and `Membership` data classes so Billing reads real memberships. Added the Billing fields to the class and ER diagrams. Logged GenAI prompt #30 | One week left and the Membership, Booking and Member features still need their behaviour and patterns | Write §5 architecture. Once every feature is in, recover the §10 blueprints in Visual Paradigm and write the §11 critique |
 | Bharat | | | |
 | DineshReddy | | | |
 | Dhruv | | | |
