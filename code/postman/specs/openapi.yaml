@@ -12,10 +12,10 @@ info:
     | Error | An [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) problem response. Its `detail` says what went wrong |
   version: "1.0"
 servers:
-- url: http://localhost:8080
-  description: The app started with ./mvnw spring-boot:run
 - url: https://gym-membership-production-a725.up.railway.app
   description: "The live app on Railway, deployed from main"
+- url: http://localhost:8080
+  description: The app started with ./mvnw spring-boot:run
 tags:
 - name: Billing
   description: "Charges members for their memberships and shows them what they paid.\

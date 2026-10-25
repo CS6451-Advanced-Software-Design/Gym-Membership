@@ -9,4 +9,4 @@ description: |-
   | Date | `YYYY-MM-DD`, e.g. `2026-11-01` |
   | Error | An [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) problem response. Its `detail` says what went wrong |
 variables:
-  baseUrl: http://localhost:8080
+  baseUrl: https://gym-membership-production-a725.up.railway.app

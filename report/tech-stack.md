@@ -42,7 +42,7 @@ A single Spring Boot jar, deployed as one unit. This is the monolith.
 ```
                  Postman (simulated front end)
                               |
-                              |  HTTP + JSON, localhost:8080
+                              |  HTTP + JSON, live on Railway
                               v
 +--------------------------------------------------------------+
 | JVM: Java 21 (Temurin)                                       |
@@ -84,15 +84,15 @@ Build and CI (GitHub Actions on every pull request):
 | Business tier | `service` and `domain` packages |
 | EIS / database | JSON files in a `code/data/` folder, accessed only through `adapter.persistence` |
 | Message bus | Spring's in-process `ApplicationEventPublisher`. It also carries the Observer pattern for waitlist promotion and payment notifications |
-| Client | Postman, calling `http://localhost:8080` |
+| Client | Postman, calling the live app at https://gym-membership-production-a725.up.railway.app (or `http://localhost:8080` in development) |
 
-The §10 deployment diagram follows from this: one node (a laptop or VM) running a JVM, with the jar artifact (Tomcat inside) and the `data/` folder.
+The §10 deployment diagram follows from this: one node (the Railway container) running a JVM, with the jar artifact (Tomcat inside) and the `data/` folder on its volume.
 
 Optionally, `./mvnw spring-boot:build-image` packages the app as a Docker image with Cloud Native Buildpacks, with no Dockerfile needed.
 
 ## Where to run it
 
-The app is deployed to **Railway**: https://gym-membership-production-a725.up.railway.app. Railway builds `code/Dockerfile` and redeploys on every merge to `main`, which is our CD. A volume keeps the JSON files across redeploys. The setup is in `.railway/railway.ts`, see [code/README.md](../code/README.md#deploying).
+The app is deployed to **Railway**: https://gym-membership-production-a725.up.railway.app. Railway builds `code/Dockerfile` and redeploys on every merge to `main`, which is our CD. A volume keeps the JSON files across redeploys. Opening the address shows the Swagger UI, so the app can be tried with no setup. The setup is in `.railway/railway.ts`, see [code/README.md](../code/README.md#deploying).
 
 Because the data is JSON files on disk, a host must keep files across restarts. The options we compared:
 
