@@ -1,0 +1,9 @@
+skinparam dpi 130
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam ArrowColor #333333
+skinparam BorderColor #333333
+skinparam BackgroundColor white
+skinparam NoteBackgroundColor #FFFBE6
+skinparam NoteBorderColor #999999

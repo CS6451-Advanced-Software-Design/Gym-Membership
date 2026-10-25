@@ -1,0 +1,178 @@
+@startuml
+!include ../common.iuml
+hide circle
+left to right direction
+hide empty members
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F5F5F5
+  BorderColor #333333
+}
+skinparam nodesep 40
+skinparam ranksep 60
+
+class Member {
+  -memberId: String
+  -name: String
+  -email: String
+  -studentId: String
+  -noShowsLast30Days: int
+  +isSuspended(): boolean
+}
+
+class Membership {
+  -startDate: LocalDate
+  -endDate: LocalDate
+  -failedPayments: int
+  +canBook(c: GymClass): boolean
+  +canCheckIn(at: LocalDateTime): boolean
+  +freeze(months: int)
+  +unfreeze()
+  +recordPayment(paid: boolean)
+  +cancel()
+}
+
+abstract class MembershipState {
+  +canBook(): boolean
+  +freeze(m: Membership, months: int)
+  +cancel(m: Membership)
+}
+class TrialState
+class ActiveState
+class FrozenState
+class LapsedState
+class CancelledState
+
+class Freeze {
+  -startDate: LocalDate
+  -months: int
+}
+
+abstract class Plan {
+  #monthlyPrice: Money
+  +priceFor(month: YearMonth): Money
+  +allows(c: GymClass): boolean
+}
+class MonthlyPlan
+class AnnualPlan
+class StudentPlan
+class OffPeakPlan
+
+class PlanFactory {
+  +create(type: PlanType): Plan
+}
+enum PlanType {
+  MONTHLY
+  ANNUAL
+  STUDENT
+  OFF_PEAK
+}
+
+class Instructor {
+  -name: String
+}
+
+class GymClass {
+  -startTime: LocalDateTime
+  -capacity: int
+  -premium: boolean
+  +isFull(): boolean
+  +reserve(m: Member): Booking
+}
+
+class Booking {
+  -status: BookingStatus
+  -bookedAt: LocalDateTime
+  +cancel(at: LocalDateTime)
+}
+enum BookingStatus {
+  BOOKED
+  CANCELLED
+  ATTENDED
+  NO_SHOW
+}
+
+class Waitlist {
+  +add(m: Member): int
+  +promoteNext(): Member
+}
+
+class Invoice {
+  -period: YearMonth
+  +total(): Money
+}
+
+class Charge {
+  -amount: Money
+  -type: ChargeType
+}
+enum ChargeType {
+  PLAN_FEE
+  PREMIUM_SURCHARGE
+  LATE_CANCELLATION
+  NO_SHOW
+  EARLY_EXIT
+  REFERRAL_CREDIT
+}
+
+interface DiscountPolicy <<interface>> {
+  +discountFor(m: Member, amount: Money): Money
+}
+class CorporateDiscount
+class FamilyDiscount
+class LoyaltyDiscount
+
+interface PaymentGateway <<interface>> {
+  +charge(m: Member, amount: Money): boolean
+}
+
+' --- Membership lifecycle
+Member "1" -- "1..*" Membership : holds >
+Member "0..1" -- "0..*" Member : referred by <
+Membership "*" --> "1" Plan : on >
+Membership "1" *-- "1" MembershipState : state >
+Membership "1" *-- "0..*" Freeze
+MembershipState <|-- TrialState
+MembershipState <|-- ActiveState
+MembershipState <|-- FrozenState
+MembershipState <|-- LapsedState
+MembershipState <|-- CancelledState
+Plan <|-- MonthlyPlan
+Plan <|-- AnnualPlan
+Plan <|-- StudentPlan
+Plan <|-- OffPeakPlan
+PlanFactory ..> Plan : creates
+PlanFactory ..> PlanType
+
+' --- Booking
+Member "1" -- "0..*" Booking : makes >
+Booking "0..*" --> "1" GymClass : for >
+Instructor "1" -- "0..*" GymClass : teaches >
+GymClass "1" *-- "1" Waitlist
+Waitlist o-- "0..*" Member : {ordered}
+Booking ..> BookingStatus
+
+' --- Billing
+Membership "1" -- "0..*" Invoice : billed by >
+Invoice "1" o-- "1..*" Charge
+Charge ..> ChargeType
+Invoice ..> DiscountPolicy : best one wins
+DiscountPolicy <|.. CorporateDiscount
+DiscountPolicy <|.. FamilyDiscount
+DiscountPolicy <|.. LoyaltyDiscount
+
+note bottom of DiscountPolicy
+  pre: amount >= 0
+  post: 0 <= result <= amount
+end note
+note bottom of PaymentGateway
+  port.out, called by the services.
+  pre: amount > 0
+  post: charged exactly once, or not at all
+end note
+note right of MembershipState
+  State pattern: the
+  behaviour of Membership
+  depends on its state
+end note
+@enduml

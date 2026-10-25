@@ -1,0 +1,34 @@
+@startuml
+!include ../common.iuml
+skinparam state {
+  BackgroundColor #F5F5F5
+  BorderColor #333333
+}
+skinparam nodesep 70
+skinparam ranksep 70
+
+state Trial : entry / chargeProRated()\nbookings allowed: 2
+state Active : entry / resetFailedPayments()
+state Frozen : not billed
+state Lapsed : no check-in, no booking
+state Cancelled : entry / issueFinalBill()
+
+[*] --> Trial : signUp(plan) [plan is not Annual]
+[*] --> Active : signUp(plan) [plan is Annual]\n/ chargeYearUpfront()
+
+Trial --> Active : trialEnds [paid]
+Trial --> Lapsed : trialEnds [payment failed]
+Trial --> Cancelled : cancel()
+
+Active --> Frozen : freeze(m) [1 <= m <= 3 and no freeze\nin the last 12 months] / extendEnd(m)
+Frozen --> Active : unfreeze() or freezeEnds
+Active --> Lapsed : paymentFailed [2nd in a row]
+Lapsed --> Active : payArrears()
+
+Active --> Cancelled : cancel() [not Annual or after 6 months]
+Active --> Cancelled : cancel() [Annual, within 6 months]\n/ chargeEarlyExit(€50)
+Frozen --> Cancelled : cancel()
+Lapsed --> Cancelled : after(60 days unpaid)
+
+Cancelled --> [*]
+@enduml

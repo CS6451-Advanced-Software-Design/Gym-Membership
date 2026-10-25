@@ -1,0 +1,104 @@
+@startuml
+!include ../common.iuml
+hide circle
+skinparam class {
+  BackgroundColor #F5F5F5
+  BorderColor #333333
+}
+skinparam nodesep 50
+skinparam ranksep 60
+
+entity MEMBER {
+  * member_id <<PK>>
+  --
+  name
+  email
+  student_id
+  referred_by <<FK>>
+}
+
+entity PLAN {
+  * plan_id <<PK>>
+  --
+  type
+  monthly_price
+}
+
+entity MEMBERSHIP {
+  * membership_id <<PK>>
+  --
+  member_id <<FK>>
+  plan_id <<FK>>
+  state
+  start_date
+  end_date
+  failed_payments
+}
+
+entity FREEZE {
+  * freeze_id <<PK>>
+  --
+  membership_id <<FK>>
+  start_date
+  months
+}
+
+entity INVOICE {
+  * invoice_id <<PK>>
+  --
+  membership_id <<FK>>
+  period
+  total
+}
+
+entity CHARGE {
+  * charge_id <<PK>>
+  --
+  invoice_id <<FK>>
+  type
+  amount
+}
+
+entity INSTRUCTOR {
+  * instructor_id <<PK>>
+  --
+  name
+}
+
+entity GYM_CLASS {
+  * class_id <<PK>>
+  --
+  instructor_id <<FK>>
+  start_time
+  capacity
+  premium
+}
+
+entity BOOKING {
+  * booking_id <<PK>>
+  --
+  member_id <<FK>>
+  class_id <<FK>>
+  status
+  booked_at
+}
+
+entity WAITLIST_ENTRY {
+  * class_id <<PK, FK>>
+  * member_id <<PK, FK>>
+  --
+  position
+}
+
+MEMBER ||--o{ MEMBERSHIP : holds
+PLAN ||--o{ MEMBERSHIP : "is taken in"
+MEMBER |o--o{ MEMBER : refers
+MEMBERSHIP ||--o{ FREEZE : has
+MEMBERSHIP ||--o{ INVOICE : "billed by"
+INVOICE ||--|{ CHARGE : contains
+MEMBER ||--o{ BOOKING : makes
+GYM_CLASS ||--o{ BOOKING : "is booked by"
+INSTRUCTOR ||--o{ GYM_CLASS : teaches
+GYM_CLASS ||--o{ WAITLIST_ENTRY : queues
+MEMBER ||--o{ WAITLIST_ENTRY : waits
+@enduml
