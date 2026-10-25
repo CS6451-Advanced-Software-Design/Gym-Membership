@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
  * Checks Spring wraps use-case beans automatically, so controllers get the intercepted proxy.
  */
 @SpringBootTest
-class InterceptorWiringTest {
+class InterceptorWiringIT {
 
     @TestConfiguration
     static class Configuration {

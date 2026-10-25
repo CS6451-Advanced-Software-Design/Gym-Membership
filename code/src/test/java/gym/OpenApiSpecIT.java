@@ -15,11 +15,11 @@ import org.springframework.test.web.servlet.MockMvc;
 /**
  * Keeps the committed OpenAPI spec, which the Postman collection is generated from, in step with the
  * Javadoc it is built from. After changing a controller or DTO, regenerate it with
- * {@code ./mvnw test -Dtest=OpenApiSpecTest -Dopenapi.write=true} and commit the result.
+ * {@code ./mvnw verify -Dskip.unit -Dit.test=OpenApiSpecIT -Dopenapi.write=true} and commit the result.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-class OpenApiSpecTest {
+class OpenApiSpecIT {
 
     private static final Path SPEC = Path.of("postman/specs/openapi.yaml");
 
@@ -34,6 +34,6 @@ class OpenApiSpecTest {
             Files.writeString(SPEC, generated);
         }
         assertEquals(Files.readString(SPEC), generated,
-                "postman/specs/openapi.yaml is out of date. Run ./mvnw test -Dtest=OpenApiSpecTest -Dopenapi.write=true and commit it");
+                "postman/specs/openapi.yaml is out of date. Run ./mvnw verify -Dskip.unit -Dit.test=OpenApiSpecIT -Dopenapi.write=true and commit it");
     }
 }

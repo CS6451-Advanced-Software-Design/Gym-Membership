@@ -21,6 +21,10 @@
 		<therapi.version>0.15.0</therapi.version>
 		<jacoco.version>0.8.15</jacoco.version>
 		<pmd-plugin.version>3.28.0</pmd-plugin.version>
+		<!-- Pass e.g. -Dskip.unit to leave out one kind of test -->
+		<skip.unit>false</skip.unit>
+		<skip.integration>false</skip.integration>
+		<skip.e2e>false</skip.e2e>
 	</properties>
 
 	<dependencies>
@@ -93,6 +97,53 @@
 						<arg>-Ajavadoc.packages=gym.controller,gym.dto</arg>
 					</compilerArgs>
 				</configuration>
+			</plugin>
+			<!-- Unit tests (*Test): one class at a time, no Spring, no files. Run in the test phase -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>${skip.unit}</skipTests>
+				</configuration>
+			</plugin>
+			<!-- Integration tests (*IT): real Spring wiring or real files. End-to-end tests (*E2E): the running app over HTTP.
+			     Both run after packaging, each with its own report, and fail the build in the verify phase -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<classesDirectory>${project.build.outputDirectory}</classesDirectory>
+					<failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+				</configuration>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+							<skipTests>${skip.integration}</skipTests>
+							<reportsDirectory>${project.build.directory}/failsafe-reports/integration</reportsDirectory>
+							<summaryFile>${project.build.directory}/failsafe-reports/integration/failsafe-summary.xml</summaryFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>e2e</id>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+							<skipTests>${skip.e2e}</skipTests>
+							<includes>
+								<include>**/*E2E.java</include>
+							</includes>
+							<reportsDirectory>${project.build.directory}/failsafe-reports/e2e</reportsDirectory>
+							<summaryFile>${project.build.directory}/failsafe-reports/e2e/failsafe-summary.xml</summaryFile>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<!-- Test coverage: target/site/jacoco/ (HTML, jacoco.csv, jacoco.xml for SonarQube) -->
 			<plugin>
