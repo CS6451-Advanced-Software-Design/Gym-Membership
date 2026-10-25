@@ -73,6 +73,8 @@ Build and CI (GitHub Actions on every pull request):
 
   ./mvnw verify --> compile --> JUnit 5 + Mockito --> JaCoCo + PMD --> gym-membership.jar
                                                                          (build artifact)
+  then: smoke test (start the jar, /actuator/health is UP) --> CK metrics
+        --> coverage, PMD and CK summary on the run page --> metrics artifact
 ```
 
 | Tier | What we use |
@@ -105,7 +107,7 @@ Free-tier terms change often. These were checked on 7 Oct 2026.
 
 | Tool | Job |
 | --- | --- |
-| GitHub Actions + `actions/setup-java` (Temurin 21) | CI on every pull request: `./mvnw verify` (build, tests, JaCoCo coverage) |
+| GitHub Actions + `actions/setup-java` (Temurin 21) | CI on every pull request: `./mvnw verify` (build, tests, JaCoCo coverage, PMD), a smoke test of the jar, CK metrics, a summary on the run page, and a `metrics` artifact kept for every run |
 | Dependabot (`.github/dependabot.yml`) | Opens pull requests when Maven dependencies or GitHub Actions versions go out of date |
 | PMD, [SonarQube Cloud](https://docs.sonarsource.com/sonarqube-cloud/) (formerly SonarCloud. Its Free plan analyses unlimited public projects, checked 21 Oct 2026) | Code smells, complexity and coupling numbers that drive refactoring |
 | [OpenRewrite](https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition) (`rewrite-spring`) | Automated Spring Boot upgrades, run from the command line without changing `pom.xml` |

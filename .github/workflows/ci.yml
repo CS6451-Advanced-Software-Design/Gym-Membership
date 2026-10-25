@@ -5,6 +5,14 @@ on:
   push:
     branches: [main]
 
+# A newer push to the same branch cancels the run it replaces
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CK_VERSION: 0.7.0
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,10 +26,62 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      # Compiles, runs every test including the ArchUnit rules, and packages the jar.
-      # A failing test fails the job, which blocks the merge.
+
+      # Compiles, runs every test including the ArchUnit rules, writes the JaCoCo coverage
+      # and PMD reports, and packages the jar. A failing test fails the job.
       - run: ./mvnw -B verify
+
+      # Starts the packaged jar and checks it reports UP, so we know the app runs and not only its tests
+      - name: Smoke test
+        run: |
+          java -jar target/gym-membership-*.jar --gym.persistence.directory="$RUNNER_TEMP/data" &
+          for attempt in $(seq 1 30); do
+            if curl -sf http://localhost:8080/actuator/health | grep -q UP; then
+              kill %1
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "The app did not report UP within 30 seconds"
+          exit 1
+
+      # CK class metrics (CBO, WMC, RFC, LCOM, LOC) for the §9 refactoring table
+      - name: CK metrics
+        run: |
+          curl -sLo "$RUNNER_TEMP/ck.jar" "https://repo1.maven.org/maven2/com/github/mauricioaniche/ck/$CK_VERSION/ck-$CK_VERSION-jar-with-dependencies.jar"
+          mkdir -p target/ck
+          java -jar "$RUNNER_TEMP/ck.jar" src/main/java false 0 false target/ck/
+
+      - name: Summary
+        run: |
+          {
+            echo "## Coverage (JaCoCo)"
+            awk -F, 'NR > 1 { missed += $8; covered += $9 } END { printf "Line coverage: **%.1f%%** (%d of %d lines)\n", 100 * covered / (missed + covered), covered, missed + covered }' target/site/jacoco/jacoco.csv
+            echo
+            echo "## PMD"
+            echo "Violations: **$(grep -c '<violation' target/pmd.xml || true)**"
+            echo
+            echo "## CK: the 5 most coupled classes"
+            echo "| Class | CBO | WMC | RFC | LOC |"
+            echo "| --- | --- | --- | --- | --- |"
+            awk -F, 'NR == 1 { for (i = 1; i <= NF; i++) column[$i] = i; next }
+                     { print $column["cbo"] "|" $column["class"] "|" $column["wmc"] "|" $column["rfc"] "|" $column["loc"] }' target/ck/class.csv \
+              | sort -t'|' -k1,1nr | head -5 \
+              | awk -F'|' '{ print "| `" $2 "` | " $1 " | " $3 " | " $4 " | " $5 " |" }'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/upload-artifact@v7
         with:
           name: gym-membership
           path: code/target/gym-membership-*.jar
+
+      # Kept for every run, so the "before" numbers for §9 exist without anyone remembering to save them
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: metrics
+          path: |
+            code/target/site/jacoco/
+            code/target/pmd.xml
+            code/target/reports/pmd.html
+            code/target/ck/

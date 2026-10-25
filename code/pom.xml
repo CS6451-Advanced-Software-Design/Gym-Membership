@@ -17,6 +17,8 @@
 	<properties>
 		<java.version>21</java.version>
 		<archunit.version>1.4.1</archunit.version>
+		<jacoco.version>0.8.15</jacoco.version>
+		<pmd-plugin.version>3.28.0</pmd-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -61,6 +63,47 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<!-- Test coverage: target/site/jacoco/ (HTML, jacoco.csv, jacoco.xml for SonarQube) -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Static analysis for §9: target/pmd.xml and target/reports/pmd.html. Reports only, never fails the build -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>${pmd-plugin.version}</version>
+				<configuration>
+					<targetJdk>${java.version}</targetJdk>
+					<printFailingErrors>false</printFailingErrors>
+					<rulesets>
+						<ruleset>pmd-ruleset.xml</ruleset>
+					</rulesets>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>pmd</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
