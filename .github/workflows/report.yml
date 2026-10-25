@@ -1,13 +1,14 @@
 name: Report
 
 # Builds the report PDF from report/sections on every change to the report, so each PR shows the real page count.
-# Fails if a section goes over the spec's page limit
+# Fails if a section goes over the spec's page limit. On main, the PDF also replaces the one on the report-latest
+# release, which the README links to
 on:
   pull_request:
-    paths: ['report/**', '.github/workflows/report.yml']
+    paths: ['report/**', '.github/workflows/report.yml', '.github/actions/setup-report/**']
   push:
     branches: [main]
-    paths: ['report/**', '.github/workflows/report.yml']
+    paths: ['report/**', '.github/workflows/report.yml', '.github/actions/setup-report/**']
 
 concurrency:
   group: report-${{ github.ref }}
@@ -16,23 +17,15 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  PANDOC_VERSION: 3.12.1
-  TYPST_VERSION: 0.15.1
-
 jobs:
   report:
     name: Report PDF
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Install pandoc and Typst
-        run: |
-          curl -sSfL -o pandoc.deb "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-$PANDOC_VERSION-1-amd64.deb"
-          sudo dpkg -i pandoc.deb
-          curl -sSfL "https://github.com/typst/typst/releases/download/v$TYPST_VERSION/typst-x86_64-unknown-linux-musl.tar.xz" | tar -xJ
-          sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
+      - uses: ./.github/actions/setup-report
 
       - name: Build
         run: |
@@ -45,3 +38,19 @@ jobs:
         with:
           name: report
           path: report/pdf/out/report.pdf
+
+      # Moves the report-latest tag to this commit and replaces the PDF on its release, so the link never goes stale
+      - name: Publish the latest draft
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes="The report as it stands on main, rebuilt on every merge that changes report/. Built from $GITHUB_SHA. The submitted version is attached to the v1.0.0 release."
+          if gh release view report-latest > /dev/null 2>&1; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/report-latest" -f sha="$GITHUB_SHA" -F force=true > /dev/null
+            gh release edit report-latest --notes "$notes"
+          else
+            gh release create report-latest --target "$GITHUB_SHA" --prerelease --latest=false \
+              --title 'Report: latest draft' --notes "$notes"
+          fi
+          gh release upload report-latest report/pdf/out/report.pdf --clobber

@@ -1,0 +1,23 @@
+name: Set up the report build
+description: Installs the pandoc and Typst versions that report/pdf/build.sh is written against
+
+inputs:
+  pandoc:
+    description: pandoc version
+    default: 3.12.1
+  typst:
+    description: Typst version
+    default: 0.15.1
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        PANDOC_VERSION: ${{ inputs.pandoc }}
+        TYPST_VERSION: ${{ inputs.typst }}
+      run: |
+        curl -sSfL -o "$RUNNER_TEMP/pandoc.deb" "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-$PANDOC_VERSION-1-amd64.deb"
+        sudo dpkg -i "$RUNNER_TEMP/pandoc.deb"
+        curl -sSfL "https://github.com/typst/typst/releases/download/v$TYPST_VERSION/typst-x86_64-unknown-linux-musl.tar.xz" | tar -xJ -C "$RUNNER_TEMP"
+        sudo mv "$RUNNER_TEMP/typst-x86_64-unknown-linux-musl/typst" /usr/local/bin/

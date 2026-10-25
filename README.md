@@ -6,6 +6,8 @@ A monolithic (package-by-layer MVC + Hexagonal, with Interceptor) business tier 
 
 **Deadline: 23:59 Sun 1 Nov 2026.**
 
+**The report:** the [latest draft PDF](https://github.com/CS6451-Advanced-Software-Design/Gym-Membership/releases/download/report-latest/report.pdf) is rebuilt from [report/sections](report/sections) on every merge to `main`. Each release has the report as it stood at that version.
+
 **Try it, no setup needed:** the app is live at https://gym-membership-production-a725.up.railway.app, which opens its Swagger UI. The public [Postman workspace](https://www.postman.com/spaceflight-geoscientist-47956182/workspace/gym-membership) has every endpoint, documented from the code, and sends to the live app by default. Pick the **mock** environment for Postman's saved examples, or **local** for the app on your machine. See [code/README.md](code/README.md#postman).
 
 ![The monthly billing run in Postman: its docs, generated from the Javadoc, above the live response](report/screenshots/postman.png)
