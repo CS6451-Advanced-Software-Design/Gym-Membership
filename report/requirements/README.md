@@ -7,12 +7,12 @@
 | Actor | Kind | Notes |
 | --- | --- | --- |
 | Member | Primary | Holds a membership, books classes, checks in |
-| Prospective Member | Primary | Specialises Member in the diagram (actor generalisation) for sign-up only |
+| Prospective Member | Primary | Someone who isn't a member yet and can only sign up. Member specialises Prospective Member in the diagram (actor generalisation), so a member can sign up again (e.g. after cancelling) but a prospective member can't book or check in |
 | Front Desk Staff | Primary | Checks members in, handles freezes and cancellations on their behalf |
 | Instructor | Primary | Runs classes, marks attendance (no-shows) |
 | Manager | Primary | Manages plans, prices and the class schedule, views reports |
 | Payment Gateway | Secondary | External system that charges cards |
-| Clock / Scheduler | Secondary (time) | Triggers the monthly billing run and the membership expiry checks |
+| Clock / Scheduler | Secondary (time) | Triggers the monthly billing run (UC7) and the daily membership checks (UC13) |
 
 ## Use cases
 
@@ -30,6 +30,8 @@
 | UC10 | Manage Class Schedule | Manager, Instructor | |
 | UC11 | View Invoices | Member | |
 | UC12 | View Reports (occupancy, revenue) | Manager | |
+| UC13 | Run Daily Membership Checks | Clock | Ends trials (BR-M2) and freezes (BR-M3), and cancels memberships Lapsed for 60 days (BR-M6). `<<include>>` Calculate Charges (final bill) |
+| UC14 | Pay Arrears | Member, Payment Gateway | Restores a Lapsed membership to Active (BR-M4) |
 
 ★ = the 2 key use cases for full descriptions: [UC1](use-cases/UC1-sign-up-for-membership.md) and [UC2](use-cases/UC2-book-class.md).
 

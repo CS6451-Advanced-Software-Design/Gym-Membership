@@ -16,7 +16,7 @@ actor Manager as MG
 actor "Clock" <<time>> as C
 actor "Payment\nGateway" <<system>> as PG
 
-PM -|> M
+PM <|- M
 
 rectangle "Gym & Fitness Club Membership System" {
   usecase "UC1 Sign Up for\nMembership" as UC1
@@ -31,6 +31,8 @@ rectangle "Gym & Fitness Club Membership System" {
   usecase "UC9 Manage Plans\nand Prices" as UC9
   usecase "UC12 View Reports" as UC12
   usecase "UC7 Run Monthly Billing" as UC7
+  usecase "UC13 Run Daily\nMembership Checks" as UC13
+  usecase "UC14 Pay Arrears" as UC14
 
   usecase "Verify Membership\nStatus" as VMS
   usecase "Calculate Charges" as CC
@@ -53,6 +55,8 @@ FD -- UC4
 FD -- UC5
 FD -- UC6
 C -- UC7
+C -- UC13
+M -- UC14
 I -- UC8
 I -- UC10
 MG -- UC9
@@ -65,6 +69,7 @@ UC4 ..> VMS : <<include>>
 UC3 ..> PW : <<include>>
 UC6 ..> CC : <<include>>
 UC7 ..> CC : <<include>>
+UC13 ..> CC : <<include>>
 
 UC2 <.. JW : <<extend>>\n[class is full]
 UC1 <.. ARC : <<extend>>\n[referral code given]
@@ -75,4 +80,5 @@ UC6 <.. EEF : <<extend>>\n[Annual plan, < 6 months]
 UC1 -- PG
 UC7 -- PG
 UC6 -- PG
+UC14 -- PG
 @enduml
