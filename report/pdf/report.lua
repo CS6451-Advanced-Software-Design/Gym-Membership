@@ -6,7 +6,8 @@
 -- Tables: every column takes the width its content needs, rather than widths guessed from the dashes under the header,
 -- and a column with no alignment of its own is left-aligned rather than inheriting the centring around the table.
 -- Includes: a div such as ::: {include="../diary.md"} ::: is replaced by that file, without its title and
--- introduction, with its headings moved down a level (or by `shift`).
+-- introduction, with its headings moved down a level (or by `shift`). A long table can be fitted to the page with
+-- `widths` (each column's share of the page width, e.g. "0.1 0.9") and `size` (its text size, e.g. "8pt").
 
 local REPOSITORY = 'https://github.com/CS6451-Advanced-Software-Design/Gym-Membership/blob/main/'
 
@@ -34,9 +35,13 @@ end
 local function rewrite(blocks, base)
   return pandoc.Blocks(blocks):walk({
     Table = function(table)
+      local widths = {}
+      for width in (table.attr.attributes.widths or ''):gmatch('%S+') do
+        widths[#widths + 1] = tonumber(width)
+      end
       for index, column in ipairs(table.colspecs) do
         local alignment = column[1] == 'AlignDefault' and 'AlignLeft' or column[1]
-        table.colspecs[index] = { alignment, nil }
+        table.colspecs[index] = { alignment, widths[index] }
       end
       return table
     end,
@@ -86,8 +91,17 @@ local function include(div, base)
       header.level = header.level + shift
       return header
     end,
+    Table = function(table)
+      table.attr.attributes.widths = div.attributes.widths
+      return table
+    end,
   })
-  return rewrite(blocks, directory(path))
+  blocks = rewrite(blocks, directory(path))
+  if div.attributes.size then
+    blocks:insert(1, pandoc.RawBlock('typst', '#[\n#show table: set text(size: ' .. div.attributes.size .. ')\n#show raw: set text(size: 7pt)\n#set table(inset: 3pt)'))
+    blocks:insert(pandoc.RawBlock('typst', ']'))
+  end
+  return blocks
 end
 
 function Pandoc(document)
