@@ -82,6 +82,16 @@ railway config apply   # apply them
 
 Build and run the image locally with `docker build -t gym-membership code && docker run -p 8080:8080 gym-membership`.
 
+## Releasing
+
+Each iteration ends with a release on GitHub. Set the new version in `pom.xml` through a PR, then tag the merge on `main`:
+
+```
+git tag v0.2.0 origin/main && git push origin v0.2.0
+```
+
+The [Release workflow](../.github/workflows/release.yml) checks that the tag matches `pom.xml`, runs every test, and attaches the runnable jar and `openapi.yaml` to the release. To write the notes yourself, create the release with `gh release create` before the workflow finishes; otherwise it lists the merged PRs.
+
 ## Packages
 
 Package by layer with Hexagonal ports and adapters. The reasoning is in [report/architecture](../report/architecture/README.md#package-structure). Each package has a `package-info.java` saying what belongs in it.
