@@ -3,7 +3,8 @@
 -- Images: paths are relative to the Markdown file, but Typst resolves them from the repository root, so each
 -- one is rewritten to start with /.
 -- Links: a link to another file in the repository can't be followed in a PDF, so it points at GitHub instead.
--- Tables: every column takes the width its content needs, rather than widths guessed from the dashes under the header.
+-- Tables: every column takes the width its content needs, rather than widths guessed from the dashes under the header,
+-- and a column with no alignment of its own is left-aligned rather than inheriting the centring around the table.
 -- Includes: a div such as ::: {include="../diary.md"} ::: is replaced by that file, without its title and
 -- introduction, with its headings moved down a level (or by `shift`).
 
@@ -34,7 +35,8 @@ local function rewrite(blocks, base)
   return pandoc.Blocks(blocks):walk({
     Table = function(table)
       for index, column in ipairs(table.colspecs) do
-        table.colspecs[index] = { column[1], nil }
+        local alignment = column[1] == 'AlignDefault' and 'AlignLeft' or column[1]
+        table.colspecs[index] = { alignment, nil }
       end
       return table
     end,
