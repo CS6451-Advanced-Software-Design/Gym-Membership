@@ -45,23 +45,43 @@ See [report/roles.md](report/roles.md) for the full role split.
 
 ## Patterns
 
-Only patterns the code really has are listed as in place, each with where to find it. Details in [report/architecture](report/architecture/README.md).
+Each pattern is listed with its roles (as named in the lectures, GoF or POSA2) and the class that plays each one. Every class links to its file. Only patterns the code really has are listed as in place. Details in [report/architecture](report/architecture/README.md).
 
 **In place**
 
-| Pattern | Kind | Where |
+| Pattern | Role | Class |
 | --- | --- | --- |
-| Model View Controller | Architectural (lectures) | `controller` (controllers, `ErrorHandler`), `dto` (the JSON view), `domain` + `service` (the model) |
-| Hexagonal (Ports and Adapters) | Architectural (self-researched) | `port.in`, `port.out`, `adapter.*`. `ArchitectureTest` fails the build if a dependency points outwards |
-| Interceptor | Architectural (lectures, POSA2) | `interceptor` (`UseCaseInterceptor`, `UseCaseContext`, `UseCaseDispatcher`, `UseCaseInterception`), with `adapter.logging.LoggingInterceptor` as the out-of-band service, registered in `InterceptorConfiguration` |
-| Repository | Design | `port.out.Repository<T, ID>`, implemented by `adapter.persistence.JsonFileRepository` |
-| Proxy (dynamic) | Design (GoF) | `UseCaseInterception` wraps every `port.in` use case so each call reaches the interceptors |
-| Dependency Injection | Design | Spring constructor injection throughout. The `Clock` bean in `GymApplication` lets tests fix the date |
-| Strategy | Design (GoF) | `domain.DiscountPolicy` with `CorporateDiscount`, `FamilyDiscount` and `LoyaltyDiscount`. `BestDiscount` applies only the largest (BR-P2), chosen in `BillingConfiguration`. Proved by `DiscountPolicyTest.theBestDiscountWinsAndDiscountsDontStack` |
+| **Model View Controller**<br>Architectural (lectures) | Model | `domain` and `service`, e.g. [`BillingService`](code/src/main/java/gym/service/BillingService.java) |
+|  | View | the JSON responses in `dto`, e.g. [`InvoiceResponse`](code/src/main/java/gym/dto/InvoiceResponse.java) |
+|  | Controller | [`BillingController`](code/src/main/java/gym/controller/BillingController.java), with [`ErrorHandler`](code/src/main/java/gym/controller/ErrorHandler.java) for errors |
+| **Hexagonal (Ports and Adapters)**<br>Architectural (self-researched) | Inbound port | `port.in`, e.g. [`RunMonthlyBillingUseCase`](code/src/main/java/gym/port/in/RunMonthlyBillingUseCase.java) |
+|  | Driving adapter | [`BillingController`](code/src/main/java/gym/controller/BillingController.java) |
+|  | Outbound port | `port.out`, e.g. [`ChargeRepository`](code/src/main/java/gym/port/out/ChargeRepository.java), [`PaymentGateway`](code/src/main/java/gym/port/out/PaymentGateway.java) |
+|  | Driven adapter | `adapter.*`, e.g. [`JsonFileChargeRepository`](code/src/main/java/gym/adapter/persistence/JsonFileChargeRepository.java), [`FakePaymentGateway`](code/src/main/java/gym/adapter/payment/FakePaymentGateway.java) |
+|  | Checked by | [`ArchitectureTest`](code/src/test/java/gym/ArchitectureTest.java), which fails the build if a dependency points outwards |
+| **Interceptor**<br>Architectural (lectures, POSA2) | Interceptor | [`UseCaseInterceptor`](code/src/main/java/gym/interceptor/UseCaseInterceptor.java) |
+|  | Concrete interceptor | [`LoggingInterceptor`](code/src/main/java/gym/adapter/logging/LoggingInterceptor.java) (logging, the out-of-band service) |
+|  | Context object | [`UseCaseContext`](code/src/main/java/gym/interceptor/UseCaseContext.java) |
+|  | Dispatcher | [`UseCaseDispatcher`](code/src/main/java/gym/interceptor/UseCaseDispatcher.java) |
+|  | Callback mechanism | [`UseCaseInterception`](code/src/main/java/gym/interceptor/UseCaseInterception.java) |
+|  | Registration | [`InterceptorConfiguration`](code/src/main/java/gym/InterceptorConfiguration.java) |
+| **Proxy (dynamic)**<br>Design (GoF) | Subject | each use case in `port.in`, e.g. [`RunMonthlyBillingUseCase`](code/src/main/java/gym/port/in/RunMonthlyBillingUseCase.java) |
+|  | Real subject | [`BillingService`](code/src/main/java/gym/service/BillingService.java) |
+|  | Proxy | the `java.lang.reflect.Proxy` that [`UseCaseInterception`](code/src/main/java/gym/interceptor/UseCaseInterception.java) wraps around each use case |
+|  | Client | [`BillingController`](code/src/main/java/gym/controller/BillingController.java) |
+| **Strategy**<br>Design (GoF) | Strategy | [`DiscountPolicy`](code/src/main/java/gym/domain/DiscountPolicy.java) |
+|  | Concrete strategies | [`CorporateDiscount`](code/src/main/java/gym/domain/CorporateDiscount.java), [`FamilyDiscount`](code/src/main/java/gym/domain/FamilyDiscount.java), [`LoyaltyDiscount`](code/src/main/java/gym/domain/LoyaltyDiscount.java), and [`BestDiscount`](code/src/main/java/gym/domain/BestDiscount.java), which applies only the largest (BR-P2) |
+|  | Context | [`BillingService`](code/src/main/java/gym/service/BillingService.java) |
+|  | Checked by | [`DiscountPolicyTest`](code/src/test/java/gym/domain/DiscountPolicyTest.java) |
+| **Repository**<br>Design | Repository | [`Repository<T, ID>`](code/src/main/java/gym/port/out/Repository.java), e.g. [`InvoiceRepository`](code/src/main/java/gym/port/out/InvoiceRepository.java) |
+|  | Implementation | [`JsonFileRepository`](code/src/main/java/gym/adapter/persistence/JsonFileRepository.java), e.g. [`JsonFileInvoiceRepository`](code/src/main/java/gym/adapter/persistence/JsonFileInvoiceRepository.java) |
+| **Dependency Injection**<br>Design | Injector | Spring, from the `@Bean` methods in [`GymApplication`](code/src/main/java/gym/GymApplication.java) and the `*Configuration` classes |
+|  | Client | every class that takes its dependencies in its constructor, e.g. [`BillingService`](code/src/main/java/gym/service/BillingService.java) |
+|  | Swappable service | the `Clock` bean in [`GymApplication`](code/src/main/java/gym/GymApplication.java), which [`BillingE2E`](code/src/test/java/gym/BillingE2E.java) replaces to fix the date |
 
 **Planned** (from [report/roles.md](report/roles.md), each with a test that exercises the pattern)
 
-| Pattern | Kind | Where | Owner |
+| Pattern | Kind | Applied to | Owner |
 | --- | --- | --- | --- |
 | State | Design (GoF) | `Membership` lifecycle: Trial, Active, Frozen, Lapsed, Cancelled | Dhruv |
 | Factory | Design (GoF) | Plan creation (`MonthlyPlan`, `AnnualPlan`, `StudentPlan`) | Dhruv |
