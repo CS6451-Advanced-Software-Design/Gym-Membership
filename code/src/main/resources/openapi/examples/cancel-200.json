@@ -1,0 +1,30 @@
+{
+  "membership": {
+    "membershipId": "ms-878c5763",
+    "memberId": "m-7b7e39b7",
+    "plan": "ANNUAL",
+    "status": "CANCELLED",
+    "startDate": "2026-10-25",
+    "endDate": "2027-10-25",
+    "trialEndsOn": null,
+    "trialBookingsLeft": null,
+    "frozenUntil": null,
+    "lapsedSince": null,
+    "failedPayments": 0
+  },
+  "finalInvoice": {
+    "id": "7067c59a-0d4d-4808-ab4f-62d6dc0e755b",
+    "membershipId": "ms-878c5763",
+    "period": "2026-10",
+    "charges": [
+      {
+        "type": "EARLY_EXIT",
+        "amount": 50.00,
+        "date": "2026-10-25"
+      }
+    ],
+    "discount": 0.00,
+    "total": 50.00,
+    "status": "PAID"
+  }
+}

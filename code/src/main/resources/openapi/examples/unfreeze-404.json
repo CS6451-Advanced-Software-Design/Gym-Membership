@@ -1,0 +1,6 @@
+{
+  "title": "Not Found",
+  "status": 404,
+  "detail": "Membership ms-42 not found",
+  "instance": "/memberships/ms-42/unfreeze"
+}

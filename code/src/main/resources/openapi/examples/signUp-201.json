@@ -1,0 +1,30 @@
+{
+  "membership": {
+    "membershipId": "ms-42f86968",
+    "memberId": "m-9a65df90",
+    "plan": "MONTHLY",
+    "status": "TRIAL",
+    "startDate": "2026-10-25",
+    "endDate": null,
+    "trialEndsOn": "2026-11-01",
+    "trialBookingsLeft": 2,
+    "frozenUntil": null,
+    "lapsedSince": null,
+    "failedPayments": 0
+  },
+  "firstInvoice": {
+    "id": "f1050865-1148-4b0e-bef1-a441f042002b",
+    "membershipId": "ms-42f86968",
+    "period": "2026-10",
+    "charges": [
+      {
+        "type": "PLAN_FEE",
+        "amount": 10.16,
+        "date": "2026-10-25"
+      }
+    ],
+    "discount": 0.00,
+    "total": 10.16,
+    "status": "PAID"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "membershipId": "ms-ann",
+  "memberId": "m-ann",
+  "plan": "MONTHLY",
+  "status": "ACTIVE",
+  "startDate": "2026-10-18",
+  "endDate": null,
+  "trialEndsOn": null,
+  "trialBookingsLeft": null,
+  "frozenUntil": null,
+  "lapsedSince": null,
+  "failedPayments": 0
+}
