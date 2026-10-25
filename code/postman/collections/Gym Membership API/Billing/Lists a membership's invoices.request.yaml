@@ -1,0 +1,14 @@
+$kind: http-request
+description: Lists a membership's invoices. <p>Every invoice of one membership, newest month first. An <code>UNPAID</code> invoice is one whose card payment was declined. It stays unpaid until the member pays their arrears.
+url: "{{baseUrl}}/memberships/:membershipId/invoices"
+method: GET
+headers:
+  Accept: application/json
+pathVariables:
+  - key: membershipId
+    value: ms-ann
+    disabled: false
+    description: (Required) the membership whose invoices to list
+settings: {}
+examples: ./.resources/Lists a membership's invoices.resources/examples
+order: 2000

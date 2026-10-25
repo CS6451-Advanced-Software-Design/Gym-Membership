@@ -1,0 +1,239 @@
+openapi: 3.1.0
+info:
+  title: Gym Membership
+  description: |-
+    The REST API of a gym and fitness club: membership plans and billing, class bookings with waitlists, check-in, freezes, penalties and referral credits.
+
+    | Value | Format |
+    | --- | --- |
+    | Money | Euro, with two decimal places, e.g. `38.25` |
+    | Month | `YYYY-MM`, e.g. `2026-11` |
+    | Date | `YYYY-MM-DD`, e.g. `2026-11-01` |
+    | Error | An [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) problem response. Its `detail` says what went wrong |
+  version: "1.0"
+servers:
+- url: http://localhost:8080
+  description: The app started with ./mvnw spring-boot:run
+tags:
+- name: Billing
+  description: "Charges members for their memberships and shows them what they paid.\
+    \ <p>Each month a membership's invoice is the <b>plan fee</b>, minus the <b>best\
+    \ discount</b>, plus <b>penalties</b>, minus <b>referral credits</b>: <ul> <li><b>Plan\
+    \ fee:</b> Monthly €45, Student €30, Off-Peak €30. Annual is €450 for the year,\
+    \ paid upfront at sign-up. A member who joins mid-month pays only for the days\
+    \ left in that month.</li> <li><b>Best discount:</b> discounts don't stack, only\
+    \ the largest applies. Corporate 15%, Family 10% (someone in the family joined\
+    \ earlier), Loyalty 5% (a member for more than 24 months).</li> <li><b>Penalties:</b>\
+    \ €5 for a late cancellation or a no-show, €8 for a premium class.</li> <li><b>Referral\
+    \ credits:</b> €20 per friend referred, up to €60 a year. A credit that doesn't\
+    \ fit within the bill waits for the next one.</li> </ul> <p>The member's card\
+    \ is charged as soon as the invoice is issued. A declined card leaves the invoice\
+    \ <code>UNPAID</code> until the member pays their arrears."
+paths:
+  /billing-runs:
+    post:
+      tags:
+      - Billing
+      summary: Runs the monthly billing
+      description: "Runs the monthly billing. <p>Bills every active membership for\
+        \ one month and charges each member's card. The gym's clock starts this on\
+        \ the first of every month. For each membership that isn't cancelled: <ol>\
+        \ <li>It is skipped if it's frozen or already has an invoice for the month,\
+        \ so repeating a run never bills anyone twice.</li> <li>The monthly plan fee\
+        \ is added. Annual plans have no monthly fee, so an Annual member is billed\
+        \ only when penalties are waiting.</li> <li>Penalties and referral credits\
+        \ waiting since the last invoice are added.</li> <li>The best discount comes\
+        \ off the plan fee and the total is charged to the member's card.</li> <li>The\
+        \ member is told what was charged, or that the payment was declined.</li>\
+        \ </ol>"
+      operationId: run
+      requestBody:
+        description: the month to bill
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BillingRunRequest"
+        required: true
+      responses:
+        "400":
+          description: The period is missing or isn't YYYY-MM
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Bad Request
+                status: 400
+                detail: Invalid request content.
+                instance: /billing-runs
+        "201":
+          description: The invoices this run issued
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InvoiceResponse"
+              example:
+              - id: d8776f63-41dc-4555-8a76-5c408cb8b6da
+                membershipId: ms-ann
+                period: 2026-11
+                charges:
+                - type: PLAN_FEE
+                  amount: 45.0
+                  date: 2026-11-01
+                discount: 6.75
+                total: 38.25
+                status: PAID
+              - id: 88cfd43b-deaf-4137-a4f4-6d1ad3879562
+                membershipId: ms-cara
+                period: 2026-11
+                charges:
+                - type: PLAN_FEE
+                  amount: 30.0
+                  date: 2026-11-01
+                discount: 3.0
+                total: 27.0
+                status: PAID
+              - id: de8a97c8-bd32-4fee-aa08-fbaff25fda68
+                membershipId: ms-eve
+                period: 2026-11
+                charges:
+                - type: PLAN_FEE
+                  amount: 45.0
+                  date: 2026-11-01
+                discount: 0.0
+                total: 45.0
+                status: UNPAID
+  /memberships/{membershipId}/invoices:
+    get:
+      tags:
+      - Billing
+      summary: Lists a membership's invoices
+      description: "Lists a membership's invoices. <p>Every invoice of one membership,\
+        \ newest month first. An <code>UNPAID</code> invoice is one whose card payment\
+        \ was declined. It stays unpaid until the member pays their arrears."
+      operationId: invoices
+      parameters:
+      - name: membershipId
+        in: path
+        description: the membership whose invoices to list
+        required: true
+        schema:
+          type: string
+        example: ms-ann
+      responses:
+        "404":
+          description: No membership has this id
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Not Found
+                status: 404
+                detail: Membership ms-42 not found
+                instance: /memberships/ms-42/invoices
+        "200":
+          description: "The membership's invoices, newest first"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InvoiceResponse"
+              example:
+              - id: d8776f63-41dc-4555-8a76-5c408cb8b6da
+                membershipId: ms-ann
+                period: 2026-11
+                charges:
+                - type: PLAN_FEE
+                  amount: 45.0
+                  date: 2026-11-01
+                discount: 6.75
+                total: 38.25
+                status: PAID
+components:
+  schemas:
+    BillingRunRequest:
+      type: object
+      description: Starts a billing run.
+      properties:
+        period:
+          type: string
+          description: "the month to bill, as <code>YYYY-MM</code>, e.g. <code>2026-11</code>"
+          example: 2026-11
+      required:
+      - period
+    ProblemDetail:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+        properties:
+          type: object
+          additionalProperties: {}
+    ChargeResponse:
+      type: object
+      description: "One line of an invoice: a fee, a penalty or a credit."
+      properties:
+        type:
+          type: string
+          description: what the charge is for
+          enum:
+          - PLAN_FEE
+          - PREMIUM_SURCHARGE
+          - LATE_CANCELLATION
+          - NO_SHOW
+          - EARLY_EXIT
+          - REFERRAL_CREDIT
+        amount:
+          type: number
+          description: "in euro. Fees and penalties are positive, referral credits\
+            \ negative"
+        date:
+          type: string
+          format: date
+          description: when it was incurred
+    InvoiceResponse:
+      type: object
+      description: A membership's bill for one month.
+      properties:
+        id:
+          type: string
+          description: the invoice id
+        membershipId:
+          type: string
+          description: the membership it bills
+        period:
+          type: string
+          description: "the month it bills, as <code>YYYY-MM</code>"
+        charges:
+          type: array
+          description: what makes up the bill
+          items:
+            $ref: "#/components/schemas/ChargeResponse"
+        discount:
+          type: number
+          description: "what the best discount took off the plan fee, in euro"
+        total:
+          type: number
+          description: "what the member pays, in euro, never below zero"
+        status:
+          type: string
+          description: "<code>PAID</code> once the card payment went through, <code>UNPAID</code>\
+            \ if it was declined"
+          enum:
+          - PAID
+          - UNPAID

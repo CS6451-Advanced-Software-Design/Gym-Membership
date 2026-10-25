@@ -1,0 +1,40 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/memberships/:membershipId/invoices"
+  method: GET
+  headers:
+    Accept: application/json
+  pathVariables:
+    - key: membershipId
+      value: ms-ann
+      disabled: false
+      description: (Required) the membership whose invoices to list
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      [
+        {
+          "id": "d8776f63-41dc-4555-8a76-5c408cb8b6da",
+          "membershipId": "ms-ann",
+          "period": "2026-11",
+          "charges": [
+            {
+              "type": "PLAN_FEE",
+              "amount": 45,
+              "date": "2026-11-01T00:00:00.000Z"
+            }
+          ],
+          "discount": 6.75,
+          "total": 38.25,
+          "status": "PAID"
+        }
+      ]
+order: 1000

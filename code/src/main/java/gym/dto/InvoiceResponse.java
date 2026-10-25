@@ -6,6 +6,17 @@ import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.List;
 
+/**
+ * A membership's bill for one month.
+ *
+ * @param id the invoice id
+ * @param membershipId the membership it bills
+ * @param period the month it bills, as <code>YYYY-MM</code>
+ * @param charges what makes up the bill
+ * @param discount what the best discount took off the plan fee, in euro
+ * @param total what the member pays, in euro, never below zero
+ * @param status <code>PAID</code> once the card payment went through, <code>UNPAID</code> if it was declined
+ */
 public record InvoiceResponse(
         String id,
         String membershipId,

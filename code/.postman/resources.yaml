@@ -1,0 +1,12 @@
+# Each entry maps a local resource to its copy in the public Gym Membership workspace in Postman Cloud
+cloudResources:
+  collections:
+    ../postman/collections/Gym Membership API: 26816728-8229b64f-3b58-443e-8538-004cd2f66477
+  environments:
+    ../postman/environments/local.environment.yaml: 26816728-b1e91ca4-4576-46a1-a760-6772771e1fbd
+    ../postman/environments/mock.environment.yaml: 26816728-bca93d11-a306-4b5c-998e-d74464a8c4d6
+  specs:
+    ../postman/specs/openapi.yaml: 1fc570f6-e9f5-4207-bc7f-c17281e9a417
+workspace:
+  id: 74fa7ff4-1e82-4a60-b33a-0e8c685ba2ac
+  name: Gym Membership

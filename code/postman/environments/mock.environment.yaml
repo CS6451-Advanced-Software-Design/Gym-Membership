@@ -1,0 +1,7 @@
+name: mock
+values:
+  - key: baseUrl
+    value: 'https://b9c20347-4de4-4203-84a0-1f37e7d3b181.mock.pstmn.io'
+    enabled: true
+    type: default
+    description: 'Postman''s mock server, which answers with each request''s saved example. No app needed. Add the header x-mock-response-code: 404 to get an error example'
