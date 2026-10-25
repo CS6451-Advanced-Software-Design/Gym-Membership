@@ -70,6 +70,7 @@ The app runs on [Railway](https://gym-membership-production-a725.up.railway.app/
 | `code/Dockerfile` | Builds the jar with Maven, then runs it on a Java 21 JRE. Tests and reports are skipped, since CI already ran them |
 | `.railway/railway.ts` | The Railway project as code: the service built from `code/` on `main`, its health check on `/actuator/health`, and the `gym-data` volume mounted at `/data` for the JSON files |
 | `server.port=${PORT:8080}` | In `application.properties`, so the app listens on the port Railway gives it |
+| `LOGGING_STRUCTURED_FORMAT_CONSOLE=logstash` | Set on the service in `railway.ts`, so the app logs JSON on Railway. Railway colours each line by its level, and every use-case call carries `useCase`, `operation`, `outcome` and `durationMs`, so a search like `@outcome:failed` lists the failed calls. Run locally, the app keeps the readable format |
 
 To change the Railway setup, edit `.railway/railway.ts`, then from the repository root:
 
