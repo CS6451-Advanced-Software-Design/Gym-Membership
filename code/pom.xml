@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>21</java.version>
-		<archunit.version>1.4.1</archunit.version>
+		<archunit.version>1.5.1</archunit.version>
 		<springdoc.version>3.2.0</springdoc.version>
 		<therapi.version>0.15.0</therapi.version>
 		<jacoco.version>0.8.15</jacoco.version>
