@@ -16,7 +16,7 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
  */
 @SpringBootTest
 @ExtendWith(OutputCaptureExtension.class)
-class NotificationTest {
+class NotificationIT {
 
     @Autowired
     private NotificationSender sender;

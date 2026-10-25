@@ -14,17 +14,35 @@ You need a JDK 21 or newer. Maven comes with the wrapper. From this folder:
 
 | Command | What it does |
 | --- | --- |
-| `./mvnw verify` | Compiles, runs every test and builds `target/gym-membership-*.jar`. CI runs the same command on every pull request |
-| `./mvnw verify`, then open `target/site/jacoco/index.html` and `target/reports/pmd.html` | Coverage and PMD reports. CI also runs CK, keeps all three as the `metrics` artifact of every run, and posts a summary as a comment on the pull request |
+| `./mvnw verify` | Compiles, runs every test (unit, integration and end-to-end, see [Tests](#tests)) and builds `target/gym-membership-*.jar` |
+| `./mvnw verify`, then open `target/site/jacoco/index.html` and `target/reports/pmd.html` | Coverage and PMD reports. CI also runs CK, keeps all three as the `metrics` artifact of every run, and posts a summary as a comment on the pull request, with coverage for each kind of test |
 | `./mvnw spring-boot:run` | Starts the app on http://localhost:8080. Check http://localhost:8080/actuator/health returns `UP` |
+
+## Tests
+
+Every test is one of three kinds, told apart by the end of its class name:
+
+| Kind | Name ends in | What it tests | Run by | Examples |
+| --- | --- | --- | --- | --- |
+| Unit | `Test` | One class on its own, with in-memory fakes: no Spring, no files, no server. Also `ArchitectureTest` | Surefire, in the `test` phase | `BillingServiceTest`, `DiscountPolicyTest` |
+| Integration | `IT` | Real wiring: the Spring application, the JSON files, the generated OpenAPI spec | Failsafe, after the jar is built | `JsonFileRepositoryIT`, `OpenApiSpecIT` |
+| End-to-end | `E2E` | The whole app on a real port, through HTTP and the JSON files, as Postman uses it | Failsafe, after the jar is built | `BillingE2E` |
+
+`./mvnw verify` runs all three. Leave kinds out with `-Dskip.unit`, `-Dskip.integration` or `-Dskip.e2e`, e.g. only the end-to-end tests:
+
+```
+./mvnw verify -Dskip.unit -Dskip.integration
+```
+
+CI runs each kind as its own check (**Unit tests**, **Integration tests**, **End-to-end tests**) and merges their coverage.
 
 ## Postman
 
-Postman is our front end. Everything is in the public [Gym Membership workspace](https://www.postman.com/spaceflight-geoscientist-47956182/workspace/gym-membership), and its source is in `postman/`:
+Postman is our front end. Everything is in the public [Gym Membership workspace](https://www.postman.com/chiragagg5k/workspace/gym-membership), and its source is in `postman/`:
 
 | Path | What it is | How it changes |
 | --- | --- | --- |
-| `specs/openapi.yaml` | The OpenAPI spec | Generated from the Javadoc on the controllers and DTOs, never edited by hand. `OpenApiSpecTest` fails the build when it's out of date |
+| `specs/openapi.yaml` | The OpenAPI spec | Generated from the Javadoc on the controllers and DTOs, never edited by hand. `OpenApiSpecIT` fails the build when it's out of date |
 | `collections/Gym Membership API` | Every endpoint, ready to send, with its docs, fields and real example responses | Generated from the spec, never edited by hand |
 | `environments/local.environment.yaml` | `baseUrl` for the app on this machine | By hand |
 | `environments/mock.environment.yaml` | `baseUrl` for the workspace's public mock server, which answers every request with its saved example, so the API can be tried without the app. Add the header `x-mock-response-code: 404` to get an error example instead | By hand |
@@ -36,7 +54,7 @@ The app also serves the spec at http://localhost:8080/v3/api-docs and a browsabl
 **Documenting an endpoint.** Write Javadoc on the controller method (first sentence is the summary, then the details, `@param` and `@return`), on its controller class (the folder description) and on the request and response records (`@param` for each field). Declare each error response with `@ApiResponse` on the method, and add a real example response as `src/main/resources/openapi/examples/<method>-<status>.json`. Then regenerate:
 
 ```
-./mvnw test -Dtest=OpenApiSpecTest -Dopenapi.write=true
+./mvnw verify -Dskip.unit -Dit.test=OpenApiSpecIT -Dopenapi.write=true
 postman spec sync collection postman/specs/openapi.yaml --force
 ```
 

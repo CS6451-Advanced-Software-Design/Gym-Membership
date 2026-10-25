@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import tools.jackson.databind.json.JsonMapper;
 
-class JsonFileRepositoryTest {
+class JsonFileRepositoryIT {
 
     record Item(String id, String name) {
     }
