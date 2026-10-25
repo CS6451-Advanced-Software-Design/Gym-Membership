@@ -1,0 +1,6 @@
+{
+  "title": "Unprocessable Content",
+  "status": 422,
+  "detail": "Membership ms-ann is Active, so it can't be unfrozen",
+  "instance": "/memberships/ms-ann/unfreeze"
+}

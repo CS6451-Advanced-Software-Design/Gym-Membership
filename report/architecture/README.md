@@ -30,7 +30,7 @@ Source: Cockburn, A. (2005) *The Hexagonal (Ports & Adapters) Architecture*, HaT
 | --- | --- | --- |
 | Application (inside the hexagon) | Domain model + use-case services | `domain`, `service` |
 | Driving (inbound) port | `SignUpUseCase`, `BookClassUseCase`, `RunMonthlyBillingUseCase`, ... | `port.in` |
-| Driving (inbound) adapter | REST controllers (Postman), `BillingJob` (clock: 06:00 on the 1st of every month), JUnit tests | `controller` |
+| Driving (inbound) adapter | REST controllers (Postman), `BillingJob` (clock: 06:00 on the 1st of every month), `MembershipChecksJob` (clock: 05:00 every day), JUnit tests | `controller` |
 | Driven (outbound) port | `Repository<T, ID>` and its bindings, `PaymentGateway`, `NotificationSender` | `port.out` |
 | Driven (outbound) adapter | `JsonFile*Repository`, `FakePaymentGateway`, `EventNotificationSender` | `adapter.*` |
 
@@ -109,7 +109,7 @@ From [tech-stack.md](../tech-stack.md#hosting-stack-report-5):
 ```
 gym/
 +- GymApplication
-+- controller/              inbound adapters: MembershipController, BookingController, BillingController, MemberController, BillingJob
++- controller/              inbound adapters: MembershipController, BookingController, BillingController, MemberController, BillingJob, MembershipChecksJob
 +- dto/                     request and response records (MVC view)
 +- port/in/                 use-case interfaces: SignUpUseCase, BookClassUseCase, ...
 +- port/out/                Repository<T, ID>, MembershipRepository, GymClassRepository, ..., PaymentGateway, NotificationSender

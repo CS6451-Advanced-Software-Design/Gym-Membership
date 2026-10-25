@@ -31,7 +31,393 @@ tags:
     \ fit within the bill waits for the next one.</li> </ul> <p>The member's card\
     \ is charged as soon as the invoice is issued. A declined card leaves the invoice\
     \ <code>UNPAID</code> until the member pays their arrears."
+- name: Memberships
+  description: "Signs members up and takes their memberships through their lifecycle.\
+    \ <p>A membership is always in one of five states: <ul> <li><b>TRIAL:</b> the\
+    \ first 7 days, with 2 class bookings. Annual plans are paid upfront and skip\
+    \ it.</li> <li><b>ACTIVE:</b> book classes and check in as the plan allows.</li>\
+    \ <li><b>FROZEN:</b> 1 to 3 months, once in any 12 months. Not billed, and the\
+    \ end date moves on by the same time.</li> <li><b>LAPSED:</b> the first charge\
+    \ or two payments in a row were declined. No booking or check-in until the arrears\
+    \ are paid. Cancelled after 60 days.</li> <li><b>CANCELLED:</b> with a final bill.\
+    \ Cancelling an Annual plan within 6 months costs €50.</li> </ul> <p>An operation\
+    \ the state doesn't allow, such as freezing a trial, is refused with a 422 problem."
 paths:
+  /memberships:
+    post:
+      tags:
+      - Memberships
+      summary: Signs someone up
+      description: "Signs someone up. <p>Creates the member and their membership and\
+        \ charges the first payment to their card: <ol> <li>The membership starts\
+        \ in <code>TRIAL</code> for 7 days, or <code>ACTIVE</code> for an Annual plan.</li>\
+        \ <li>The first charge is the plan price for the days left in this month,\
+        \ or the whole year for an Annual plan, minus the best discount.</li> <li>If\
+        \ the card is declined the membership is still created, and the trial ends\
+        \ <code>LAPSED</code> unless the arrears are paid first.</li> <li>With a referral\
+        \ code, the referrer is credited €20 once the first charge is paid.</li> </ol>"
+      operationId: signUp
+      requestBody:
+        description: who is joining and on which plan
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
+        required: true
+      responses:
+        "400":
+          description: A required field is missing or the email isn't valid
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Bad Request
+                status: 400
+                detail: Invalid request content.
+                instance: /memberships
+        "422":
+          description: "The email already has a membership, the student ID is missing\
+            \ or not 8 digits, or the referral code is unknown"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Unprocessable Content
+                status: 422
+                detail: The Student plan needs an 8-digit student ID
+                instance: /memberships
+        "201":
+          description: The new membership and its first invoice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignUpResponse"
+              example:
+                membership:
+                  membershipId: ms-42f86968
+                  memberId: m-9a65df90
+                  plan: MONTHLY
+                  status: TRIAL
+                  startDate: 2026-10-25
+                  endDate: null
+                  trialEndsOn: 2026-11-01
+                  trialBookingsLeft: 2
+                  frozenUntil: null
+                  lapsedSince: null
+                  failedPayments: 0
+                firstInvoice:
+                  id: f1050865-1148-4b0e-bef1-a441f042002b
+                  membershipId: ms-42f86968
+                  period: 2026-10
+                  charges:
+                  - type: PLAN_FEE
+                    amount: 10.16
+                    date: 2026-10-25
+                  discount: 0.0
+                  total: 10.16
+                  status: PAID
+  /memberships/{membershipId}/unfreeze:
+    post:
+      tags:
+      - Memberships
+      summary: Unfreezes a membership early
+      description: Unfreezes a membership early. <p>Makes a <code>FROZEN</code> membership
+        <code>ACTIVE</code> before its months are up.
+      operationId: unfreeze
+      parameters:
+      - name: membershipId
+        in: path
+        description: the membership to unfreeze
+        required: true
+        schema:
+          type: string
+        example: ms-ann
+      responses:
+        "404":
+          description: No membership has this id
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Not Found
+                status: 404
+                detail: Membership ms-42 not found
+                instance: /memberships/ms-42/unfreeze
+        "422":
+          description: The membership isn't Frozen
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Unprocessable Content
+                status: 422
+                detail: "Membership ms-ann is Active, so it can't be unfrozen"
+                instance: /memberships/ms-ann/unfreeze
+        "200":
+          description: The active membership
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MembershipResponse"
+              example:
+                membershipId: ms-ann
+                memberId: m-ann
+                plan: MONTHLY
+                status: ACTIVE
+                startDate: 2026-10-18
+                endDate: null
+                trialEndsOn: null
+                trialBookingsLeft: null
+                frozenUntil: null
+                lapsedSince: null
+                failedPayments: 0
+  /memberships/{membershipId}/pay-arrears:
+    post:
+      tags:
+      - Memberships
+      summary: Pays a membership's arrears
+      description: Pays a membership's arrears. <p>Charges every unpaid invoice to
+        the member's card in one payment. A <code>LAPSED</code> membership becomes
+        <code>ACTIVE</code> again.
+      operationId: payArrears
+      parameters:
+      - name: membershipId
+        in: path
+        description: the membership whose arrears to pay
+        required: true
+        schema:
+          type: string
+        example: ms-ann
+      responses:
+        "404":
+          description: No membership has this id
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Not Found
+                status: 404
+                detail: Membership ms-42 not found
+                instance: /memberships/ms-42/pay-arrears
+        "422":
+          description: "The membership is Frozen or Cancelled, owes nothing, or the\
+            \ card was declined"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Unprocessable Content
+                status: 422
+                detail: "The card was declined, so membership ms-086478f1 still owes\
+                  \ its arrears"
+                instance: /memberships/ms-086478f1/pay-arrears
+        "200":
+          description: The membership after paying
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MembershipResponse"
+              example:
+                membershipId: ms-086478f1
+                memberId: m-eve
+                plan: OFF_PEAK
+                status: TRIAL
+                startDate: 2026-10-25
+                endDate: null
+                trialEndsOn: 2026-11-01
+                trialBookingsLeft: 2
+                frozenUntil: null
+                lapsedSince: null
+                failedPayments: 0
+  /memberships/{membershipId}/freeze:
+    post:
+      tags:
+      - Memberships
+      summary: Freezes a membership
+      description: "Freezes a membership. <p>Only an <code>ACTIVE</code> membership\
+        \ can be frozen, for 1 to 3 months and at most once in 12 months. It isn't\
+        \ billed while frozen, and the daily checks unfreeze it when the months are\
+        \ up."
+      operationId: freeze
+      parameters:
+      - name: membershipId
+        in: path
+        description: the membership to freeze
+        required: true
+        schema:
+          type: string
+        example: ms-ann
+      requestBody:
+        description: how many months
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FreezeRequest"
+        required: true
+      responses:
+        "400":
+          description: The number of months is missing
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Bad Request
+                status: 400
+                detail: Invalid request content.
+                instance: /memberships/ms-ann/freeze
+        "404":
+          description: No membership has this id
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Not Found
+                status: 404
+                detail: Membership ms-42 not found
+                instance: /memberships/ms-42/freeze
+        "422":
+          description: "The membership isn't Active, the months aren't 1 to 3, or\
+            \ it was frozen in the last 12 months"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Unprocessable Content
+                status: 422
+                detail: "Membership ms-ann is Frozen, so it can't be frozen"
+                instance: /memberships/ms-ann/freeze
+        "200":
+          description: The frozen membership
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MembershipResponse"
+              example:
+                membershipId: ms-ann
+                memberId: m-ann
+                plan: MONTHLY
+                status: FROZEN
+                startDate: 2026-10-18
+                endDate: null
+                trialEndsOn: null
+                trialBookingsLeft: null
+                frozenUntil: 2026-12-25
+                lapsedSince: null
+                failedPayments: 0
+  /memberships/{membershipId}/cancel:
+    post:
+      tags:
+      - Memberships
+      summary: Cancels a membership
+      description: "Cancels a membership. <p>Cancels it and charges the final bill:\
+        \ any penalties still waiting, plus €50 for an Annual plan cancelled within\
+        \ its first 6 months."
+      operationId: cancel
+      parameters:
+      - name: membershipId
+        in: path
+        description: the membership to cancel
+        required: true
+        schema:
+          type: string
+        example: ms-ann
+      responses:
+        "404":
+          description: No membership has this id
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Not Found
+                status: 404
+                detail: Membership ms-42 not found
+                instance: /memberships/ms-42/cancel
+        "422":
+          description: The membership is already cancelled
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Unprocessable Content
+                status: 422
+                detail: "Membership ms-878c5763 is Cancelled, so it can't be cancelled"
+                instance: /memberships/ms-878c5763/cancel
+        "200":
+          description: The cancelled membership and its final invoice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CancellationResponse"
+              example:
+                membership:
+                  membershipId: ms-878c5763
+                  memberId: m-7b7e39b7
+                  plan: ANNUAL
+                  status: CANCELLED
+                  startDate: 2026-10-25
+                  endDate: 2027-10-25
+                  trialEndsOn: null
+                  trialBookingsLeft: null
+                  frozenUntil: null
+                  lapsedSince: null
+                  failedPayments: 0
+                finalInvoice:
+                  id: 7067c59a-0d4d-4808-ab4f-62d6dc0e755b
+                  membershipId: ms-878c5763
+                  period: 2026-10
+                  charges:
+                  - type: EARLY_EXIT
+                    amount: 50.0
+                    date: 2026-10-25
+                  discount: 0.0
+                  total: 50.0
+                  status: PAID
+  /membership-checks:
+    post:
+      tags:
+      - Memberships
+      summary: Runs the daily membership checks
+      description: "Runs the daily membership checks. <p>The gym's clock starts this\
+        \ every morning. For every membership: <ol> <li>A trial that is 7 days old\
+        \ ends: <code>ACTIVE</code> if the first charge was paid, <code>LAPSED</code>\
+        \ if not.</li> <li>A freeze whose months are up ends, and the membership is\
+        \ <code>ACTIVE</code> again.</li> <li>A membership with two unpaid invoices\
+        \ in a row becomes <code>LAPSED</code>.</li> <li>A membership <code>LAPSED</code>\
+        \ for 60 days is cancelled with a final bill.</li> </ol> Running it again\
+        \ on the same day changes nothing."
+      operationId: runChecks
+      responses:
+        "200":
+          description: The memberships whose state changed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MembershipResponse"
+              example:
+              - membershipId: ms-ann
+                memberId: m-ann
+                plan: MONTHLY
+                status: ACTIVE
+                startDate: 2026-10-18
+                endDate: null
+                trialEndsOn: null
+                trialBookingsLeft: null
+                frozenUntil: null
+                lapsedSince: null
+                failedPayments: 0
   /billing-runs:
     post:
       tags:
@@ -107,6 +493,91 @@ paths:
                 discount: 0.0
                 total: 45.0
                 status: UNPAID
+  /plans:
+    get:
+      tags:
+      - Memberships
+      summary: Lists the plans
+      description: "Lists the plans. <p>Every plan on offer, with its price, its trial\
+        \ and when it can be used."
+      operationId: plans
+      responses:
+        "200":
+          description: The plans on offer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PlanResponse"
+              example:
+              - plan: MONTHLY
+                price: 45.0
+                paidYearly: false
+                trialDays: 7
+                description: "Any time, billed monthly"
+              - plan: ANNUAL
+                price: 450.0
+                paidYearly: true
+                trialDays: 0
+                description: "Any time, paid for the year upfront, no trial. Cancelling\
+                  \ within 6 months costs €50"
+              - plan: STUDENT
+                price: 30.0
+                paidYearly: false
+                trialDays: 7
+                description: "Any time, billed monthly. Needs an 8-digit student ID"
+              - plan: OFF_PEAK
+                price: 30.0
+                paidYearly: false
+                trialDays: 7
+                description: "Weekdays 10:00 to 16:00 only, billed monthly"
+  /memberships/{membershipId}:
+    get:
+      tags:
+      - Memberships
+      summary: Shows a membership
+      description: "Shows a membership. <p>The membership's state, and what that state\
+        \ means for it: when a trial or freeze ends, or how long it has been lapsed."
+      operationId: membership
+      parameters:
+      - name: membershipId
+        in: path
+        description: the membership to show
+        required: true
+        schema:
+          type: string
+        example: ms-ann
+      responses:
+        "404":
+          description: No membership has this id
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Not Found
+                status: 404
+                detail: Membership ms-42 not found
+                instance: /memberships/ms-42
+        "200":
+          description: The membership
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MembershipResponse"
+              example:
+                membershipId: ms-ann
+                memberId: m-ann
+                plan: MONTHLY
+                status: ACTIVE
+                startDate: 2026-10-18
+                endDate: null
+                trialEndsOn: null
+                trialBookingsLeft: null
+                frozenUntil: null
+                lapsedSince: null
+                failedPayments: 0
   /memberships/{membershipId}/invoices:
     get:
       tags:
@@ -157,16 +628,52 @@ paths:
                 status: PAID
 components:
   schemas:
-    BillingRunRequest:
+    SignUpRequest:
       type: object
-      description: Starts a billing run.
+      description: "Someone joining the gym, and the plan they chose."
       properties:
-        period:
+        name:
           type: string
-          description: "the month to bill, as <code>YYYY-MM</code>, e.g. <code>2026-11</code>"
-          example: 2026-11
+          description: their full name
+          example: Ann Byrne
+          minLength: 1
+        email:
+          type: string
+          format: email
+          description: where notifications go. Someone who left and joins again uses
+            the same email
+          example: ann@example.com
+          minLength: 1
+        plan:
+          type: string
+          description: the plan they chose
+          enum:
+          - MONTHLY
+          - ANNUAL
+          - STUDENT
+          - OFF_PEAK
+          example: MONTHLY
+        studentId:
+          type: string
+          description: "8 digits, needed for the <code>STUDENT</code> plan"
+          example: "24123456"
+        employer:
+          type: string
+          description: "their employer, for the 15% Corporate discount"
+          example: Stripe
+        familyId:
+          type: string
+          description: "the same for everyone in a family, for the 10% Family discount"
+          example: byrne
+        referralCode:
+          type: string
+          description: "the membership id of the member who referred them, who is\
+            \ credited €20"
+          example: ms-3f9c2a1b
       required:
-      - period
+      - email
+      - name
+      - plan
     ProblemDetail:
       type: object
       properties:
@@ -239,3 +746,129 @@ components:
           enum:
           - PAID
           - UNPAID
+    MembershipResponse:
+      type: object
+      description: A membership and where it is in its lifecycle.
+      properties:
+        membershipId:
+          type: string
+          description: "the membership id, which is also the code a member gives friends\
+            \ to refer them"
+        memberId:
+          type: string
+          description: the member who holds it
+        plan:
+          type: string
+          description: the plan it is on
+          enum:
+          - MONTHLY
+          - ANNUAL
+          - STUDENT
+          - OFF_PEAK
+        status:
+          type: string
+          description: "<code>TRIAL</code>, <code>ACTIVE</code>, <code>FROZEN</code>,\
+            \ <code>LAPSED</code> or <code>CANCELLED</code>"
+          enum:
+          - TRIAL
+          - ACTIVE
+          - FROZEN
+          - LAPSED
+          - CANCELLED
+        startDate:
+          type: string
+          format: date
+          description: when it started
+        endDate:
+          type: string
+          format: date
+          description: "when it ends, or empty if it rolls on month by month"
+        trialEndsOn:
+          type: string
+          format: date
+          description: "when the trial ends, only while in <code>TRIAL</code>"
+        trialBookingsLeft:
+          type: integer
+          format: int32
+          description: "class bookings left in the trial, only while in <code>TRIAL</code>"
+        frozenUntil:
+          type: string
+          format: date
+          description: "when the freeze ends, only while <code>FROZEN</code>"
+        lapsedSince:
+          type: string
+          format: date
+          description: "when it lapsed, only while <code>LAPSED</code>"
+        failedPayments:
+          type: integer
+          format: int32
+          description: card payments declined in a row. Two make it <code>LAPSED</code>
+    SignUpResponse:
+      type: object
+      description: A new membership and its first bill.
+      properties:
+        membership:
+          $ref: "#/components/schemas/MembershipResponse"
+          description: "the new membership, in <code>TRIAL</code>, or <code>ACTIVE</code>\
+            \ for an Annual plan"
+        firstInvoice:
+          $ref: "#/components/schemas/InvoiceResponse"
+          description: "the first charge. <code>UNPAID</code> if the card was declined,\
+            \ and then the trial ends <code>LAPSED</code>"
+    FreezeRequest:
+      type: object
+      description: Freezes a membership.
+      properties:
+        months:
+          type: integer
+          format: int32
+          description: "how long to freeze it for, 1 to 3"
+          example: 2
+      required:
+      - months
+    CancellationResponse:
+      type: object
+      description: A cancelled membership and its final bill.
+      properties:
+        membership:
+          $ref: "#/components/schemas/MembershipResponse"
+          description: "the membership, now <code>CANCELLED</code>"
+        finalInvoice:
+          $ref: "#/components/schemas/InvoiceResponse"
+          description: "everything still owed, with the €50 early-exit fee for an\
+            \ Annual plan cancelled within 6 months"
+    BillingRunRequest:
+      type: object
+      description: Starts a billing run.
+      properties:
+        period:
+          type: string
+          description: "the month to bill, as <code>YYYY-MM</code>, e.g. <code>2026-11</code>"
+          example: 2026-11
+      required:
+      - period
+    PlanResponse:
+      type: object
+      description: A plan on offer.
+      properties:
+        plan:
+          type: string
+          description: the plan to ask for when signing up
+          enum:
+          - MONTHLY
+          - ANNUAL
+          - STUDENT
+          - OFF_PEAK
+        price:
+          type: number
+          description: "in euro, per month, or per year when <code>paidYearly</code>"
+        paidYearly:
+          type: boolean
+          description: <code>true</code> if the year is paid upfront
+        trialDays:
+          type: integer
+          format: int32
+          description: "how long the trial lasts, 0 if there is none"
+        description:
+          type: string
+          description: who the plan is for and when it can be used

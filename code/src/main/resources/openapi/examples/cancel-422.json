@@ -1,0 +1,6 @@
+{
+  "title": "Unprocessable Content",
+  "status": 422,
+  "detail": "Membership ms-878c5763 is Cancelled, so it can't be cancelled",
+  "instance": "/memberships/ms-878c5763/cancel"
+}

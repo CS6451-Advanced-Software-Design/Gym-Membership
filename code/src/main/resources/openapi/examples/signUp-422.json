@@ -1,0 +1,6 @@
+{
+  "title": "Unprocessable Content",
+  "status": 422,
+  "detail": "The Student plan needs an 8-digit student ID",
+  "instance": "/memberships"
+}

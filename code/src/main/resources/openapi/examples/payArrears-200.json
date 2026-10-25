@@ -1,0 +1,13 @@
+{
+  "membershipId": "ms-086478f1",
+  "memberId": "m-eve",
+  "plan": "OFF_PEAK",
+  "status": "TRIAL",
+  "startDate": "2026-10-25",
+  "endDate": null,
+  "trialEndsOn": "2026-11-01",
+  "trialBookingsLeft": 2,
+  "frozenUntil": null,
+  "lapsedSince": null,
+  "failedPayments": 0
+}

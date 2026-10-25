@@ -1,0 +1,6 @@
+{
+  "title": "Unprocessable Content",
+  "status": 422,
+  "detail": "The card was declined, so membership ms-086478f1 still owes its arrears",
+  "instance": "/memberships/ms-086478f1/pay-arrears"
+}
