@@ -52,7 +52,9 @@ entity INVOICE {
   --
   membership_id <<FK>>
   period
+  discount
   total
+  status
 }
 
 entity CHARGE {
@@ -62,6 +64,7 @@ entity CHARGE {
   invoice_id <<FK>> (null until invoiced)
   type
   amount
+  date
 }
 
 entity INSTRUCTOR {

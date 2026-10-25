@@ -53,6 +53,7 @@ Only patterns the code really has are listed as in place, each with where to fin
 | Repository | Design | `port.out.Repository<T, ID>`, implemented by `adapter.persistence.JsonFileRepository` |
 | Proxy (dynamic) | Design (GoF) | `UseCaseInterception` wraps every `port.in` use case so each call reaches the interceptors |
 | Dependency Injection | Design | Spring constructor injection throughout. The `Clock` bean in `GymApplication` lets tests fix the date |
+| Strategy | Design (GoF) | `domain.DiscountPolicy` with `CorporateDiscount`, `FamilyDiscount` and `LoyaltyDiscount`. `BestDiscount` applies only the largest (BR-P2), chosen in `BillingConfiguration`. Proved by `DiscountPolicyTest.theBestDiscountWinsAndDiscountsDontStack` |
 
 **Planned** (from [report/roles.md](report/roles.md), each with a test that exercises the pattern)
 
@@ -60,7 +61,6 @@ Only patterns the code really has are listed as in place, each with where to fin
 | --- | --- | --- | --- |
 | State | Design (GoF) | `Membership` lifecycle: Trial, Active, Frozen, Lapsed, Cancelled | Dhruv |
 | Factory | Design (GoF) | Plan creation (`MonthlyPlan`, `AnnualPlan`, `StudentPlan`) | Dhruv |
-| Strategy | Design (GoF) | `DiscountPolicy` and pricing in Billing | Chirag |
 | Command | Design (GoF) | Book and cancel a class, with undo | Bharat |
 | Observer | Design (GoF) | Waitlist promotion in Booking, and member notifications | Bharat, DineshReddy |
 

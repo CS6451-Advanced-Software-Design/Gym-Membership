@@ -51,7 +51,7 @@ These are analysis **sketches**, so they show the main classes and only the attr
 - [x] Associations with multiplicity: `Member`–`Membership`, `Member`–`Booking`, `Booking` → `GymClass`, `Membership` → `Plan`, `Instructor`–`GymClass`, `Membership`–`Invoice`, `Membership`–`Charge`, and the reflexive referral on `Member` (BR-P3)
 - [x] Dependencies: `Invoice` uses `DiscountPolicy`, `PlanFactory` creates `Plan`. `PaymentGateway` is a `port.out` interface called by the services, so no domain class depends on it (the Hexagonal rule)
 - [x] Visibility: `+`, `-`, `#`
-- [x] Enumerations: `PlanType`, `BookingStatus`, `ChargeType`
+- [x] Enumerations: `PlanType`, `BookingStatus`, `ChargeType`, `InvoiceStatus`
 - [x] Interfaces with pre/postconditions: `DiscountPolicy`, `PaymentGateway`. `NotificationSender` is the other `port.out` interface
 - [x] Derived attribute: `/noShowsLast30Days`, counted from `NO_SHOW` bookings, so it has no ER column
 - [x] No duplicated attributes or operations
@@ -78,7 +78,7 @@ The class diagram has more boxes than the ER diagram has entities, and that is e
 | `Booking` | `BOOKING` | |
 | `Waitlist` | `WAITLIST_ENTRY` | The ordered `Waitlist`–`Member` link becomes one row per member, ordered by `position` |
 
-Not stored, so no entity: the five `MembershipState` classes (a column), the three enumerations (columns), `DiscountPolicy` and its three strategies (behaviour only), `PlanFactory` (creation only), and the `PaymentGateway` and `NotificationSender` ports (outside systems). `Notification` is sent and not kept.
+Not stored, so no entity: the five `MembershipState` classes (a column), the four enumerations (columns), `DiscountPolicy` and its three strategies (behaviour only), `PlanFactory` (creation only), and the `PaymentGateway` and `NotificationSender` ports (outside systems). `Notification` is sent and not kept.
 
 The other diagrams line up with the same names:
 
