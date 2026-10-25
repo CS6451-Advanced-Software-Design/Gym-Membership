@@ -2,6 +2,8 @@ package gym;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -35,5 +37,10 @@ class OpenApiSpecIT {
         }
         assertEquals(Files.readString(SPEC), generated,
                 "postman/specs/openapi.yaml is out of date. Run ./mvnw verify -Dskip.unit -Dit.test=OpenApiSpecIT -Dopenapi.write=true and commit it");
+    }
+
+    @Test
+    void rootOpensTheSwaggerUi() throws Exception {
+        mvc.perform(get("/")).andExpect(status().isFound()).andExpect(redirectedUrl("/swagger-ui.html"));
     }
 }
