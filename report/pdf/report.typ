@@ -4,7 +4,17 @@
 #let details = yaml("report.yaml")
 
 #set document(title: details.title, author: details.members.map(member => member.name))
-#set page(paper: "a4", margin: (x: 2.4cm, y: 2.5cm))
+// Every page after the cover and the marking scheme carries the module and university at the top
+#set page(
+  paper: "a4",
+  margin: (x: 2.4cm, y: 2.5cm),
+  header: {
+    set text(size: 9pt, style: "italic")
+    grid(columns: (1fr, auto), details.module, details.university)
+    v(-6pt)
+    line(length: 100%, stroke: 0.4pt + luma(150))
+  },
+)
 #set text(font: "Libertinus Serif", size: 11pt, lang: "en", region: "ie")
 #set par(justify: true, leading: 0.62em, spacing: 1.1em)
 #show raw: set text(font: "DejaVu Sans Mono", size: 8.5pt)
@@ -14,17 +24,26 @@
 #set table(stroke: 0.5pt + luma(170), inset: 5pt)
 #show table: set text(size: 9pt)
 #show table: set par(justify: false)
-// Pandoc centres each table; its cells read better left-aligned, and a long table must be able to break across pages
-#show table: set align(left)
+// A long table must be able to break across pages
 #show figure.where(kind: table): set block(breakable: true)
+// A table with a caption (a "Table: ..." line under it in Markdown) is numbered, with the caption above it.
+// One without a caption isn't counted, so the numbers have no gaps
+#show figure.where(kind: table): set figure.caption(position: top)
+#show figure.where(kind: table, caption: none): it => {
+  counter(figure.where(kind: table)).update(count => count - 1)
+  align(center, it.body)
+}
 
 // Pandoc's Typst output uses this for a --- line
 #let horizontalrule = line(length: 100%, stroke: 0.5pt + luma(170))
 
-// Front cover, with no page number
-#page(numbering: none)[
+// Front cover, with no page number or header
+#page(numbering: none, header: none)[
   #set align(center)
-  #v(3cm)
+  #set par(justify: false)
+  #v(1.5cm)
+  #image("ul-logo.svg", width: 4.2cm)
+  #v(1.2cm)
   #text(size: 13pt, details.module) \
   #text(size: 13pt, details.assignment)
   #v(1.6cm)
@@ -49,7 +68,7 @@
 #set page(numbering: "i")
 #counter(page).update(1)
 #for number in (1, 2) {
-  page(margin: 0pt, numbering: none)[
+  page(margin: 0pt, numbering: none, header: none)[
     #image("marking-scheme.pdf", page: number, width: 100%)
     #if number == 1 {
       for (row, member) in details.members.enumerate() {

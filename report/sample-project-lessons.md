@@ -34,6 +34,33 @@ Brightspace provides past submissions as samples. These notes are our own summar
 - **Recovered blueprints not from a UML workbench**: hand-drawn in older samples, and hand-written PlantUML in both AY25/26 samples. The route class boxes were empty, and the hotel component diagram was unreadable at page width.
 - **Thin critique and reflection** (one generic paragraph, "me" inside a team report), and **presentation slips** (broken table-of-contents references, generic textbook prose, the wrong module code on the cover, the same decorator listed twice).
 
+## How the AY25/26 reports were laid out (checked 25 Oct 2026)
+
+Only the two AY25/26 samples are still on Brightspace. Neither the spec nor the marking scheme has changed since it was issued.
+
+| | Route (Word, 74 pages) | Hotel (LaTeX, 64 pages) |
+| --- | --- | --- |
+| Cover | UL logo, team name, module, lecturer, names and IDs | Title and subtitle, module and semester, lecturer, members table with IDs, UL logo |
+| Blank marking scheme | Missing | Missing |
+| Contents | 3 pages, 3 levels | 3 pages, 3 levels, linked |
+| Running header | None | Module and university on every page |
+| Captions | On some figures | "Figure n" and "Table n" throughout |
+| Code in §8 | IDE screenshots, dark theme, cut off at the page edge | Whole classes as listings with line numbers, so §8 runs to 19 pages |
+| GenAI in §13 | 13 one-line prompts | Prose only. It says GenAI was used to improve grammar, which the spec forbids |
+| References | Listed | None |
+
+The hotel report's pages per section: §1 1, §2 1, §3 1, §4 5, §5 3, §6 5, §7 2, §8 19, §9 11, §10 7, §11 1, §12 2, §13 6. The route report's §2 ran to 4 pages against a limit of 2.
+
+## How we lay out ours
+
+The PDF build (`report/pdf`) already does the cover with the UL logo, the blank marking scheme, contents, page numbers, the running header and a new page per section. When writing a section:
+
+- **Figures:** `![Caption](path.png)` on its own line becomes a numbered figure with that caption. Say in the text what the reader should notice in it.
+- **Tables:** put a `Table: Caption` line under the table to number it and caption it. Leave the caption off only for small layout tables.
+- **Code:** paste the 10–20 lines that show the pattern as a fenced block with its language (` ```java `), never an IDE screenshot or a whole class. Follow it with the test that proves it and a sentence on what to notice.
+- **Diagrams:** each must be readable at page width. Split a large diagram rather than shrink it.
+- **Page limits:** §1 1 page, §2 2, §5 2, §11 1. The Report check fails if a section goes over.
+
 ## Takeaways for us
 1. Follow this year's section order exactly (§1–14).
 2. Put the business rules (billing, waitlist, lifecycle) at the heart of the design, with patterns where they naturally fit. One pattern per problem; don't repeat Factory three times.
