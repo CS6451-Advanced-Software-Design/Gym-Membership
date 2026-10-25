@@ -43,4 +43,13 @@ class OpenApiSpecIT {
     void rootOpensTheSwaggerUi() throws Exception {
         mvc.perform(get("/")).andExpect(status().isFound()).andExpect(redirectedUrl("/swagger-ui.html"));
     }
+
+    /**
+     * Railway ends HTTPS at its proxy and forwards plain HTTP, so the redirect must follow X-Forwarded-Proto.
+     */
+    @Test
+    void rootRedirectKeepsHttpsBehindAProxy() throws Exception {
+        mvc.perform(get("/").header("X-Forwarded-Proto", "https").header("X-Forwarded-Host", "gym.example"))
+                .andExpect(redirectedUrl("https://gym.example/swagger-ui.html"));
+    }
 }
