@@ -1,0 +1,99 @@
+@startuml
+!include ../common.iuml
+skinparam sequence {
+  ParticipantBackgroundColor #F5F5F5
+  ParticipantBorderColor #333333
+  LifeLineBorderColor #888888
+  GroupBackgroundColor #F5F5F5
+}
+skinparam responseMessageBelowArrow true
+autoactivate off
+hide footbox
+
+actor "Member\n(Postman)" as M
+participant ":BookingController" as C
+participant ":BookingService" as S <<BookClassUseCase>>
+participant ":GymClassRepository" as GR
+participant ":MemberRepository" as MBR
+participant ":MembershipRepository" as MR
+participant ":BookingRepository" as BR
+participant ":Member" as MB
+participant ":Membership" as MS
+participant ":MembershipState" as ST
+participant ":Plan" as P
+participant ":GymClass" as G
+participant ":Waitlist" as W
+
+M -> C : POST /bookings\n{memberId, classId}
+activate C
+C -> S : book(memberId, classId)
+activate S
+note right of C
+  The call passes through the
+  Interceptor proxy (onBefore /
+  onAfter, logged by LoggingInterceptor)
+end note
+
+S -> GR : findById(classId)
+GR --> S : gymClass
+S -> MBR : findById(memberId)
+MBR --> S : member
+S -> MB : isSuspended()
+MB --> S : suspended
+note right of MB
+  BR-B4: 3 no-shows
+  in 30 days
+end note
+S -> BR : countFuture(memberId)
+BR --> S : n
+note right of BR
+  BR-B5: at most 5
+end note
+S -> MR : findCurrent(memberId)
+MR --> S : membership
+
+S -> MS : canBook(gymClass)
+activate MS
+MS -> ST : canBook(membership)
+ST --> MS : true / false
+note right of ST
+  Trial: trialBookingsUsed < 2.
+  Active: yes.
+  Frozen, Lapsed, Cancelled: no
+end note
+MS -> P : allows(gymClass)
+P --> MS : true / false
+note right of P
+  BR-B5: Off-Peak plans
+  allow off-peak classes only
+end note
+MS --> S : allowed
+deactivate MS
+
+alt not allowed (suspended, n >= 5, state or plan)
+  S --> C : RuleViolationException(reason)
+  C --> M : 422 refused + reason
+else allowed
+  S -> G : isFull()
+  G --> S : full
+  alt space left
+    S -> G : reserve(member)
+    activate G
+    create participant ":Booking" as B
+    G -> B : <<create>>
+    G --> S : booking
+    deactivate G
+    S -> BR : save(booking)
+    S --> C : booked
+    C --> M : 201 booked
+  else class is full
+    S -> W : add(member)
+    W --> S : position
+    S -> GR : save(gymClass)
+    S --> C : waitlisted(position)
+    C --> M : 200 waitlisted, position n
+  end
+end
+deactivate S
+deactivate C
+@enduml

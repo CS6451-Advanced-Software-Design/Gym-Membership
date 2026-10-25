@@ -1,0 +1,61 @@
+@startuml
+!include ../common.iuml
+set separator none
+skinparam packageStyle folder
+skinparam package {
+  BackgroundColor #F5F5F5
+  BorderColor #333333
+}
+skinparam nodesep 60
+skinparam ranksep 70
+
+package gym.controller <<driving adapter>> {
+}
+package gym.dto <<MVC view>> {
+}
+package gym.interceptor <<Interceptor>> {
+}
+package gym.port.in <<driving port>> {
+}
+package gym.service <<use cases>> {
+}
+package gym.port.out <<driven port>> {
+}
+package gym.domain <<MVC model>> {
+}
+package gym.adapter <<driven adapters>> {
+  package persistence {
+  }
+  package payment {
+  }
+  package notification {
+  }
+  package logging {
+  }
+}
+
+gym.controller ..> gym.dto : uses
+gym.controller ..> gym.port.in : calls
+gym.service ..> gym.port.in : implements
+gym.service ..> gym.port.out : uses
+gym.service ..> gym.domain : uses
+gym.port.in ..> gym.domain
+gym.port.out ..> gym.domain
+persistence ..> gym.port.out : implements
+payment ..> gym.port.out : implements
+notification ..> gym.port.out : implements
+payment ..> gym.domain : uses
+notification ..> gym.domain : uses
+logging ..> gym.interceptor : implements
+
+note right of gym.domain
+  Plain Java. Depends on nothing
+  outside java.* (ArchitectureTest)
+end note
+note left of gym.interceptor
+  Dynamic proxy around every
+  port.in use case. Imports no
+  business package: wired to
+  port.in at run time
+end note
+@enduml

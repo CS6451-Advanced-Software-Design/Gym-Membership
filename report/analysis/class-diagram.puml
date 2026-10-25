@@ -1,0 +1,207 @@
+@startuml
+!include ../common.iuml
+hide circle
+left to right direction
+hide empty members
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F5F5F5
+  BorderColor #333333
+}
+skinparam nodesep 40
+skinparam ranksep 60
+
+class Member {
+  -memberId: String
+  -name: String
+  -email: String
+  -studentId: String
+  -employer: String
+  -familyId: String
+  -/noShowsLast30Days: int
+  +isSuspended(): boolean
+}
+
+class Membership {
+  -startDate: LocalDate
+  -endDate: LocalDate
+  -failedPayments: int
+  -trialBookingsUsed: int
+  -lapsedSince: LocalDate
+  +canBook(c: GymClass): boolean
+  +canCheckIn(at: LocalDateTime): boolean
+  +freeze(months: int)
+  +unfreeze()
+  +endTrial()
+  +recordPayment(paid: boolean)
+  +payArrears()
+  +cancel()
+  +expire(today: LocalDate)
+}
+
+abstract class MembershipState {
+  +canBook(m: Membership): boolean
+  +canCheckIn(m: Membership): boolean
+  +freeze(m: Membership, months: int)
+  +unfreeze(m: Membership)
+  +endTrial(m: Membership)
+  +recordPayment(m: Membership, paid: boolean)
+  +payArrears(m: Membership)
+  +cancel(m: Membership)
+  +expire(m: Membership, today: LocalDate)
+}
+class TrialState
+class ActiveState
+class FrozenState
+class LapsedState
+class CancelledState
+
+class Freeze {
+  -startDate: LocalDate
+  -months: int
+}
+
+abstract class Plan {
+  #monthlyPrice: Money
+  +priceFor(month: YearMonth): Money
+  +allows(c: GymClass): boolean
+}
+class MonthlyPlan
+class AnnualPlan
+class StudentPlan
+class OffPeakPlan
+
+class PlanFactory {
+  +create(type: PlanType): Plan
+}
+enum PlanType {
+  MONTHLY
+  ANNUAL
+  STUDENT
+  OFF_PEAK
+}
+
+class Instructor {
+  -name: String
+}
+
+class GymClass {
+  -startTime: LocalDateTime
+  -capacity: int
+  -premium: boolean
+  +isFull(): boolean
+  +reserve(m: Member): Booking
+}
+
+class Booking {
+  -status: BookingStatus
+  -bookedAt: LocalDateTime
+  +cancel(at: LocalDateTime)
+}
+enum BookingStatus {
+  BOOKED
+  CANCELLED
+  ATTENDED
+  NO_SHOW
+}
+
+class Waitlist {
+  +add(m: Member): int
+  +promoteNext(): Member
+}
+
+class Invoice {
+  -period: YearMonth
+  +total(): Money
+}
+
+class Charge {
+  -amount: Money
+  -type: ChargeType
+}
+enum ChargeType {
+  PLAN_FEE
+  PREMIUM_SURCHARGE
+  LATE_CANCELLATION
+  NO_SHOW
+  EARLY_EXIT
+  REFERRAL_CREDIT
+}
+
+interface DiscountPolicy <<interface>> {
+  +discountFor(m: Member, amount: Money): Money
+}
+class CorporateDiscount
+class FamilyDiscount
+class LoyaltyDiscount
+
+interface PaymentGateway <<interface>> {
+  +charge(m: Member, amount: Money): boolean
+}
+
+interface NotificationSender <<interface>> {
+  +send(n: Notification)
+}
+class Notification {
+  -memberId: String
+  -subject: String
+  -message: String
+}
+
+Member "1" -- "0..*" Membership : holds >
+Member "0..1" -- "0..*" Member : referred by <
+Membership "*" --> "1" Plan : on >
+Membership "1" *-- "1" MembershipState : state >
+Membership "1" *-- "0..*" Freeze
+MembershipState <|-- TrialState
+MembershipState <|-- ActiveState
+MembershipState <|-- FrozenState
+MembershipState <|-- LapsedState
+MembershipState <|-- CancelledState
+Plan <|-- MonthlyPlan
+Plan <|-- AnnualPlan
+Plan <|-- StudentPlan
+Plan <|-- OffPeakPlan
+PlanFactory ..> Plan : creates
+PlanFactory ..> PlanType
+
+Member "1" -- "0..*" Booking : makes >
+Booking "0..*" --> "1" GymClass : for >
+Instructor "1" -- "0..*" GymClass : teaches >
+GymClass "1" *-- "1" Waitlist
+Waitlist o-- "0..*" Member : {ordered}
+Booking ..> BookingStatus
+
+Membership "1" -- "0..*" Invoice : billed by >
+Invoice "0..1" o-- "1..*" Charge
+Membership "1" -- "0..*" Charge : incurs >
+Charge ..> ChargeType
+Invoice ..> DiscountPolicy : best one wins
+DiscountPolicy <|.. CorporateDiscount
+DiscountPolicy <|.. FamilyDiscount
+DiscountPolicy <|.. LoyaltyDiscount
+NotificationSender ..> Notification
+
+note bottom of DiscountPolicy
+  pre: amount >= 0
+  post: 0 <= result <= amount
+end note
+note bottom of PaymentGateway
+  port.out, called by the services.
+  pre: amount > 0
+  post: charged exactly once, or not at all
+end note
+note bottom of NotificationSender
+  port.out, called by the services.
+  Not stored, so no ER entity
+end note
+note bottom of Member
+  /noShowsLast30Days is derived
+  from Bookings with status NO_SHOW
+end note
+note right of MembershipState
+  State pattern: the
+  behaviour of Membership
+  depends on its state
+end note
+@enduml
