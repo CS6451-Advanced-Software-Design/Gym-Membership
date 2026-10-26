@@ -1,0 +1,33 @@
+$kind: http-example
+name: The membership isn't Active, the months aren't 1 to 3, or it was frozen in the last 12 months
+request:
+  url: "{{baseUrl}}/memberships/:membershipId/freeze"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: membershipId
+      value: ms-ann
+      disabled: false
+      description: (Required) the membership to freeze
+  body:
+    type: json
+    content: |-
+      {
+        "months": 2
+      }
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity (WebDAV) (RFC 4918)
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "title": "Unprocessable Content",
+        "status": 422,
+        "detail": "Membership ms-ann is Frozen, so it can't be frozen",
+        "instance": "/memberships/ms-ann/freeze"
+      }
+order: 4000

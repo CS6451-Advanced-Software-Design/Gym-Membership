@@ -1,0 +1,57 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/memberships"
+  method: POST
+  headers:
+    Accept: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "email": "ann@example.com",
+        "name": "Ann Byrne",
+        "plan": "MONTHLY",
+        "studentId": "24123456",
+        "employer": "Stripe",
+        "familyId": "byrne",
+        "referralCode": "ms-3f9c2a1b"
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "membership": {
+          "membershipId": "ms-42f86968",
+          "memberId": "m-9a65df90",
+          "plan": "MONTHLY",
+          "status": "TRIAL",
+          "startDate": "2026-10-25T00:00:00.000Z",
+          "endDate": null,
+          "trialEndsOn": "2026-11-01T00:00:00.000Z",
+          "trialBookingsLeft": 2,
+          "frozenUntil": null,
+          "lapsedSince": null,
+          "failedPayments": 0
+        },
+        "firstInvoice": {
+          "id": "f1050865-1148-4b0e-bef1-a441f042002b",
+          "membershipId": "ms-42f86968",
+          "period": "2026-10",
+          "charges": [
+            {
+              "type": "PLAN_FEE",
+              "amount": 10.16,
+              "date": "2026-10-25T00:00:00.000Z"
+            }
+          ],
+          "discount": 0,
+          "total": 10.16,
+          "status": "PAID"
+        }
+      }
+order: 1000

@@ -1,0 +1,32 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/memberships/:membershipId/freeze"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: membershipId
+      value: ms-ann
+      disabled: false
+      description: (Required) the membership to freeze
+  body:
+    type: json
+    content: |-
+      {
+        "months": 2
+      }
+response:
+  statusCode: 400
+  statusText: Bad Request
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "Invalid request content.",
+        "instance": "/memberships/ms-ann/freeze"
+      }
+order: 2000

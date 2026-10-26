@@ -1,0 +1,32 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/memberships/:membershipId/freeze"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: membershipId
+      value: ms-ann
+      disabled: false
+      description: (Required) the membership to freeze
+  body:
+    type: json
+    content: |-
+      {
+        "months": 2
+      }
+response:
+  statusCode: 404
+  statusText: Not Found
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "title": "Not Found",
+        "status": 404,
+        "detail": "Membership ms-42 not found",
+        "instance": "/memberships/ms-42/freeze"
+      }
+order: 3000

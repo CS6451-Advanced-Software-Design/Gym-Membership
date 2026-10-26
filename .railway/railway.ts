@@ -1,13 +1,13 @@
 import { defineRailway, github, project, service, volume } from "railway/iac";
 
 // The Railway project the app is deployed to. Preview a change with `railway config plan`, apply it with
-// `railway config apply`. Railway builds code/Dockerfile and redeploys on every merge to main.
+// `railway config apply`. Railway builds code/Dockerfile and redeploys on every merge to main once CI passes.
 export default defineRailway(() => {
   // The JSON files the app stores its data in. A volume keeps them across redeploys and restarts
   const data = volume("gym-data", { sizeMB: 500, region: "iad" });
 
   const gym = service("gym-membership", {
-    source: github("CS6451-Advanced-Software-Design/Gym-Membership", { branch: "main", rootDirectory: "/code" }),
+    source: github("CS6451-Advanced-Software-Design/Gym-Membership", { branch: "main", rootDirectory: "/code", checkSuites: true }),
     build: {
       builder: "DOCKERFILE",
       dockerfilePath: "Dockerfile",

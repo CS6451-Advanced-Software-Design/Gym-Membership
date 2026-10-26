@@ -1,0 +1,48 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/plans"
+  method: GET
+  headers:
+    Accept: application/json
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      [
+        {
+          "plan": "MONTHLY",
+          "price": 45,
+          "paidYearly": false,
+          "trialDays": 7,
+          "description": "Any time, billed monthly"
+        },
+        {
+          "plan": "ANNUAL",
+          "price": 450,
+          "paidYearly": true,
+          "trialDays": 0,
+          "description": "Any time, paid for the year upfront, no trial. Cancelling within 6 months costs €50"
+        },
+        {
+          "plan": "STUDENT",
+          "price": 30,
+          "paidYearly": false,
+          "trialDays": 7,
+          "description": "Any time, billed monthly. Needs an 8-digit student ID"
+        },
+        {
+          "plan": "OFF_PEAK",
+          "price": 30,
+          "paidYearly": false,
+          "trialDays": 7,
+          "description": "Weekdays 10:00 to 16:00 only, billed monthly"
+        }
+      ]
+order: 1000

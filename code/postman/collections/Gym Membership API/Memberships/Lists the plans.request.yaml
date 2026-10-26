@@ -1,0 +1,9 @@
+$kind: http-request
+description: Lists the plans. <p>Every plan on offer, with its price, its trial and when it can be used.
+url: "{{baseUrl}}/plans"
+method: GET
+headers:
+  Accept: application/json
+settings: {}
+examples: ./.resources/Lists the plans.resources/examples
+order: 7000

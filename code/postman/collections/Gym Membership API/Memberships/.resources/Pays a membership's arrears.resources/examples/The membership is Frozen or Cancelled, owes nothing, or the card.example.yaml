@@ -1,0 +1,30 @@
+$kind: http-example
+name: The membership is Frozen or Cancelled, owes nothing, or the card was declined
+request:
+  url: "{{baseUrl}}/memberships/:membershipId/pay-arrears"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: membershipId
+      value: ms-ann
+      disabled: false
+      description: (Required) the membership whose arrears to pay
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity (WebDAV) (RFC 4918)
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "title": "Unprocessable Content",
+        "status": 422,
+        "detail": "The card was declined, so membership ms-086478f1 still owes its arrears",
+        "instance": "/memberships/ms-086478f1/pay-arrears"
+      }
+order: 3000

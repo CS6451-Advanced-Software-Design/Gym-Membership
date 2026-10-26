@@ -1,0 +1,53 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/memberships/:membershipId/cancel"
+  method: POST
+  headers:
+    Accept: application/json
+  pathVariables:
+    - key: membershipId
+      value: ms-ann
+      disabled: false
+      description: (Required) the membership to cancel
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "membership": {
+          "membershipId": "ms-878c5763",
+          "memberId": "m-7b7e39b7",
+          "plan": "ANNUAL",
+          "status": "CANCELLED",
+          "startDate": "2026-10-25T00:00:00.000Z",
+          "endDate": "2027-10-25T00:00:00.000Z",
+          "trialEndsOn": null,
+          "trialBookingsLeft": null,
+          "frozenUntil": null,
+          "lapsedSince": null,
+          "failedPayments": 0
+        },
+        "finalInvoice": {
+          "id": "7067c59a-0d4d-4808-ab4f-62d6dc0e755b",
+          "membershipId": "ms-878c5763",
+          "period": "2026-10",
+          "charges": [
+            {
+              "type": "EARLY_EXIT",
+              "amount": 50,
+              "date": "2026-10-25T00:00:00.000Z"
+            }
+          ],
+          "discount": 0,
+          "total": 50,
+          "status": "PAID"
+        }
+      }
+order: 1000
