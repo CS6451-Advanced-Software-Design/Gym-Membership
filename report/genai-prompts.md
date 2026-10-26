@@ -56,5 +56,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 49 | 25 Oct | Dhruv | "this is my part and what i have to do" (with the task list: sign-up, freeze, cancel, daily checks, State on Membership, Factory for plans) | Membership feature: `Plan` classes and `PlanFactory`, the `MembershipState` classes, the Membership use cases, `MembershipService`, REST endpoints, the daily checks job and their tests |
 | 50 | 25 Oct | Dhruv | "make some sketches related to my work and save that in mac's folder" | Reference layouts (State with the crossed-out if/else chain, the lifecycle, the plan Factory, UC1 sign-up) that Dhruv redrew by hand |
 | 51 | 25 Oct | Chirag | "oh this reminds me, professor encouraged including teachings in report …" then "perhaps note down points for me to include when writing reflection etc." | lessons.md: lessons with their evidence (no report prose) |
+| 52 | 26 Oct | Chirag | "can we similarly compact diary notes?" | Shorter diary entries and smaller diary tables |
 
 Table: GenAI prompts, all to Claude (Claude Code)

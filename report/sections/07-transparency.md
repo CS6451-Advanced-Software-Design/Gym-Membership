@@ -29,5 +29,5 @@ patterns, testing and CI/CD. Then the diary, which comes from report/diary.md.
 
 ## Diary
 
-::: {include="../diary.md"}
+::: {include="../diary.md" widths="0.11 0.43 0.23 0.23" size="8pt"}
 :::

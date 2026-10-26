@@ -49,7 +49,7 @@ done <<< "$summary"
 echo
 echo "Total: $end pages, $out/report.pdf"
 
-missing=$(grep -B1 "id: ''" "$here/report.yaml" | sed -n 's/.*name: //p')
+missing=$({ grep -B1 "id: ''" "$here/report.yaml" || true; } | sed -n 's/.*name: //p')
 if [[ -n $missing ]]; then
   echo "Student IDs still missing in $here/report.yaml for: $(paste -sd, - <<< "$missing")"
 fi
