@@ -10,13 +10,28 @@ Evidence: report/architecture/README.md, report/tech-stack.md, ArchitectureTest.
 
 We built the system as a monolith mainly because the professor asked for one in Part 1, but it had real advantages for us too. Keeping everything in one application made development much simpler, which is what we wanted for this first iteration of the project, and it made testing and debugging easier. Deployment was simple as well: one Dockerfile that we can deploy to any service, in our case Railway. Our goal is to convert the monolith into microservices later, using what we learn in future lectures.
 
-*Intro to the three patterns and the package diagram, to be written by Chirag.*
+The system uses three architectural patterns: MVC, Hexagonal and Interceptor. MVC handles requests in and out, Hexagonal shapes the whole app, and Interceptor wraps every use case.
+
+The code is organised by layer rather than by feature, which keeps it a monolith rather than microservices:
+
+```text
+gym/                 classes
+├── controller/         5   MVC controller, driving adapters (Postman and the clock)
+├── dto/                9   MVC view: the JSON records
+├── port/in/           11   inbound ports: one interface per use case
+├── port/out/           7   outbound ports: repositories, payments, notifications
+├── service/            2   use cases, implementing port.in
+├── domain/            31   MVC model: the core, plain Java only
+├── adapter/           12   driven adapters: JSON files, payments, events, logging
+├── interceptor/        4   the Interceptor framework
+└── (root)              4   GymApplication and the Spring configuration
+```
 
 ![Package diagram](../architecture/package-diagram.png)
 
 ## Model View Controller
 
-We chose MVC for its three-layered style, which keeps the code simple and organised. In our case the view is the JSON our controllers return (the records in `dto`), which we look at through Postman and Swagger UI rather than through screens of our own.
+MVC was our choice for its three-layered style, which keeps the code simple and organised. In our case the view is the JSON our controllers return (the records in `dto`), which we look at through Postman and Swagger UI rather than through screens of our own.
 
 | Role | Package | Example |
 | --- | --- | --- |
@@ -36,7 +51,7 @@ There are two kinds of ports. Inbound ports (`port.in`) are the use cases the ou
 - **Room to evolve:** it gave us a clear direction for how the system can evolve. The data is currently stored in JSON files, but it could move to a proper PostgreSQL database in future without changing any business logic.
 - **Testability:** since the core logic in the middle, such as `BillingService`, is so decoupled, we could test it easily without involving outside services like the JSON files or payments.
 
-**How it fits with MVC.** We found the two architectures were not competing, and fit very well together:
+**How it fits with MVC.** The two architectures turned out not to compete, and fit very well together:
 
 - MVC describes how requests come in and go out: the controller receives them, and the view shows the model.
 - Hexagonal describes how the whole application can be built for extensibility and very little coupling.
@@ -49,26 +64,7 @@ There are two kinds of ports. Inbound ports (`port.in`) are the use cases the ou
 | Outbound port | `port.out` | `Repository<T, ID>`, `PaymentGateway`, `NotificationSender` |
 | Driven adapter | `adapter.*` | `JsonFileInvoiceRepository`, `FakePaymentGateway`, `EventNotificationSender` |
 
-**Enforced by a test.** *To be written by Chirag.* <!-- The dependency rule isn't just a convention: ArchitectureTest (ArchUnit) checks it on every build, and CI blocks the merge if it fails. `domain` may only use the JDK, so no Spring, Jackson or file I/O can leak into the business rules. -->
-
-```java
-@ArchTest
-static final ArchRule layersOnlyDependInwards = layeredArchitecture()
-        .consideringOnlyDependenciesInLayers()
-        .withOptionalLayers(true)
-        // ... one layer per package
-        .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
-        .whereLayer("Inbound port").mayOnlyBeAccessedByLayers("Controller", "Service")
-        .whereLayer("Outbound port").mayOnlyBeAccessedByLayers("Service", "Adapter")
-        .whereLayer("Service").mayNotBeAccessedByAnyLayer()
-        .whereLayer("Adapter").mayNotBeAccessedByAnyLayer();
-
-@ArchTest
-static final ArchRule domainOnlyDependsOnTheJdk = classes()
-        .that().resideInAPackage("gym.domain..")
-        .should().onlyDependOnClassesThat()
-        .resideInAnyPackage("gym.domain..", "java.lang..", "java.util..", "java.time..", "java.math..");
-```
+**Enforced by a test.** *To be written by Chirag.* <!-- The dependency rule isn't just a convention: ArchitectureTest (ArchUnit) checks it on every build, and CI blocks the merge if it fails (snippet in §8). `domain` may only use the JDK, so no Spring, Jackson or file I/O can leak into the business rules. -->
 
 ## Interceptor
 
@@ -92,19 +88,10 @@ About a quarter page:
 | Application | `InterceptorConfiguration` | `gym` |
 
 <!--
-Before the snippet, 1 sentence: adding a new cross-cutting service (audit, timing, rate limiting) is one class plus one register line here, with no change to the hexagon. That's a second extensibility tactic for QA1.
+After the table, 1 sentence: adding a new cross-cutting service (audit, timing, rate limiting) is one class plus one register line in InterceptorConfiguration (snippet in §8), with no change to the hexagon. That's a second extensibility tactic for QA1.
 -->
 
 *To be written by Chirag.*
-
-```java
-@Bean
-public UseCaseDispatcher useCaseDispatcher() {
-    UseCaseDispatcher dispatcher = new UseCaseDispatcher();
-    dispatcher.register(new LoggingInterceptor(), 0);
-    return dispatcher;
-}
-```
 
 ## Alternatives Considered
 
