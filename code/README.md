@@ -52,7 +52,7 @@ The app also serves the spec at `/v3/api-docs` and a browsable version, built fr
 
 ![Swagger UI showing the API overview and the Billing and Memberships endpoints](../report/screenshots/swagger-ui.png)
 
-**Documenting an endpoint.** Write Javadoc on the controller method (first sentence is the summary, then the details, `@param` and `@return`), on its controller class (the folder description) and on the request and response records (`@param` for each field). Declare each error response with `@ApiResponse` on the method, and add a real example response as `src/main/resources/openapi/examples/<method>-<status>.json`. Then regenerate:
+**Documenting an endpoint.** Write Javadoc on the controller method (first sentence is the summary, then the details, `@param` and `@return`), on its controller class (the folder description) and on the request and response records (`@param` for each field). Mark a field that can be `null` with JSpecify's `@Nullable`, so the spec allows it. Give a new controller an `@Order`, which sets where its folder goes in Postman. Declare each error response with `@ApiResponse` on the method, and add a real example response as `src/main/resources/openapi/examples/<method>-<status>.json`. Then regenerate:
 
 ```
 ./mvnw verify -Dskip.unit -Dit.test=OpenApiSpecIT -Dopenapi.write=true
