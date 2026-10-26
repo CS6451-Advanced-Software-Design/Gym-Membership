@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,6 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>An operation the state doesn't allow, such as freezing a trial, is refused with a 422 problem.
  */
 @Tag(name = "Memberships")
+@Order(1)
 @RestController
 public class MembershipController {
 
