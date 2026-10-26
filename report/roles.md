@@ -9,7 +9,7 @@ The spec (Table 2) lists 10 roles. Everyone must contribute **equally to code an
 | Member | Report-facing role | Technical role | Owns feature |
 | --- | --- | --- | --- |
 | Bharat | Project Manager (§3 plan, diary, transparency tables §7) | Tester (test strategy, JUnit 5 setup, §8 tests) | Booking |
-| Dhruv | Business Analyst / Requirements Engineer (§4) | Systems Analyst (§6 analysis sketches) | Membership |
+| Dhruv | Business Analyst / Requirements Engineer (§1 narrative; §4 requirements: UC1 and UC2 in own words, 2 quality attributes, 2 GUI prototypes) | Systems Analyst (§6 candidate objects and diagram captions); State and Factory snippets in §8 | Membership |
 | Chirag | Architect (§5 architecture, tech pipeline) | Designer (§10 recovered blueprints in the UML workbench) | Billing |
 | DineshReddy | Documentation Manager (assembles the report, presentation checks) | Technical Lead + DevOps (repo, CI/CD, metrics → refactoring §9) | Member |
 
