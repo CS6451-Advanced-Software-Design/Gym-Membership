@@ -1,0 +1,33 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/membership-checks"
+  method: POST
+  headers:
+    Accept: application/json
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      [
+        {
+          "membershipId": "ms-ann",
+          "memberId": "m-ann",
+          "plan": "MONTHLY",
+          "status": "ACTIVE",
+          "startDate": "2026-10-18T00:00:00.000Z",
+          "endDate": null,
+          "trialEndsOn": null,
+          "trialBookingsLeft": null,
+          "frozenUntil": null,
+          "lapsedSince": null,
+          "failedPayments": 0
+        }
+      ]
+order: 1000

@@ -1,0 +1,14 @@
+$kind: http-request
+description: Unfreezes a membership early. <p>Makes a <code>FROZEN</code> membership <code>ACTIVE</code> before its months are up.
+url: "{{baseUrl}}/memberships/:membershipId/unfreeze"
+method: POST
+headers:
+  Accept: application/json
+pathVariables:
+  - key: membershipId
+    value: ms-ann
+    disabled: false
+    description: (Required) the membership to unfreeze
+settings: {}
+examples: ./.resources/Unfreezes a membership early.resources/examples
+order: 2000

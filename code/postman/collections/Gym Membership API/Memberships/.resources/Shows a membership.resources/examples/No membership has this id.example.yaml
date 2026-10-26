@@ -1,0 +1,29 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/memberships/:membershipId"
+  method: GET
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: membershipId
+      value: ms-ann
+      disabled: false
+      description: (Required) the membership to show
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 404
+  statusText: Not Found
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "title": "Not Found",
+        "status": 404,
+        "detail": "Membership ms-42 not found",
+        "instance": "/memberships/ms-42"
+      }
+order: 2000

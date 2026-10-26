@@ -1,0 +1,39 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/memberships/:membershipId/freeze"
+  method: POST
+  headers:
+    Accept: application/json
+  pathVariables:
+    - key: membershipId
+      value: ms-ann
+      disabled: false
+      description: (Required) the membership to freeze
+  body:
+    type: json
+    content: |-
+      {
+        "months": 2
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "membershipId": "ms-ann",
+        "memberId": "m-ann",
+        "plan": "MONTHLY",
+        "status": "FROZEN",
+        "startDate": "2026-10-18T00:00:00.000Z",
+        "endDate": null,
+        "trialEndsOn": null,
+        "trialBookingsLeft": null,
+        "frozenUntil": "2026-12-25T00:00:00.000Z",
+        "lapsedSince": null,
+        "failedPayments": 0
+      }
+order: 1000

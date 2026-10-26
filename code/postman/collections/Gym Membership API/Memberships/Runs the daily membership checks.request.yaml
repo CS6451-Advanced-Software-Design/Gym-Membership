@@ -1,0 +1,9 @@
+$kind: http-request
+description: "Runs the daily membership checks. <p>The gym's clock starts this every morning. For every membership: <ol> <li>A trial that is 7 days old ends: <code>ACTIVE</code> if the first charge was paid, <code>LAPSED</code> if not.</li> <li>A freeze whose months are up ends, and the membership is <code>ACTIVE</code> again.</li> <li>A membership with two unpaid invoices in a row becomes <code>LAPSED</code>.</li> <li>A membership <code>LAPSED</code> for 60 days is cancelled with a final bill.</li> </ol> Running it again on the same day changes nothing."
+url: "{{baseUrl}}/membership-checks"
+method: POST
+headers:
+  Accept: application/json
+settings: {}
+examples: ./.resources/Runs the daily membership checks.resources/examples
+order: 6000

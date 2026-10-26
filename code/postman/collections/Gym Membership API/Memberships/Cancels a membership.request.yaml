@@ -1,0 +1,14 @@
+$kind: http-request
+description: "Cancels a membership. <p>Cancels it and charges the final bill: any penalties still waiting, plus €50 for an Annual plan cancelled within its first 6 months."
+url: "{{baseUrl}}/memberships/:membershipId/cancel"
+method: POST
+headers:
+  Accept: application/json
+pathVariables:
+  - key: membershipId
+    value: ms-ann
+    disabled: false
+    description: (Required) the membership to cancel
+settings: {}
+examples: ./.resources/Cancels a membership.resources/examples
+order: 5000

@@ -1,0 +1,22 @@
+$kind: http-request
+description: "Signs someone up. <p>Creates the member and their membership and charges the first payment to their card: <ol> <li>The membership starts in <code>TRIAL</code> for 7 days, or <code>ACTIVE</code> for an Annual plan.</li> <li>The first charge is the plan price for the days left in this month, or the whole year for an Annual plan, minus the best discount.</li> <li>If the card is declined the membership is still created, and the trial ends <code>LAPSED</code> unless the arrears are paid first.</li> <li>With a referral code, the referrer is credited €20 once the first charge is paid.</li> </ol>"
+url: "{{baseUrl}}/memberships"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "ann@example.com",
+      "name": "Ann Byrne",
+      "plan": "MONTHLY",
+      "studentId": "24123456",
+      "employer": "Stripe",
+      "familyId": "byrne",
+      "referralCode": "ms-3f9c2a1b"
+    }
+settings: {}
+examples: ./.resources/Signs someone up.resources/examples
+order: 1000

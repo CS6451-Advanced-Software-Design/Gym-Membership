@@ -1,0 +1,36 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/memberships/:membershipId/pay-arrears"
+  method: POST
+  headers:
+    Accept: application/json
+  pathVariables:
+    - key: membershipId
+      value: ms-ann
+      disabled: false
+      description: (Required) the membership whose arrears to pay
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "membershipId": "ms-086478f1",
+        "memberId": "m-eve",
+        "plan": "OFF_PEAK",
+        "status": "TRIAL",
+        "startDate": "2026-10-25T00:00:00.000Z",
+        "endDate": null,
+        "trialEndsOn": "2026-11-01T00:00:00.000Z",
+        "trialBookingsLeft": 2,
+        "frozenUntil": null,
+        "lapsedSince": null,
+        "failedPayments": 0
+      }
+order: 1000

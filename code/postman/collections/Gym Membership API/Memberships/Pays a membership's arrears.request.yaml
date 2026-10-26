@@ -1,0 +1,14 @@
+$kind: http-request
+description: Pays a membership's arrears. <p>Charges every unpaid invoice to the member's card in one payment. A <code>LAPSED</code> membership becomes <code>ACTIVE</code> again.
+url: "{{baseUrl}}/memberships/:membershipId/pay-arrears"
+method: POST
+headers:
+  Accept: application/json
+pathVariables:
+  - key: membershipId
+    value: ms-ann
+    disabled: false
+    description: (Required) the membership whose arrears to pay
+settings: {}
+examples: ./.resources/Pays a membership's arrears.resources/examples
+order: 3000
