@@ -2,62 +2,51 @@
 
 Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 format).
 
-## Week 4
+## Week 4 (28 Sep – 4 Oct)
 
 | Member | Contributions | Issues arising | Plan for next week |
 | --- | --- | --- | --- |
-| Chirag | Switched the package structure to package by layer so Part 1 stays monolithic. Proposed the tech stack (Java 21, Spring Boot, Maven, JSON file repositories, JUnit 5, GitHub Actions), agreed by the team on 30 Sep. Logged GenAI prompts #3–4 | Architecture and analysis (team deadline Wed 30 Sep) not started. Self-researched pattern not chosen | Choose the self-researched architectural pattern. Draft §5 architecture and §6 analysis sketches |
+| Chirag | Package by layer, so Part 1 stays a monolith. Proposed the tech stack, agreed 30 Sep. GenAI #3–4 | Architecture and analysis (due 30 Sep) not started; no pattern chosen | Choose the pattern; draft §5 and §6 |
 | Bharat | Took part in team meetings on the scenario and tech stack | | Choose roles. Review the architecture and analysis drafts |
 | DineshReddy | Took part in team meetings on the scenario and tech stack | | Choose roles. Review the architecture and analysis drafts |
 | Dhruv | Suggested project ideas for the scenario | | Choose roles. Review the architecture and analysis drafts |
 
 **Notes:** The role split in `roles.md` is still a proposal. All repository commits so far are Chirag's, so the others need to start committing under their own accounts.
 
-## Week 5
+## Week 5 (5 – 11 Oct)
 
 | Member | Contributions | Issues arising | Plan for next week |
 | --- | --- | --- | --- |
-| Chirag | Chose Hexagonal (Ports and Adapters) as the self-researched pattern with the team's input. Drafted §5 architecture (package diagram, ports and adapters view, hosting stack) and §6 analysis (candidate objects, class diagram, UC2 sequence, Membership state chart, ER). Logged GenAI prompts #5–6 | Iteration 0 finished late (due 4 Oct). Open questions: does a Trial member pay at sign-up or at the end of the trial? Does Lapsed time out to Cancelled? Are family memberships in scope? | Set up the Spring Boot project, shared repository port with a JSON file adapter, and GitHub Actions CI for Iteration 1 |
+| Chirag | Chose Hexagonal with the team. Drafted §5 (package diagram, hosting stack) and §6 (candidate objects, class, sequence, state chart, ER). GenAI #5–15 | Iteration 0 late (due 4 Oct). Open: when a Trial pays, whether Lapsed ends in Cancelled, whether family plans are in scope | Skeleton, JSON repository, CI |
 | Bharat | | | |
 | DineshReddy | | | |
 | Dhruv | | | |
 
 **Notes:**
 
-## Week 6
+## Week 6 (12 – 18 Oct)
 
 | Member | Contributions | Issues arising | Plan for next week |
 | --- | --- | --- | --- |
-| Chirag | Reviewed the two newer sample projects released on Brightspace against this year's spec. Added a report plan (owner, evidence and quality bar per section) and tightened the docs: CI must block merges on test failures, ArchUnit enforces Hexagonal, §7 numbers come from tools, a test for each pattern, QA1 as a six-part scenario. Logged GenAI prompts #16–17 | Still no code, with about 2.5 weeks left. Nobody else has committed yet | Set up the Spring Boot skeleton, the JSON file repository port and adapter, and GitHub Actions CI, then open one issue per member for their feature |
+| Chirag | Reviewed the new sample projects. Report plan and a tighter quality bar (CI blocks merges, ArchUnit, tool-made numbers, a test per pattern). GenAI #16–17 | No code yet, 2.5 weeks left; nobody else committing | Skeleton, JSON repository, CI; an issue per feature |
 | Bharat | | | |
 | DineshReddy | | | |
 | Dhruv | | | |
 
 **Notes:**
 
-## Week 7
+## Week 7 (19 – 25 Oct)
 
 | Member | Contributions | Issues arising | Plan for next week |
 | --- | --- | --- | --- |
-| Chirag | Added a diagram overview to the README. Set up the Spring Boot 4.1 skeleton: the shared `Repository<T, ID>` port with a JSON file adapter, domain exceptions mapped to problem responses, ArchUnit tests that enforce the Hexagonal dependency rule, and GitHub Actions CI that fails on any test failure. Added the Interceptor pattern from the Week 7 lectures around every use case, with logging as the out-of-band service. Logged GenAI prompts #19–24 | About 1.5 weeks left and only the skeleton exists. Bharat and DineshReddy have no commits yet | Build the Billing feature with the Strategy pattern and its tests. Help the others start their features |
+| Chirag | Spring Boot skeleton: `Repository` port and JSON adapter, ArchUnit, CI that fails on any test failure. Interceptor with logging. Billing feature: invoices, best-discount Strategy, referral cap, pro-rating, freeze, early-exit fee, arrears; `BillingJob`. Postman workspace, test split, CI metrics, Railway deploy, `v0.1.0`, report PDF build. GenAI #19–48, #51 | One week left; Booking and Member not built | §5; then §10 in Visual Paradigm and §11 |
 | Bharat | | | |
 | DineshReddy | | | |
 | Dhruv | | | |
 
 **Notes:**
 
-## Week 8
-
-| Member | Contributions | Issues arising | Plan for next week |
-| --- | --- | --- | --- |
-| Chirag | Built the Billing feature across every layer: charges and invoices per membership (BR-P1), the Strategy pattern for discounts where the best one wins (BR-P2), referral credits capped at €60 a year (BR-P3), pro-rated first bills (BR-P4), no billing while frozen (BR-M3), the early-exit fee (BR-M5) and paying arrears (UC14). Added bare `Member` and `Membership` data classes so Billing reads real memberships. Added the Billing fields to the class and ER diagrams. Logged GenAI prompt #30 | One week left and the Membership, Booking and Member features still need their behaviour and patterns | Write §5 architecture. Once every feature is in, recover the §10 blueprints in Visual Paradigm and write the §11 critique |
-| Bharat | | | |
-| DineshReddy | | | |
-| Dhruv | | | |
-
-**Notes:**
-
-## Week 9
+## Week 8 (26 Oct – 1 Nov)
 
 | Member | Contributions | Issues arising | Plan for next week |
 | --- | --- | --- | --- |
@@ -66,37 +55,4 @@ Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 f
 | DineshReddy | | | |
 | Dhruv | | | |
 
-**Notes:**
-
-## Week 10
-
-| Member | Contributions | Issues arising | Plan for next week |
-| --- | --- | --- | --- |
-| Chirag | | | |
-| Bharat | | | |
-| DineshReddy | | | |
-| Dhruv | | | |
-
-**Notes:**
-
-## Week 11
-
-| Member | Contributions | Issues arising | Plan for next week |
-| --- | --- | --- | --- |
-| Chirag | | | |
-| Bharat | | | |
-| DineshReddy | | | |
-| Dhruv | | | |
-
-**Notes:**
-
-## Week 12
-
-| Member | Contributions | Issues arising | Plan for next week |
-| --- | --- | --- | --- |
-| Chirag | | | |
-| Bharat | | | |
-| DineshReddy | | | |
-| Dhruv | | | |
-
-**Notes:**
+**Notes:** Submission due 23:59 Sun 1 Nov.
