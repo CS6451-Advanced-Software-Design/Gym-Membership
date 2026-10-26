@@ -26,14 +26,20 @@ We chose MVC for its three-layered style, which keeps the code simple and organi
 
 ## Hexagonal (Ports and Adapters)
 
-<!--
-The main part, about half a page. Before the table:
-- Cite Cockburn (2005) and give its intent in your words: the application can be driven equally by users, programs, tests or batch scripts, and tested without its real devices and databases.
-- Why you picked it for this scenario: extensibility (QA1: a new discount goes in `domain`, a real database is just a new adapter), testability (tests use in-memory fakes and a fixed Clock), and it sets up Part 2.
-- How it fits with MVC: the MVC controller becomes one driving adapter among several. Postman, the clock (BillingJob at 06:00 on the 1st) and JUnit all call the same inbound ports.
--->
+**What it is.** Hexagonal architecture was proposed by Alistair Cockburn (2005). The idea is that the core logic lives in a single structure in the middle, which doesn't know who calls it or where its data is stored. Ports (interfaces) and adapters (the classes that implement them) plug into that middle structure as plug-and-play components. The hexagon shape itself has no real meaning; it just shows the core logic in the middle with many ports around it.
 
-*To be written by Chirag.*
+There are two kinds of ports. Inbound ports (`port.in`) are the use cases the outside world can call, such as running the monthly billing. Outbound ports (`port.out`) are what the core needs from the outside world, such as storing data or taking a payment, without knowing how it is done.
+
+**Why we chose it.**
+
+- **Less coupling:** MVC's three layers alone were too abstract for the actual implementation, and could have led to a tightly coupled solution.
+- **Room to evolve:** it gave us a clear direction for how the system can evolve. The data is currently stored in JSON files, but it could move to a proper PostgreSQL database in future without changing any business logic.
+- **Testability:** since the core logic in the middle, such as `BillingService`, is so decoupled, we could test it easily without involving outside services like the JSON files or payments.
+
+**How it fits with MVC.** We found the two architectures were not competing, and fit very well together:
+
+- MVC describes how requests come in and go out: the controller receives them, and the view shows the model.
+- Hexagonal describes how the whole application can be built for extensibility and very little coupling.
 
 | Role | Package | Example |
 | --- | --- | --- |
@@ -43,13 +49,7 @@ The main part, about half a page. Before the table:
 | Outbound port | `port.out` | `Repository<T, ID>`, `PaymentGateway`, `NotificationSender` |
 | Driven adapter | `adapter.*` | `JsonFileInvoiceRepository`, `FakePaymentGateway`, `EventNotificationSender` |
 
-<!--
-Before the snippet, 1–2 sentences:
-- The dependency rule isn't just a convention: ArchitectureTest (ArchUnit) checks it on every build, and CI blocks the merge if it fails.
-- `domain` may only use the JDK, so no Spring, Jackson or file I/O can leak into the business rules.
--->
-
-*To be written by Chirag.*
+**Enforced by a test.** *To be written by Chirag.* <!-- The dependency rule isn't just a convention: ArchitectureTest (ArchUnit) checks it on every build, and CI blocks the merge if it fails. `domain` may only use the JDK, so no Spring, Jackson or file I/O can leak into the business rules. -->
 
 ```java
 @ArchTest
