@@ -17,6 +17,17 @@ servers:
 - url: http://localhost:8080
   description: The app started with ./mvnw spring-boot:run
 tags:
+- name: Memberships
+  description: "Signs members up and takes their memberships through their lifecycle.\
+    \ <p>A membership is always in one of five states: <ul> <li><b>TRIAL:</b> the\
+    \ first 7 days, with 2 class bookings. Annual plans are paid upfront and skip\
+    \ it.</li> <li><b>ACTIVE:</b> book classes and check in as the plan allows.</li>\
+    \ <li><b>FROZEN:</b> 1 to 3 months, once in any 12 months. Not billed, and the\
+    \ end date moves on by the same time.</li> <li><b>LAPSED:</b> the first charge\
+    \ or two payments in a row were declined. No booking or check-in until the arrears\
+    \ are paid. Cancelled after 60 days.</li> <li><b>CANCELLED:</b> with a final bill.\
+    \ Cancelling an Annual plan within 6 months costs €50.</li> </ul> <p>An operation\
+    \ the state doesn't allow, such as freezing a trial, is refused with a 422 problem."
 - name: Billing
   description: "Charges members for their memberships and shows them what they paid.\
     \ <p>Each month a membership's invoice is the <b>plan fee</b>, minus the <b>best\
@@ -31,17 +42,6 @@ tags:
     \ fit within the bill waits for the next one.</li> </ul> <p>The member's card\
     \ is charged as soon as the invoice is issued. A declined card leaves the invoice\
     \ <code>UNPAID</code> until the member pays their arrears."
-- name: Memberships
-  description: "Signs members up and takes their memberships through their lifecycle.\
-    \ <p>A membership is always in one of five states: <ul> <li><b>TRIAL:</b> the\
-    \ first 7 days, with 2 class bookings. Annual plans are paid upfront and skip\
-    \ it.</li> <li><b>ACTIVE:</b> book classes and check in as the plan allows.</li>\
-    \ <li><b>FROZEN:</b> 1 to 3 months, once in any 12 months. Not billed, and the\
-    \ end date moves on by the same time.</li> <li><b>LAPSED:</b> the first charge\
-    \ or two payments in a row were declined. No booking or check-in until the arrears\
-    \ are paid. Cancelled after 60 days.</li> <li><b>CANCELLED:</b> with a final bill.\
-    \ Cancelling an Annual plan within 6 months costs €50.</li> </ul> <p>An operation\
-    \ the state doesn't allow, such as freezing a trial, is refused with a 422 problem."
 paths:
   /memberships:
     post:
@@ -133,7 +133,7 @@ paths:
         required: true
         schema:
           type: string
-        example: ms-ann
+        example: ms-3f9c2a71
       responses:
         "404":
           description: No membership has this id
@@ -155,8 +155,8 @@ paths:
               example:
                 title: Unprocessable Content
                 status: 422
-                detail: "Membership ms-ann is Active, so it can't be unfrozen"
-                instance: /memberships/ms-ann/unfreeze
+                detail: "Membership ms-3f9c2a71 is Active, so it can't be unfrozen"
+                instance: /memberships/ms-3f9c2a71/unfreeze
         "200":
           description: The active membership
           content:
@@ -164,8 +164,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/MembershipResponse"
               example:
-                membershipId: ms-ann
-                memberId: m-ann
+                membershipId: ms-3f9c2a71
+                memberId: m-8d14e6b2
                 plan: MONTHLY
                 status: ACTIVE
                 startDate: 2026-10-18
@@ -191,7 +191,7 @@ paths:
         required: true
         schema:
           type: string
-        example: ms-ann
+        example: ms-3f9c2a71
       responses:
         "404":
           description: No membership has this id
@@ -225,7 +225,7 @@ paths:
                 $ref: "#/components/schemas/MembershipResponse"
               example:
                 membershipId: ms-086478f1
-                memberId: m-eve
+                memberId: m-5a2f9c04
                 plan: OFF_PEAK
                 status: TRIAL
                 startDate: 2026-10-25
@@ -252,7 +252,7 @@ paths:
         required: true
         schema:
           type: string
-        example: ms-ann
+        example: ms-3f9c2a71
       requestBody:
         description: how many months
         content:
@@ -271,7 +271,7 @@ paths:
                 title: Bad Request
                 status: 400
                 detail: Invalid request content.
-                instance: /memberships/ms-ann/freeze
+                instance: /memberships/ms-3f9c2a71/freeze
         "404":
           description: No membership has this id
           content:
@@ -293,8 +293,8 @@ paths:
               example:
                 title: Unprocessable Content
                 status: 422
-                detail: "Membership ms-ann is Frozen, so it can't be frozen"
-                instance: /memberships/ms-ann/freeze
+                detail: "Membership ms-3f9c2a71 is Frozen, so it can't be frozen"
+                instance: /memberships/ms-3f9c2a71/freeze
         "200":
           description: The frozen membership
           content:
@@ -302,8 +302,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/MembershipResponse"
               example:
-                membershipId: ms-ann
-                memberId: m-ann
+                membershipId: ms-3f9c2a71
+                memberId: m-8d14e6b2
                 plan: MONTHLY
                 status: FROZEN
                 startDate: 2026-10-18
@@ -329,7 +329,7 @@ paths:
         required: true
         schema:
           type: string
-        example: ms-ann
+        example: ms-3f9c2a71
       responses:
         "404":
           description: No membership has this id
@@ -407,8 +407,8 @@ paths:
                 items:
                   $ref: "#/components/schemas/MembershipResponse"
               example:
-              - membershipId: ms-ann
-                memberId: m-ann
+              - membershipId: ms-3f9c2a71
+                memberId: m-8d14e6b2
                 plan: MONTHLY
                 status: ACTIVE
                 startDate: 2026-10-18
@@ -464,7 +464,7 @@ paths:
                   $ref: "#/components/schemas/InvoiceResponse"
               example:
               - id: d8776f63-41dc-4555-8a76-5c408cb8b6da
-                membershipId: ms-ann
+                membershipId: ms-3f9c2a71
                 period: 2026-11
                 charges:
                 - type: PLAN_FEE
@@ -474,7 +474,7 @@ paths:
                 total: 38.25
                 status: PAID
               - id: 88cfd43b-deaf-4137-a4f4-6d1ad3879562
-                membershipId: ms-cara
+                membershipId: ms-c47a0e95
                 period: 2026-11
                 charges:
                 - type: PLAN_FEE
@@ -484,7 +484,7 @@ paths:
                 total: 27.0
                 status: PAID
               - id: de8a97c8-bd32-4fee-aa08-fbaff25fda68
-                membershipId: ms-eve
+                membershipId: ms-e61b7d38
                 period: 2026-11
                 charges:
                 - type: PLAN_FEE
@@ -547,7 +547,7 @@ paths:
         required: true
         schema:
           type: string
-        example: ms-ann
+        example: ms-3f9c2a71
       responses:
         "404":
           description: No membership has this id
@@ -567,8 +567,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/MembershipResponse"
               example:
-                membershipId: ms-ann
-                memberId: m-ann
+                membershipId: ms-3f9c2a71
+                memberId: m-8d14e6b2
                 plan: MONTHLY
                 status: ACTIVE
                 startDate: 2026-10-18
@@ -594,7 +594,7 @@ paths:
         required: true
         schema:
           type: string
-        example: ms-ann
+        example: ms-3f9c2a71
       responses:
         "404":
           description: No membership has this id
@@ -617,7 +617,7 @@ paths:
                   $ref: "#/components/schemas/InvoiceResponse"
               example:
               - id: d8776f63-41dc-4555-8a76-5c408cb8b6da
-                membershipId: ms-ann
+                membershipId: ms-3f9c2a71
                 period: 2026-11
                 charges:
                 - type: PLAN_FEE
@@ -679,7 +679,7 @@ components:
       properties:
         type:
           type: string
-          format: uri
+          format: uri-reference
         title:
           type: string
         status:
@@ -689,7 +689,7 @@ components:
           type: string
         instance:
           type: string
-          format: uri
+          format: uri-reference
         properties:
           type: object
           additionalProperties: {}
@@ -780,23 +780,33 @@ components:
           format: date
           description: when it started
         endDate:
-          type: string
+          type:
+          - string
+          - "null"
           format: date
-          description: "when it ends, or empty if it rolls on month by month"
+          description: "when it ends, or null if it rolls on month by month"
         trialEndsOn:
-          type: string
+          type:
+          - string
+          - "null"
           format: date
           description: "when the trial ends, only while in <code>TRIAL</code>"
         trialBookingsLeft:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int32
           description: "class bookings left in the trial, only while in <code>TRIAL</code>"
         frozenUntil:
-          type: string
+          type:
+          - string
+          - "null"
           format: date
           description: "when the freeze ends, only while <code>FROZEN</code>"
         lapsedSince:
-          type: string
+          type:
+          - string
+          - "null"
           format: date
           description: "when it lapsed, only while <code>LAPSED</code>"
         failedPayments:

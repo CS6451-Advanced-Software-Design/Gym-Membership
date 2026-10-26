@@ -6,7 +6,7 @@ headers:
   Accept: application/json
 pathVariables:
   - key: membershipId
-    value: ms-ann
+    value: ms-3f9c2a71
     disabled: false
     description: (Required) the membership to unfreeze
 settings: {}

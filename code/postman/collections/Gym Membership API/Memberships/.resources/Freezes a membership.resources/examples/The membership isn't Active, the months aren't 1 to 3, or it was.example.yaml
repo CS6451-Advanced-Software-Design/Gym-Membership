@@ -7,7 +7,7 @@ request:
     Accept: application/problem+json
   pathVariables:
     - key: membershipId
-      value: ms-ann
+      value: ms-3f9c2a71
       disabled: false
       description: (Required) the membership to freeze
   body:
@@ -27,7 +27,7 @@ response:
       {
         "title": "Unprocessable Content",
         "status": 422,
-        "detail": "Membership ms-ann is Frozen, so it can't be frozen",
-        "instance": "/memberships/ms-ann/freeze"
+        "detail": "Membership ms-3f9c2a71 is Frozen, so it can't be frozen",
+        "instance": "/memberships/ms-3f9c2a71/freeze"
       }
 order: 4000

@@ -6,7 +6,7 @@ request:
     Accept: application/problem+json
   pathVariables:
     - key: membershipId
-      value: ms-ann
+      value: ms-3f9c2a71
       disabled: false
       description: (Required) the membership to freeze
   body:
@@ -27,6 +27,6 @@ response:
         "title": "Bad Request",
         "status": 400,
         "detail": "Invalid request content.",
-        "instance": "/memberships/ms-ann/freeze"
+        "instance": "/memberships/ms-3f9c2a71/freeze"
       }
 order: 2000

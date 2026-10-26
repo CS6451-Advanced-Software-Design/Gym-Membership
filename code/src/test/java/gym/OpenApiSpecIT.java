@@ -1,7 +1,9 @@
 package gym;
 
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,6 +39,33 @@ class OpenApiSpecIT {
         }
         assertEquals(Files.readString(SPEC), generated,
                 "postman/specs/openapi.yaml is out of date. Run ./mvnw verify -Dskip.unit -Dit.test=OpenApiSpecIT -Dopenapi.write=true and commit it");
+    }
+
+    @Test
+    void foldersFollowTheControllersOrder() throws Exception {
+        mvc.perform(get("/v3/api-docs"))
+                .andExpect(jsonPath("$.tags[0].name").value("Memberships"))
+                .andExpect(jsonPath("$.tags[1].name").value("Billing"));
+    }
+
+    /**
+     * Postman checks each example response against its schema, so a field that is {@code null} in a real
+     * response must allow it.
+     */
+    @Test
+    void nullableFieldsAllowNull() throws Exception {
+        mvc.perform(get("/v3/api-docs"))
+                .andExpect(jsonPath("$.components.schemas.MembershipResponse.properties.endDate.type").value(hasItem("null")))
+                .andExpect(jsonPath("$.components.schemas.MembershipResponse.properties.membershipId.type").value("string"));
+    }
+
+    /**
+     * A problem's instance is the path that failed, such as {@code /memberships}, which isn't an absolute URI.
+     */
+    @Test
+    void problemInstanceIsAUriReference() throws Exception {
+        mvc.perform(get("/v3/api-docs"))
+                .andExpect(jsonPath("$.components.schemas.ProblemDetail.properties.instance.format").value("uri-reference"));
     }
 
     @Test

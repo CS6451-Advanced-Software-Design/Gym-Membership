@@ -5,6 +5,7 @@ import gym.domain.Membership;
 import gym.domain.MembershipStatus;
 import gym.domain.PlanType;
 import java.time.LocalDate;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A membership and where it is in its lifecycle.
@@ -14,7 +15,7 @@ import java.time.LocalDate;
  * @param plan the plan it is on
  * @param status <code>TRIAL</code>, <code>ACTIVE</code>, <code>FROZEN</code>, <code>LAPSED</code> or <code>CANCELLED</code>
  * @param startDate when it started
- * @param endDate when it ends, or empty if it rolls on month by month
+ * @param endDate when it ends, or null if it rolls on month by month
  * @param trialEndsOn when the trial ends, only while in <code>TRIAL</code>
  * @param trialBookingsLeft class bookings left in the trial, only while in <code>TRIAL</code>
  * @param frozenUntil when the freeze ends, only while <code>FROZEN</code>
@@ -27,11 +28,11 @@ public record MembershipResponse(
         PlanType plan,
         MembershipStatus status,
         LocalDate startDate,
-        LocalDate endDate,
-        LocalDate trialEndsOn,
-        Integer trialBookingsLeft,
-        LocalDate frozenUntil,
-        LocalDate lapsedSince,
+        @Nullable LocalDate endDate,
+        @Nullable LocalDate trialEndsOn,
+        @Nullable Integer trialBookingsLeft,
+        @Nullable LocalDate frozenUntil,
+        @Nullable LocalDate lapsedSince,
         int failedPayments) {
 
     public static MembershipResponse from(Membership membership) {

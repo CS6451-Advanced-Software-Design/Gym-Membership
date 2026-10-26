@@ -58,5 +58,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 51 | 25 Oct | Chirag | "oh this reminds me, professor encouraged including teachings in report …" then "perhaps note down points for me to include when writing reflection etc." | lessons.md: lessons with their evidence (no report prose) |
 | 52 | 26 Oct | Chirag | "can we similarly compact diary notes?" | Shorter diary entries and smaller diary tables |
 | 53 | 26 Oct | Chirag | "can we sync with main, dhruv added more code it seems, we might need to update postman etc. to reflect that" | Memberships in the Postman collection, Railway auto-deploy fixed, new Swagger screenshot |
+| 54 | 26 Oct | Chirag | "memberships folder should come before billing", a screenshot of Postman flagging `null` as "expected string" and `/memberships` as not a "uri" with "fix", then "lets use more real looking ids in examples" | Nullable fields and URI references in the spec, folder order, generated-style example ids |
 
 Table: GenAI prompts, all to Claude (Claude Code)

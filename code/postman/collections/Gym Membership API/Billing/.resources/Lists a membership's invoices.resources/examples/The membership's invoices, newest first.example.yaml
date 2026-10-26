@@ -6,7 +6,7 @@ request:
     Accept: application/json
   pathVariables:
     - key: membershipId
-      value: ms-ann
+      value: ms-3f9c2a71
       disabled: false
       description: (Required) the membership whose invoices to list
   body:
@@ -23,7 +23,7 @@ response:
       [
         {
           "id": "d8776f63-41dc-4555-8a76-5c408cb8b6da",
-          "membershipId": "ms-ann",
+          "membershipId": "ms-3f9c2a71",
           "period": "2026-11",
           "charges": [
             {
