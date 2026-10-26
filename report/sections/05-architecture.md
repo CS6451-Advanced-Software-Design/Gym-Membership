@@ -54,15 +54,11 @@ There are two kinds of ports. Inbound ports (`port.in`) are the use cases the ou
 
 ## Interceptor
 
-<!--
-About a quarter page:
-- Cite POSA2 (Schmidt et al. 2000) and lectures I and J. It came from the lectures, so it sits on top of Hexagonal and doesn't replace it as the self-researched pattern.
-- Intent in your words: add services to a framework without changing the framework or the code that uses it.
-- The lecture asked to prove it works by implementing logging as an out-of-band service: LoggingInterceptor logs every use-case call, its outcome and duration, and no controller or service has a log statement. On Railway the logs are JSON, so you can filter them by use case or outcome.
-- One design choice worth naming: the context object is read-only, so a faulty interceptor can't change arguments or results (safety over openness, as the lecture warns).
--->
+The Interceptor pattern was taught in lectures after we had already started work on the project, so at first we didn't have a clear idea of how to implement it. The lecture suggested logging as an out-of-band service, and after some back-and-forth discussion with GenAI we agreed it was a good place for it.
 
-*To be written by Chirag.*
+The pattern wraps every use case in our codebase, so logic can run at fixed points in a consistent and very extensible way. Logging fit this perfectly, and it was what we lacked at that moment. It is "out-of-band": the main business logic doesn't need it, but without the pattern it would have been spread out and unorganised across every service.
+
+It proved very useful after we deployed to Railway and saw that Railway supports JSON logs, which our first deployment didn't produce. By changing only the logging interceptor and one setting, we changed the logging across the whole codebase and improved our log monitoring on Railway.
 
 | POSA2 participant | Class | Package |
 | --- | --- | --- |
