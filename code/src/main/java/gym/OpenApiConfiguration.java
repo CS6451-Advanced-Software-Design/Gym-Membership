@@ -9,17 +9,22 @@ import io.swagger.v3.oas.models.servers.Server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.lang.reflect.RecordComponent;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
+import org.jspecify.annotations.Nullable;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.providers.JavadocProvider;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.OrderUtils;
 import org.springframework.core.io.ClassPathResource;
 
 /**
@@ -59,13 +64,15 @@ public class OpenApiConfiguration {
 
     /**
      * Describes each {@link Tag} with the class Javadoc of the controller that carries it,
-     * which springdoc doesn't do by itself.
+     * which springdoc doesn't do by itself. The tags, and so the folders in Postman, follow the
+     * controllers' {@code @Order}, lowest first, so they read in the order a member meets them.
      */
     @Bean
     public OpenApiCustomizer tagDescriptions(ApplicationContext context, JavadocProvider javadoc) {
         return openApi -> context.getBeansWithAnnotation(Tag.class).values().stream()
                 .map(AopUtils::getTargetClass)
-                .sorted(Comparator.comparing(Class::getSimpleName))
+                .sorted(Comparator.<Class<?>>comparingInt(controller -> OrderUtils.getOrder(controller, Ordered.LOWEST_PRECEDENCE))
+                        .thenComparing(Class::getSimpleName))
                 .forEach(controller -> openApi.addTagsItem(new io.swagger.v3.oas.models.tags.Tag()
                         .name(controller.getAnnotation(Tag.class).name())
                         .description(javadoc.getClassJavadoc(controller))));
@@ -85,6 +92,51 @@ public class OpenApiConfiguration {
                         response.getContent().values().forEach(mediaType -> mediaType.setExample(value));
                     }
                 })));
+    }
+
+    /**
+     * Lets a DTO field marked {@link Nullable} be {@code null} in the spec as well, which springdoc
+     * doesn't do by itself. Otherwise Postman flags every {@code null} in a real response as the wrong type.
+     */
+    @Bean
+    public OpenApiCustomizer nullableFields() {
+        return openApi -> {
+            for (Map.Entry<String, Schema> entry : openApi.getComponents().getSchemas().entrySet()) {
+                Class<?> dto = dto(entry.getKey());
+                if (dto == null || !dto.isRecord()) {
+                    continue;
+                }
+                Map<String, Schema> properties = entry.getValue().getProperties();
+                for (RecordComponent field : dto.getRecordComponents()) {
+                    if (field.getAnnotatedType().isAnnotationPresent(Nullable.class)) {
+                        properties.get(field.getName()).addType("null");
+                    }
+                }
+            }
+        };
+    }
+
+    private static @Nullable Class<?> dto(String name) {
+        try {
+            return Class.forName("gym.dto." + name);
+        } catch (ClassNotFoundException exception) {
+            return null;
+        }
+    }
+
+    /**
+     * A problem's {@code type} and {@code instance} are URI references (RFC 9457), such as
+     * {@code /memberships}, not the absolute URIs Spring's {@code ProblemDetail} schema asks for.
+     */
+    @Bean
+    public OpenApiCustomizer problemReferences() {
+        return openApi -> {
+            Schema<?> problem = openApi.getComponents().getSchemas().get("ProblemDetail");
+            if (problem != null) {
+                problem.getProperties().get("type").setFormat("uri-reference");
+                problem.getProperties().get("instance").setFormat("uri-reference");
+            }
+        };
     }
 
     private static Object read(ClassPathResource example) {
