@@ -50,7 +50,7 @@ There are two kinds of ports. Inbound ports (`port.in`) are the use cases the ou
 - MVC describes how requests come in and go out: the controller receives them, and the view shows the model.
 - Hexagonal describes how the whole application can be built for extensibility and very little coupling.
 
-**Enforced by a test.** *To be written by Chirag.* <!-- The dependency rule isn't just a convention: ArchitectureTest (ArchUnit) checks it on every build, and CI blocks the merge if it fails (snippet in §8). `domain` may only use the JDK, so no Spring, Jackson or file I/O can leak into the business rules. -->
+**Enforced by a test.** A test called `ArchitectureTest`, written with ArchUnit (a Java library for checking architecture rules), enforces this architecture not just on paper but with actual tests (snippet in §8).
 
 ## Interceptor
 
