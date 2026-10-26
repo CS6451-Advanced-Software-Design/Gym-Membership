@@ -33,12 +33,6 @@ gym/                 classes
 
 MVC was our choice for its three-layered style, which keeps the code simple and organised. In our case the view is the JSON our controllers return (the records in `dto`), which we look at through Postman and Swagger UI rather than through screens of our own.
 
-| Role | Package | Example |
-| --- | --- | --- |
-| Model | `domain`, `service` | `Membership`, `BillingService` |
-| View | `dto`, rendered as JSON | `InvoiceResponse` |
-| Controller | `controller` | `BillingController`, `ErrorHandler` |
-
 ## Hexagonal (Ports and Adapters)
 
 **What it is.** Hexagonal architecture was proposed by Alistair Cockburn (2005). The idea is that the core logic lives in a single structure in the middle, which doesn't know who calls it or where its data is stored. Ports (interfaces) and adapters (the classes that implement them) plug into that middle structure as plug-and-play components. The hexagon shape itself has no real meaning; it just shows the core logic in the middle with many ports around it.
@@ -55,14 +49,6 @@ There are two kinds of ports. Inbound ports (`port.in`) are the use cases the ou
 
 - MVC describes how requests come in and go out: the controller receives them, and the view shows the model.
 - Hexagonal describes how the whole application can be built for extensibility and very little coupling.
-
-| Role | Package | Example |
-| --- | --- | --- |
-| Application (the hexagon) | `domain`, `service` | `BillingService`, `Membership` |
-| Inbound port | `port.in` | `RunMonthlyBillingUseCase`, `SignUpUseCase` |
-| Driving adapter | `controller` | `BillingController` (Postman), `BillingJob` and `MembershipChecksJob` (the clock) |
-| Outbound port | `port.out` | `Repository<T, ID>`, `PaymentGateway`, `NotificationSender` |
-| Driven adapter | `adapter.*` | `JsonFileInvoiceRepository`, `FakePaymentGateway`, `EventNotificationSender` |
 
 **Enforced by a test.** *To be written by Chirag.* <!-- The dependency rule isn't just a convention: ArchitectureTest (ArchUnit) checks it on every build, and CI blocks the merge if it fails (snippet in §8). `domain` may only use the JDK, so no Spring, Jackson or file I/O can leak into the business rules. -->
 
