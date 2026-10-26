@@ -131,7 +131,7 @@ public class MembershipController {
     @ResponseStatus(HttpStatus.OK)
     @ApiResponse(responseCode = "404", description = "No membership has this id",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public MembershipResponse membership(@Parameter(example = "ms-ann") @PathVariable String membershipId) {
+    public MembershipResponse membership(@Parameter(example = "ms-3f9c2a71") @PathVariable String membershipId) {
         return MembershipResponse.from(view.membership(membershipId));
     }
 
@@ -153,7 +153,7 @@ public class MembershipController {
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
     @ApiResponse(responseCode = "422", description = "The membership isn't Active, the months aren't 1 to 3, or it was frozen in the last 12 months",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public MembershipResponse freeze(@Parameter(example = "ms-ann") @PathVariable String membershipId, @Valid @RequestBody FreezeRequest request) {
+    public MembershipResponse freeze(@Parameter(example = "ms-3f9c2a71") @PathVariable String membershipId, @Valid @RequestBody FreezeRequest request) {
         return MembershipResponse.from(freezes.freeze(membershipId, request.months()));
     }
 
@@ -171,7 +171,7 @@ public class MembershipController {
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
     @ApiResponse(responseCode = "422", description = "The membership isn't Frozen",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public MembershipResponse unfreeze(@Parameter(example = "ms-ann") @PathVariable String membershipId) {
+    public MembershipResponse unfreeze(@Parameter(example = "ms-3f9c2a71") @PathVariable String membershipId) {
         return MembershipResponse.from(freezes.unfreeze(membershipId));
     }
 
@@ -190,7 +190,7 @@ public class MembershipController {
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
     @ApiResponse(responseCode = "422", description = "The membership is already cancelled",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public CancellationResponse cancel(@Parameter(example = "ms-ann") @PathVariable String membershipId) {
+    public CancellationResponse cancel(@Parameter(example = "ms-3f9c2a71") @PathVariable String membershipId) {
         Cancellation result = cancellations.cancel(membershipId);
         return CancellationResponse.from(result.membership(), result.finalInvoice());
     }
@@ -210,7 +210,7 @@ public class MembershipController {
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
     @ApiResponse(responseCode = "422", description = "The membership is Frozen or Cancelled, owes nothing, or the card was declined",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public MembershipResponse payArrears(@Parameter(example = "ms-ann") @PathVariable String membershipId) {
+    public MembershipResponse payArrears(@Parameter(example = "ms-3f9c2a71") @PathVariable String membershipId) {
         return MembershipResponse.from(restore.payArrears(membershipId));
     }
 

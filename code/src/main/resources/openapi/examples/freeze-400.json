@@ -2,5 +2,5 @@
   "title": "Bad Request",
   "status": 400,
   "detail": "Invalid request content.",
-  "instance": "/memberships/ms-ann/freeze"
+  "instance": "/memberships/ms-3f9c2a71/freeze"
 }

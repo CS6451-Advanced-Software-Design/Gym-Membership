@@ -91,7 +91,7 @@ public class BillingController {
     @ResponseStatus(HttpStatus.OK)
     @ApiResponse(responseCode = "404", description = "No membership has this id",
             content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
-    public List<InvoiceResponse> invoices(@Parameter(example = "ms-ann") @PathVariable String membershipId) {
+    public List<InvoiceResponse> invoices(@Parameter(example = "ms-3f9c2a71") @PathVariable String membershipId) {
         return invoices.invoicesFor(membershipId).stream().map(InvoiceResponse::from).toList();
     }
 }

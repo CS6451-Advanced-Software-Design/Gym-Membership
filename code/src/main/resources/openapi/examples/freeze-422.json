@@ -1,6 +1,6 @@
 {
   "title": "Unprocessable Content",
   "status": 422,
-  "detail": "Membership ms-ann is Frozen, so it can't be frozen",
-  "instance": "/memberships/ms-ann/freeze"
+  "detail": "Membership ms-3f9c2a71 is Frozen, so it can't be frozen",
+  "instance": "/memberships/ms-3f9c2a71/freeze"
 }
