@@ -69,9 +69,7 @@ About a quarter page:
 | Interceptor | `UseCaseInterceptor` (`onBefore`, `onAfter`, `onFailure`) | `interceptor` |
 | Context object | `UseCaseContext` | `interceptor` |
 | Dispatcher | `UseCaseDispatcher` | `interceptor` |
-| Callback mechanism | `UseCaseInterception` (a dynamic proxy around every `port.in` bean) | `interceptor` |
 | Concrete interceptor | `LoggingInterceptor` (logging, the out-of-band service) | `adapter.logging` |
-| Application | `InterceptorConfiguration` | `gym` |
 
 <!--
 After the table, 1 sentence: adding a new cross-cutting service (audit, timing, rate limiting) is one class plus one register line in InterceptorConfiguration (snippet in §8), with no change to the hexagon. That's a second extensibility tactic for QA1.
@@ -82,17 +80,10 @@ After the table, 1 sentence: adding a new cross-cutting service (audit, timing, 
 ## Alternatives Considered
 
 <!--
-1–2 sentences before the table: when you chose (7 Oct 2026, with the team) and what mattered most (extensibility, and showing independent research).
+1–2 sentences, no table: when you chose (7 Oct 2026, with the team), what mattered most, and why not the others: Microservices (Part 1 must be a monolith), Microkernel (overlaps with Strategy at our scale), Pipes and Filters (fits only the billing run), Service Layer + Data Mapper (a common default, so less independent research).
 -->
 
 *To be written by Chirag.*
-
-| Alternative | Why not |
-| --- | --- |
-| Microservices | Part 1 must be a monolith |
-| Microkernel (Plug-in) | Overlaps with Strategy at our scale |
-| Pipes and Filters | Fits only the billing run |
-| Service Layer + Data Mapper | A common default, so less independent research |
 
 ## Liabilities
 
@@ -118,6 +109,5 @@ After the table, 1 sentence: adding a new cross-cutting service (audit, timing, 
 | --- | --- |
 | Web server | Tomcat, embedded in the Spring Boot jar |
 | Application server | The same embedded Tomcat, running `domain` and `service` |
-| Enterprise Information System | JSON files, one per entity, reached only through `adapter.persistence` |
-| Message bus | Spring `ApplicationEventPublisher` (in-process), used by `adapter.notification` |
-| Hosting | Railway, deployed from `main`, data on a volume at `/data` |
+| Enterprise Information System | JSON files, one per entity, behind `adapter.persistence` |
+| Message bus | Spring `ApplicationEventPublisher`, in-process |
