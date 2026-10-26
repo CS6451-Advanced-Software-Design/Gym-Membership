@@ -50,7 +50,7 @@ Postman is our front end. Everything is in the public [Gym Membership workspace]
 
 The app also serves the spec at `/v3/api-docs` and a browsable version, built from the same Javadoc, at its root address. Live, that is https://gym-membership-production-a725.up.railway.app/v3/api-docs and https://gym-membership-production-a725.up.railway.app:
 
-![Swagger UI showing the API overview, the Billing description and both endpoints](../report/screenshots/swagger-ui.png)
+![Swagger UI showing the API overview and the Billing and Memberships endpoints](../report/screenshots/swagger-ui.png)
 
 **Documenting an endpoint.** Write Javadoc on the controller method (first sentence is the summary, then the details, `@param` and `@return`), on its controller class (the folder description) and on the request and response records (`@param` for each field). Declare each error response with `@ApiResponse` on the method, and add a real example response as `src/main/resources/openapi/examples/<method>-<status>.json`. Then regenerate:
 
