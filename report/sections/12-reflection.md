@@ -2,7 +2,7 @@
 
 <!--
 Everyone writes their own part, in their own voice: what they learned, what worked and what didn't, and the value of
-the project. Be specific, and write about yourself, not the team.
+the project. Be specific, and write about yourself, not the team. Notes with evidence to draw on: report/lessons.md.
 -->
 
 ## Chirag Aggarwal

@@ -18,7 +18,7 @@ What each report section needs, what evidence backs it, and who owns it. Section
 | 9 | Added value | DineshReddy | **CI that fails the build when a test fails** (no `continue-on-error`). **Metrics leading to refactoring**: run PMD and CK, pick the worst classes, refactor, and show the before and after numbers in a table. **Once the features are implemented, run SonarQube Cloud on the whole codebase**: a table of its numbers (complexity, duplication, code smells, maintainability rating, coverage) with a dashboard screenshot, taken before the refactoring and again after it. UI, ORM, security and login don't count |
 | 10 | Recovered blueprints | Chirag | Reverse-engineered from the code in Visual Paradigm (not hand-written PlantUML), with the workbench choice justified. Design-time package diagram compared with the §5 one, differences explained. Component and deployment diagrams. A note under each saying what it shows |
 | 11 | Critique | Chirag | Max 1 page. Honest: where the code and diagrams differ, what the metrics say (quote the final SonarQube Cloud numbers), how we would evaluate the architecture (e.g. ATAM) |
-| 12 | Reflection | Everyone | One section per member, in their own voice. Specific: what they learned, what worked, what didn't |
+| 12 | Reflection | Everyone | One section per member, in their own voice. Specific: what they learned, what worked, what didn't. Draw on [lessons.md](lessons.md), and add your own lessons there as they happen |
 | 13 | GenAI prompts | Everyone | Complete log from [genai-prompts.md](genai-prompts.md), kept as we go |
 | 14 | References | DineshReddy | Cockburn (Hexagonal), Bass et al. 2019, GoF, Fowler (Refactoring), tool docs |
 
