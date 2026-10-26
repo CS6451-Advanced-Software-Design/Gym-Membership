@@ -6,7 +6,7 @@ request:
     Accept: application/json
   pathVariables:
     - key: membershipId
-      value: ms-ann
+      value: ms-3f9c2a71
       disabled: false
       description: (Required) the membership to freeze
   body:
@@ -24,8 +24,8 @@ response:
     type: json
     content: |-
       {
-        "membershipId": "ms-ann",
-        "memberId": "m-ann",
+        "membershipId": "ms-3f9c2a71",
+        "memberId": "m-8d14e6b2",
         "plan": "MONTHLY",
         "status": "FROZEN",
         "startDate": "2026-10-18T00:00:00.000Z",

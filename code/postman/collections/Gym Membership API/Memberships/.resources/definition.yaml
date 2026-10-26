@@ -1,3 +1,3 @@
 $kind: collection
 description: "Signs members up and takes their memberships through their lifecycle. <p>A membership is always in one of five states: <ul> <li><b>TRIAL:</b> the first 7 days, with 2 class bookings. Annual plans are paid upfront and skip it.</li> <li><b>ACTIVE:</b> book classes and check in as the plan allows.</li> <li><b>FROZEN:</b> 1 to 3 months, once in any 12 months. Not billed, and the end date moves on by the same time.</li> <li><b>LAPSED:</b> the first charge or two payments in a row were declined. No booking or check-in until the arrears are paid. Cancelled after 60 days.</li> <li><b>CANCELLED:</b> with a final bill. Cancelling an Annual plan within 6 months costs €50.</li> </ul> <p>An operation the state doesn't allow, such as freezing a trial, is refused with a 422 problem."
-order: 2000
+order: 1000

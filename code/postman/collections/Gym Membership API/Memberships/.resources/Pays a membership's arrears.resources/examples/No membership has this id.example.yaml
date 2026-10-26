@@ -6,7 +6,7 @@ request:
     Accept: application/problem+json
   pathVariables:
     - key: membershipId
-      value: ms-ann
+      value: ms-3f9c2a71
       disabled: false
       description: (Required) the membership whose arrears to pay
   body:
