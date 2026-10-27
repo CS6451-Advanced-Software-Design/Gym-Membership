@@ -71,11 +71,9 @@ With Interceptor, adding another service such as audit, timing or rate limiting 
 
 ## Alternatives Considered
 
-<!--
-1–2 sentences, no table: when you chose (7 Oct 2026, with the team), what mattered most, and why not the others: Microservices (Part 1 must be a monolith), Microkernel (overlaps with Strategy at our scale), Pipes and Filters (fits only the billing run), Service Layer + Data Mapper (a common default, so less independent research).
--->
+When deciding on the architecture, we wanted to cover as many of the patterns discussed in our lectures as possible. We were already constrained to a monolith by the specification, so MVC made the most sense. For our self-researched pattern, we discussed options with GenAI, and after some comparisons Hexagonal seemed to fit best.
 
-*To be written by Chirag.*
+We could have used Service Layer + Data Mapper, which is the default for most Spring Boot apps, but that wouldn't have involved much research of our own.
 
 ## Liabilities
 
@@ -91,15 +89,4 @@ With Interceptor, adding another service such as audit, timing or rate limiting 
 
 ## Hosting Stack
 
-<!--
-1 sentence before the table: everything runs in one process, and the Enterprise Information System sits behind an outbound port, so a real database in Part 2 would only need a new adapter.
--->
-
-*To be written by Chirag.*
-
-| Tier | Technology |
-| --- | --- |
-| Web server | Tomcat, embedded in the Spring Boot jar |
-| Application server | The same embedded Tomcat, running `domain` and `service` |
-| Enterprise Information System | JSON files, one per entity, behind `adapter.persistence` |
-| Message bus | Spring `ApplicationEventPublisher`, in-process |
+Tomcat embedded in the Spring Boot jar is both the web server and the application server; JSON files behind `adapter.persistence` are the Enterprise Information System; and Spring's `ApplicationEventPublisher` is the in-process message bus.
