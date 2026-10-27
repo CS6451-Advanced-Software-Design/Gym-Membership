@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>gym</groupId>
 	<artifactId>gym-membership</artifactId>
-	<version>0.1.0</version>
+	<version>0.2.0</version>
 	<name>gym-membership</name>
 	<description>Gym and fitness club membership system: CS6451 Assignment Part 1</description>
 
