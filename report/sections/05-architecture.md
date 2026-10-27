@@ -67,11 +67,7 @@ It proved very useful after we deployed to Railway and saw that Railway supports
 | Dispatcher | `UseCaseDispatcher` | `interceptor` |
 | Concrete interceptor | `LoggingInterceptor` (logging, the out-of-band service) | `adapter.logging` |
 
-<!--
-After the table, 1 sentence: adding a new cross-cutting service (audit, timing, rate limiting) is one class plus one register line in InterceptorConfiguration (snippet in §8), with no change to the hexagon. That's a second extensibility tactic for QA1.
--->
-
-*To be written by Chirag.*
+With Interceptor, adding another service such as audit, timing or rate limiting is as simple as the logging service implementation.
 
 ## Alternatives Considered
 
