@@ -17,7 +17,7 @@ Evidence: report/roles.md, the GitHub milestones, the plan table in the course R
 
 | Member | Domains | Languages | Frameworks and tools |
 | --- | --- | --- | --- |
-| Chirag Aggarwal | | | |
+| Chirag Aggarwal | Cloud backend platform (Appwrite, Platform Engineer, Dec 2024 to now); ed-tech (Skillarena, Backend Developer, 2024); AI wellness (Clearmind AI, Full-stack Developer, 2023) | PHP, Go, TypeScript, JavaScript, Python | Swoole, Node.js, Express, React, MongoDB, FastAPI, PostgreSQL, Docker, Kubernetes, Grafana, OpenTelemetry, Stripe |
 | Bharat Doodi | | | |
 | DineshReddy Mogili | | | |
 | Dhruv Punj | | | |
