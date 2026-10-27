@@ -27,7 +27,7 @@ gym/                 classes
 └── (root)              4   GymApplication and the Spring configuration
 ```
 
-![Package diagram](../architecture/package-diagram.png)
+![Package diagram](../architecture/package-diagram.png){width=75%}
 
 ## Model View Controller
 
