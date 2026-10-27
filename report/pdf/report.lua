@@ -8,6 +8,8 @@
 -- Includes: a div such as ::: {include="../diary.md"} ::: is replaced by that file, without its title and
 -- introduction, with its headings moved down a level (or by `shift`). A long table can be fitted to the page with
 -- `widths` (each column's share of the page width, e.g. "0.1 0.9") and `size` (its text size, e.g. "8pt").
+-- Grids: a div such as ::: {.grid columns=2} ::: lays its figures out side by side, `columns` to a row, so a page
+-- holds more of them. Give each image a width (e.g. {width=100%}), which is then a share of its column.
 
 local REPOSITORY = 'https://github.com/CS6451-Advanced-Software-Design/Gym-Membership/blob/main/'
 
@@ -104,6 +106,20 @@ local function include(div, base)
   return blocks
 end
 
+local function grid(div)
+  local columns = tonumber(div.attributes.columns or '2')
+  local blocks = pandoc.Blocks({
+    pandoc.RawBlock('typst', '#grid(columns: ' .. columns .. ', column-gutter: 12pt, row-gutter: 6pt, align: bottom,'),
+  })
+  for _, block in ipairs(div.content) do
+    blocks:insert(pandoc.RawBlock('typst', '['))
+    blocks:insert(block)
+    blocks:insert(pandoc.RawBlock('typst', '],'))
+  end
+  blocks:insert(pandoc.RawBlock('typst', ')'))
+  return blocks
+end
+
 function Pandoc(document)
   local source = PANDOC_STATE.input_files[1]
   local base = directory(source)
@@ -111,6 +127,9 @@ function Pandoc(document)
     Div = function(div)
       if div.attributes.include then
         return include(div, base)
+      end
+      if div.classes:includes('grid') then
+        return grid(div)
       end
     end,
   })
