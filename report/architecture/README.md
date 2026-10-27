@@ -101,7 +101,7 @@ From [tech-stack.md](../tech-stack.md#hosting-stack-report-5):
 | --- | --- |
 | Web server + application server | Tomcat, embedded in the Spring Boot jar |
 | Business tier | `domain` + `service` (the hexagon) |
-| EIS / database | JSON files, reached only through `adapter.persistence` |
+| Enterprise Information System (database) | JSON files, reached only through `adapter.persistence` |
 | Message bus | Spring `ApplicationEventPublisher` (in-process), used by `adapter.notification` |
 
 ## Package structure

@@ -66,7 +66,7 @@ A single Spring Boot jar, deployed as one unit. This is the monolith.
 +-------------|------------------------------------------------+
               |  Jackson, file I/O
               v
-     data/*.json                    EIS (one file per entity)
+     data/*.json                    Enterprise Information System (one file per entity)
 
 
 Build and CI (GitHub Actions on every pull request):
@@ -82,7 +82,7 @@ Build and CI (GitHub Actions on every pull request):
 | --- | --- |
 | Web server + application server | Tomcat, embedded in the Spring Boot jar. `java -jar gym-membership.jar` starts everything |
 | Business tier | `service` and `domain` packages |
-| EIS / database | JSON files in a `code/data/` folder, accessed only through `adapter.persistence` |
+| Enterprise Information System (database) | JSON files in a `code/data/` folder, accessed only through `adapter.persistence` |
 | Message bus | Spring's in-process `ApplicationEventPublisher`. It also carries the Observer pattern for waitlist promotion and payment notifications |
 | Client | Postman, calling the live app at https://gym-membership-production-a725.up.railway.app (or `http://localhost:8080` in development) |
 
