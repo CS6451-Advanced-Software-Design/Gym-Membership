@@ -38,7 +38,7 @@ CI runs each kind as its own check (**Unit tests**, **Integration tests**, **End
 
 ## Postman
 
-Postman is our front end. Everything is in the public [Gym Membership workspace](https://www.postman.com/spaceflight-geoscientist-47956182/workspace/gym-membership), and its source is in `postman/`:
+Postman is our front end. Everything is in the public [Gym Membership workspace](https://www.postman.com/spaceflight-geoscientist-47956182/gym-membership/collection/g5aqom5/gym-membership-api), and its source is in `postman/`:
 
 | Path | What it is | How it changes |
 | --- | --- | --- |
