@@ -12,22 +12,9 @@ We built the system as a monolith mainly because the professor asked for one in 
 
 The system uses three architectural patterns: MVC, Hexagonal and Interceptor. MVC handles requests in and out, Hexagonal shapes the whole app, and Interceptor wraps every use case.
 
-The code is organised by layer rather than by feature, which keeps it a monolith rather than microservices:
+The code is organised by layer rather than by feature, which keeps it a monolith rather than microservices.
 
-```text
-gym/                 classes
-├── controller/         5   MVC controller, driving adapters (Postman and the clock)
-├── dto/                9   MVC view: the JSON records
-├── port/in/           11   inbound ports: one interface per use case
-├── port/out/           7   outbound ports: repositories, payments, notifications
-├── service/            2   use cases, implementing port.in
-├── domain/            31   MVC model: the core, plain Java only
-├── adapter/           12   driven adapters: JSON files, payments, events, logging
-├── interceptor/        4   the Interceptor framework
-└── (root)              4   GymApplication and the Spring configuration
-```
-
-![Package diagram](../architecture/package-diagram.png){width=75%}
+![Package diagram](../architecture/package-diagram.png)
 
 ## Model View Controller
 
@@ -77,15 +64,8 @@ We could have used Service Layer + Data Mapper, which is the default for most Sp
 
 ## Liabilities
 
-<!--
-2–4 honest sentences; markers reward admitting the costs:
-- More interfaces and indirection than plain layers (a port per use case).
-- A mapping step between DTOs, domain objects and the JSON documents.
-- Every use-case call goes through an extra proxy, and interceptor order matters (hence the priority on register).
-- It's easy to let Spring annotations leak into the core; ArchitectureTest is what stops that.
--->
-
-*To be written by Chirag.*
+- **Complexity:** Hexagonal uses technical terms such as `port.in` and `port.out`, making the stack look more complex than it might be.
+- **Shortcut:** we store the domain objects directly as JSON files, without a separate persistence document in between, for example a `MembershipDocument` with `from(Membership)` and `toDomain()`, where old-data defaults would be handled.
 
 ## Hosting Stack
 
