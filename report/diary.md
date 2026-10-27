@@ -50,7 +50,7 @@ Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 f
 
 | Member | Contributions | Issues arising | Plan for next week |
 | --- | --- | --- | --- |
-| Chirag | | | |
+| Chirag | Memberships in Postman, OpenAPI nullable fields, Railway auto-deploy on merge. §5 Architecture. Dhruv's sketches in §6, two to a row. Industry experience, lessons for the reflections. `v0.2.0`. GenAI #52–56 | Booking and Member still not built, so no Command or Observer; most report sections still placeholders; §5 had to be cut to fit 2 pages | Before 1 Nov: §10 in Visual Paradigm, §11 after SonarQube, §8 snippets, my reflection. Then the interview |
 | Bharat | | | |
 | DineshReddy | | | |
 | Dhruv | | | |
