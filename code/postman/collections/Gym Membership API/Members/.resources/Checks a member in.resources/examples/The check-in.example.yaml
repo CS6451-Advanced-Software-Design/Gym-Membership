@@ -6,7 +6,7 @@ request:
     Accept: application/json
   pathVariables:
     - key: memberId
-      value: m-3f9c2a71
+      value: m-8d14e6b2
       disabled: false
       description: (Required) the member checking in
   body:
