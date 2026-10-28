@@ -31,7 +31,7 @@ Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 f
 | Chirag | Reviewed the new sample projects. Report plan and a tighter quality bar (CI blocks merges, ArchUnit, tool-made numbers, a test per pattern). GenAI #16–17 | No code yet, 2.5 weeks left; nobody else committing | Skeleton, JSON repository, CI; an issue per feature |
 | Bharat | | | |
 | DineshReddy | | | |
-| Dhruv | | | |
+| Dhruv | Reviewed the report plan and its quality bar | Still no commits of my own, with 2.5 weeks left | Start committing: reorganise the repo, bring the diagrams up to date, build Membership |
 
 **Notes:**
 
