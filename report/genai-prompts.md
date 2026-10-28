@@ -76,5 +76,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 69 | 28 Oct | Chirag | "add diagram of how logging interceptor was implemented in our gym project", "instead of complicated diagram, can we just follow a single request", "make it less words, more diagram like" and "i like the diagram, can we raise a pr to add it to our project", then "i meant if we can use this diagram" | The Interceptor request diagram in report/architecture |
 | 70 | 26 Oct | Dhruv | "commit all of my rough work sketches to github" | My six hand-drawn Membership sketches in `report/sketches`, with a README row for each saying what changed afterwards (#44) |
 | 71 | 26 Oct | Dhruv | "update my roles in roles.md" | My row in the role split in `roles.md` (#45) |
+| 72 | 28 Oct | Dhruv | "fill and commit the changes in diary week from 5-8 on all the work i have done" | My diary rows for Weeks 5 to 8, from my commits and pull requests (#59) |
 
 Table: GenAI prompts, all to Claude (Claude Code)
