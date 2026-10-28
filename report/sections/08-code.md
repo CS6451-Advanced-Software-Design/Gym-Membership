@@ -123,6 +123,95 @@ void theBestDiscountWinsAndDiscountsDontStack() {
 
 *The test that proves discounts don't stack (`DiscountPolicyTest`, fee €45)*
 
+### State
+
+We used the State design pattern for the membership lifecycle: Trial, Active, Frozen, Lapsed and Cancelled, the states in the §6 state chart.
+
+1. What a membership may do depends on its state. A Trial can book only 2 classes, an Active one can be frozen, and a Frozen or Lapsed one can't book or check in.
+2. Each state is its own class, and overrides only the operations it allows. Everything else is refused once, in the base class, with a reason the member can read (a 422 over REST).
+3. The states keep no fields, so one instance of each is shared, chosen from the membership's status.
+4. Adding a state means one new subclass. There is no `if` or `switch` on the status in `Membership` or in any service.
+
+```java
+public abstract class MembershipState {
+    public static MembershipState of(MembershipStatus status) {
+        return switch (status) {
+            case TRIAL -> TRIAL;
+            case ACTIVE -> ACTIVE;
+            case FROZEN -> FROZEN;
+            case LAPSED -> LAPSED;
+            case CANCELLED -> CANCELLED;
+        };
+    }
+
+    public boolean canBook(Membership membership) {
+        return false;
+    }
+
+    public Membership freeze(Membership membership, int months, LocalDate today) {
+        throw refused(membership, "be frozen");
+    }
+    // ... endTrial, recordPayment, payArrears, cancel, expire, checkOn
+}
+
+public class ActiveState extends MembershipState {
+    @Override
+    public boolean canBook(Membership membership) {
+        return true;
+    }
+
+    @Override
+    public Membership freeze(Membership membership, int months, LocalDate today) {
+        // BR-M3: 1 to 3 months, at most once in any 12 months
+        // ... both checks, each throwing a RuleViolationException
+        return membership.moveTo(MembershipStatus.FROZEN).withFreeze(new Freeze(today, months));
+    }
+}
+```
+
+*The State and one of its five states (`gym/domain`, the shared instances and other operations left out)*
+
+```java
+public MembershipState state() {
+    return MembershipState.of(status);
+}
+
+public boolean canBook() {
+    return state().canBook(this);
+}
+
+public Membership freeze(int months, LocalDate today) {
+    return state().freeze(this, months, today);
+}
+```
+
+*The context: `Membership` hands every operation to its current state (`gym/domain/Membership.java`)*
+
+```java
+@Test
+void aTrialCannotBeFrozen() {
+    RuleViolationException refused = assertThrows(RuleViolationException.class,
+            () -> trial().freeze(1, JOINED));
+
+    assertEquals("Membership ms1 is Trial, so it can't be frozen", refused.getMessage());
+}
+
+@Test
+void freezingStopsBookingAndCheckInAndMovesTheEndDate() {
+    // BR-M3: an Annual plan frozen for 2 months ends 2 months later
+    Membership annual = Membership.signUp("ms2", "m2", new AnnualPlan(), JOINED);
+
+    Membership frozen = annual.freeze(2, JOINED.plusMonths(1));
+
+    assertEquals(MembershipStatus.FROZEN, frozen.status());
+    assertFalse(frozen.canBook());
+    assertFalse(frozen.canCheckIn(MONDAY_EVENING));
+    assertEquals(JOINED.plusYears(1).plusMonths(2), frozen.endDate());
+}
+```
+
+*The same request, freeze, refused by one state and carried out by another (`MembershipStateTest`, which has a test for every arrow of the state chart)*
+
 ## Automated Tests
 
 We divided the testing strategy into 3 popular ones that most of the industry follows - unit, integration and end-to-end. JUnit 5 was used for all three, and the unit tests use in-memory fakes of ports like `InMemoryRepository`. All three strategies run in their own lane in CI/CD. Since 25 Oct, we also enforced that a new PR cannot be merged without having all testing CI lanes pass first.
