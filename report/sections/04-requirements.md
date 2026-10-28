@@ -38,6 +38,19 @@ The use case drafts in report/requirements/use-cases came from GenAI (prompt #2)
 | | 8 | The payment goes through. If a referral code was given, the referrer gets €20 credit, «extend» Apply Referral Credit (BR-P3) |
 | | 9 | The system sends a welcome message and shows the new membership with its first invoice |
 
+| EXTENSIONS | Step | Branching Action |
+| --- | --- | --- |
+| | 4a | The past member still holds a membership that isn't cancelled: 4a1. The system refuses and names that membership. Nothing is saved |
+| | 5a | The Student plan is chosen without a valid 8-digit student ID: 5a1. The system refuses and the person returns to step 3. Nothing is saved |
+| | 5b | The referral code doesn't belong to a current membership: 5b1. The system refuses and the person returns to step 3. Nothing is saved |
+| | 8a | The card is declined: 8a1. The membership is still created, the first invoice stays unpaid and a failed payment is recorded. 8a2. No referral credit is given, and the welcome message says the payment failed. 8a3. When the trial ends, the membership becomes Lapsed (BR-M2), and the member can pay what they owe to make it Active again (UC14) |
+
+| VARIATIONS | Step | Branching Action |
+| --- | --- | --- |
+| | 1 | The person signs up themselves online, or at the front desk with a member of staff entering their details |
+| | 3 | Any of the four plans: Monthly (€45), Student (€30), Off-Peak (€30), or Annual (€450 for the year, paid upfront, with no trial) |
+| | 7 | The discount is Corporate 15% when an employer is given, or Family 10% for the second member of a family onward; Loyalty 5% needs 24 months, so it never applies at sign-up |
+
 ## UC2: Book Class
 
 *To be written by Dhruv.*
