@@ -81,5 +81,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 74 | 28 Oct | Dhruv | "the AI log is showing text lines after log no 61, how to fix that?" | Removed the blank line that split this table after row 61 (#67) |
 | 75 | 28 Oct | Dhruv | "write some material for section 4 for reference which i will edit later" | A full draft of §4 (use case introduction, UC1 and UC2, the two quality attributes, the two GUI prototypes), merged as written, for me to rewrite in my own words before submission (#68–#72) |
 | 76 | 28 Oct | Dhruv | "do the same with section 1 ad sone for section 4" | A full draft of the §1 narrative, merged as written, for me to rewrite in my own words before submission (#74) |
+| 77 | 28 Oct | Dhruv | "do the same with section 8 and add code snippets and test snippets with short description below" | The State and Factory parts of §8: the code and test snippets from my feature and the text around them, merged as written, for me to rewrite in my own words before submission (#76, #77) |
 
 Table: GenAI prompts, all to Claude (Claude Code)
