@@ -22,6 +22,8 @@ The class diagram keeps the candidates from the table above, with only the attri
 
 ![UC2 Book Class sequence diagram](../analysis/sequence-book-class.png)
 
+The sequence diagram follows UC2 Book Class through the hexagon: the request comes in through `BookingController`, passes the logging interceptor, and reaches `BookingService` behind the `BookClassUseCase` port. The service loads the class, the member and the membership through their repositories and checks each booking rule in turn: a member with 3 no-shows in 30 days is suspended (BR-B4), and nobody may hold more than 5 future bookings (BR-B5). It then asks the `Membership` whether it may book. The membership asks its current `MembershipState` and its `Plan`, so the service never checks the status itself. If the class has space the member is booked (201); if it is full they join the `Waitlist` and are told their position. `Membership` is in this diagram on purpose, because it is the object the state chart describes. Booking is not implemented yet, so this diagram is the design the Booking feature will follow.
+
 ## State Chart: Membership
 
 ![Membership state chart](../analysis/membership-statechart.png)
