@@ -1,0 +1,15 @@
+$kind: http-request
+name: Shows a member.
+description: Shows a member.
+url: "{{baseUrl}}/members/:memberId"
+method: GET
+headers:
+  Accept: application/json
+pathVariables:
+  - key: memberId
+    value: m-3f9c2a71
+    disabled: false
+    description: (Required) the member to show
+settings: {}
+examples: ./.resources/Shows a member-.resources/examples
+order: 3000

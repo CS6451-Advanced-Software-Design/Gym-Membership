@@ -1,0 +1,15 @@
+$kind: http-request
+name: Lists a member's check-ins.
+description: Lists a member's check-ins.
+url: "{{baseUrl}}/members/:memberId/check-ins"
+method: GET
+headers:
+  Accept: application/json
+pathVariables:
+  - key: memberId
+    value: m-3f9c2a71
+    disabled: false
+    description: (Required) the member
+settings: {}
+examples: ./.resources/Lists a member's check-ins-.resources/examples
+order: 1000

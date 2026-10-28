@@ -1,0 +1,3 @@
+$kind: collection
+description: Shows a member's profile and checks them in for a visit. <p>A check-in is only recorded if the member's current membership isn't <code>CANCELLED</code>, and their plan and state allow a visit right now (e.g. a <code>FROZEN</code> membership refuses, see {@link gym.domain.Membership#canCheckIn gym.domain.Membership#canCheckIn}).
+order: 3000

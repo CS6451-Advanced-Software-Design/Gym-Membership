@@ -1,0 +1,31 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/members/:memberId/check-ins"
+  method: GET
+  headers:
+    Accept: application/json
+  pathVariables:
+    - key: memberId
+      value: m-3f9c2a71
+      disabled: false
+      description: (Required) the member
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      [
+        {
+          "checkInId": "ci-3f9c2a71",
+          "memberId": "m-8d14e6b2",
+          "membershipId": "ms-3f9c2a71",
+          "at": "2026-10-28T09:15:00.000Z"
+        }
+      ]
+order: 1000

@@ -1,0 +1,31 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/members/:memberId"
+  method: GET
+  headers:
+    Accept: application/json
+  pathVariables:
+    - key: memberId
+      value: m-3f9c2a71
+      disabled: false
+      description: (Required) the member to show
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "memberId": "m-8d14e6b2",
+        "name": "Ann Example",
+        "email": "ann@example.com",
+        "studentId": null,
+        "employer": null,
+        "familyId": null
+      }
+order: 1000

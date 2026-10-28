@@ -42,6 +42,11 @@ tags:
     \ fit within the bill waits for the next one.</li> </ul> <p>The member's card\
     \ is charged as soon as the invoice is issued. A declined card leaves the invoice\
     \ <code>UNPAID</code> until the member pays their arrears."
+- name: Members
+  description: "Shows a member's profile and checks them in for a visit. <p>A check-in\
+    \ is only recorded if the member's current membership isn't <code>CANCELLED</code>,\
+    \ and their plan and state allow a visit right now (e.g. a <code>FROZEN</code>\
+    \ membership refuses, see {@link gym.domain.Membership#canCheckIn gym.domain.Membership#canCheckIn})."
 paths:
   /memberships:
     post:
@@ -418,6 +423,95 @@ paths:
                 frozenUntil: null
                 lapsedSince: null
                 failedPayments: 0
+  /members/{memberId}/check-ins:
+    get:
+      tags:
+      - Members
+      summary: Lists a member's check-ins.
+      description: Lists a member's check-ins.
+      operationId: history
+      parameters:
+      - name: memberId
+        in: path
+        description: the member
+        required: true
+        schema:
+          type: string
+        example: m-3f9c2a71
+      responses:
+        "404":
+          description: No member has this id
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Not Found
+                status: 404
+                detail: Member m-42 not found
+                instance: /members/m-42/check-ins
+        "200":
+          description: "Every check-in, oldest first"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CheckInResponse"
+              example:
+              - checkInId: ci-3f9c2a71
+                memberId: m-8d14e6b2
+                membershipId: ms-3f9c2a71
+                at: 2026-10-28T09:15:00
+    post:
+      tags:
+      - Members
+      summary: Checks a member in
+      description: "Checks a member in. <p>Records a visit against the member's current\
+        \ membership, and sends them a notification."
+      operationId: checkIn
+      parameters:
+      - name: memberId
+        in: path
+        description: the member checking in
+        required: true
+        schema:
+          type: string
+        example: m-3f9c2a71
+      responses:
+        "404":
+          description: "No member has this id, or they hold no current membership"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Not Found
+                status: 404
+                detail: Current membership for member m-8d14e6b2 not found
+                instance: /members/m-8d14e6b2/check-ins
+        "422":
+          description: The membership's state or plan refuses the check-in
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Unprocessable Content
+                status: 422
+                detail: Membership ms-3f9c2a71 can't check in right now
+                instance: /members/m-8d14e6b2/check-ins
+        "201":
+          description: The check-in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckInResponse"
+              example:
+                checkInId: ci-3f9c2a71
+                memberId: m-8d14e6b2
+                membershipId: ms-3f9c2a71
+                at: 2026-10-28T09:15:00
   /billing-runs:
     post:
       tags:
@@ -626,6 +720,46 @@ paths:
                 discount: 6.75
                 total: 38.25
                 status: PAID
+  /members/{memberId}:
+    get:
+      tags:
+      - Members
+      summary: Shows a member.
+      description: Shows a member.
+      operationId: member
+      parameters:
+      - name: memberId
+        in: path
+        description: the member to show
+        required: true
+        schema:
+          type: string
+        example: m-3f9c2a71
+      responses:
+        "404":
+          description: No member has this id
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                title: Not Found
+                status: 404
+                detail: Member m-42 not found
+                instance: /members/m-42
+        "200":
+          description: The member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemberResponse"
+              example:
+                memberId: m-8d14e6b2
+                name: Ann Example
+                email: ann@example.com
+                studentId: null
+                employer: null
+                familyId: null
 components:
   schemas:
     SignUpRequest:
@@ -847,6 +981,23 @@ components:
           $ref: "#/components/schemas/InvoiceResponse"
           description: "everything still owed, with the €50 early-exit fee for an\
             \ Annual plan cancelled within 6 months"
+    CheckInResponse:
+      type: object
+      description: One visit to the gym.
+      properties:
+        checkInId:
+          type: string
+          description: the check-in id
+        memberId:
+          type: string
+          description: the member who checked in
+        membershipId:
+          type: string
+          description: the membership checked against
+        at:
+          type: string
+          format: date-time
+          description: when they checked in
     BillingRunRequest:
       type: object
       description: Starts a billing run.
@@ -882,3 +1033,32 @@ components:
         description:
           type: string
           description: who the plan is for and when it can be used
+    MemberResponse:
+      type: object
+      description: A member's profile.
+      properties:
+        memberId:
+          type: string
+          description: the member id
+        name:
+          type: string
+          description: their full name
+        email:
+          type: string
+          description: where notifications go
+        studentId:
+          type:
+          - string
+          - "null"
+          description: "their student ID for the Student plan, or null"
+        employer:
+          type:
+          - string
+          - "null"
+          description: "their employer for the Corporate discount, or null"
+        familyId:
+          type:
+          - string
+          - "null"
+          description: "shared by members of one family for the Family discount, or\
+            \ null"

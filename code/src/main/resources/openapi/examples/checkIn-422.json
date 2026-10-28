@@ -1,0 +1,6 @@
+{
+  "title": "Unprocessable Content",
+  "status": 422,
+  "detail": "Membership ms-3f9c2a71 can't check in right now",
+  "instance": "/members/m-8d14e6b2/check-ins"
+}
