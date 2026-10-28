@@ -51,6 +51,19 @@ The use case drafts in report/requirements/use-cases came from GenAI (prompt #2)
 | | 3 | Any of the four plans: Monthly (€45), Student (€30), Off-Peak (€30), or Annual (€450 for the year, paid upfront, with no trial) |
 | | 7 | The discount is Corporate 15% when an employer is given, or Family 10% for the second member of a family onward; Loyalty 5% needs 24 months, so it never applies at sign-up |
 
+| RELATED INFORMATION | Sign Up for Membership |
+| --- | --- |
+| Priority | Top: without it nobody becomes a member |
+| Performance | The whole sign-up, including the card payment, answers in under 2 seconds |
+| Frequency | About 20 a day, more in January |
+| Channel to actors | REST API (`POST /memberships`), tried through Postman or the Swagger UI; the Join screen in the first GUI prototype |
+| OPEN ISSUES | On the Annual plan a declined payment still starts the membership Active, and it only lapses after a second failure. Should sign-up refuse it instead? |
+| | Card details are left to the Payment Gateway, which the prototype fakes |
+| | Family memberships with one payer for several members were ruled out of scope on 24 Oct; the family ID is only used for the Family discount |
+| Due Date | Release 0.2.0 (done) |
+| Superordinates | Manage memberships |
+| Subordinates | Calculate Charges, Apply Referral Credit |
+
 ## UC2: Book Class
 
 *To be written by Dhruv.*
