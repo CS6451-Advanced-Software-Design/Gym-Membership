@@ -9,7 +9,7 @@
 | Diagram | Purpose |
 | --- | --- |
 | ![Package diagram](package-diagram.png) | The required high-level package diagram: every package in the skeleton, with `port.in` and `port.out` split, the four driven adapters, and the Interceptor wrapping `port.in`. Every dependency points towards `domain` |
-| ![Interceptor request](interceptor-request.png) | One request through the Interceptor: `POST /memberships/{id}/freeze` reaches the use-case proxy, which calls `onBefore`, the real service, then `onAfter` or `onFailure`. `LoggingInterceptor` writes the log lines, with no log statement in the controller or service |
+| ![Interceptor request](interceptor-request.png) | One request through the Interceptor: `POST /memberships/{id}/freeze` reaches the use-case proxy, which builds the context, calls `onBefore`, invokes the real service, then calls `onAfter` or `onFailure`. `LoggingInterceptor` writes the log lines, with no log statement in the controller or service |
 
 ## Pattern 1: MVC (covered in lectures)
 
