@@ -115,6 +115,12 @@ The MVC + Hexagonal layers. Every dependency points towards `domain`. Details in
 
 ![Package diagram](report/architecture/package-diagram.png)
 
+### One request through the Interceptor (report §5)
+
+A freeze request reaches the use-case proxy, which calls `onBefore`, the real service, then `onAfter` or `onFailure`. `LoggingInterceptor` writes every log line, with none in the controller or service. Details in [report/architecture](report/architecture/README.md#pattern-3-interceptor-covered-in-lectures-week-7).
+
+![One request through the Interceptor](report/architecture/interceptor-request.png)
+
 ### Classes (report §6)
 
 The domain classes, with pre- and postconditions on the interfaces. Details in [report/analysis](report/analysis/README.md).
