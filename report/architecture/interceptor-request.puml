@@ -1,0 +1,42 @@
+@startuml
+!include ../common.iuml
+skinparam sequence {
+  ParticipantBackgroundColor #F5F5F5
+  ParticipantBorderColor #333333
+  LifeLineBorderColor #888888
+  GroupBackgroundColor #F5F5F5
+}
+skinparam responseMessageBelowArrow true
+autoactivate off
+hide footbox
+
+actor "Member\n(Postman)" as M
+participant ":MembershipController" as C
+participant ":Proxy" as P <<FreezeMembershipUseCase>>
+participant ":UseCaseDispatcher" as D
+participant ":LoggingInterceptor" as L
+participant ":MembershipService" as S <<FreezeMembershipUseCase>>
+
+M -> C : POST /memberships/m-42/freeze\n{"months": 2}
+C -> P : freeze("m-42", 2)
+P -> P : new UseCaseContext(...)
+P -> D : onBefore(context)
+D -> L : onBefore(context)
+note right of L : INFO call FreezeMembershipUseCase.freeze(m-42, 2)
+P -> S : freeze("m-42", 2)
+alt returns
+  S --> P : membership
+  P -> D : onAfter(context)
+  D -> L : onAfter(context)
+  note right of L : INFO done FreezeMembershipUseCase.freeze in 3 ms
+  P --> C : membership
+  C --> M : 200 OK
+else throws RuleViolationException (e.g. months: 5)
+  S --> P : exception
+  P -> D : onFailure(context)
+  D -> L : onFailure(context)
+  note right of L : WARN failed FreezeMembershipUseCase.freeze in 1 ms:\nA freeze lasts 1 to 3 months, not 5
+  P --> C : rethrows exception
+  C --> M : 422 Unprocessable Content
+end
+@enduml
