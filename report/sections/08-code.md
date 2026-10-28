@@ -61,7 +61,7 @@ public UseCaseDispatcher useCaseDispatcher() {
 
 ## Design Patterns
 
-*State and Factory (Dhruv), Observer (Bharat), each with a snippet and its test.*
+*Observer (Bharat), with a snippet and its test.*
 
 ### Strategy
 
@@ -211,6 +211,77 @@ void freezingStopsBookingAndCheckInAndMovesTheEndDate() {
 ```
 
 *The same request, freeze, refused by one state and carried out by another (`MembershipStateTest`, which has a test for every arrow of the state chart)*
+
+### Factory
+
+We used a Factory for creating the four plans: Monthly, Annual, Student and Off-Peak.
+
+1. Each plan is its own class with its own rules: its price, whether it has a trial, its end date, when it allows check-in and classes, and who is eligible.
+2. `PlanFactory` is the only class that knows which class goes with which plan type. The sign-up request names a `PlanType`, and the service asks the factory for the plan.
+3. Callers only ever see the abstract `Plan`, so they never name a plan class.
+4. Adding a plan means one new `Plan` subclass, one `PlanType` value with its price and one entry in the factory's map. No change is needed to `MembershipService`, Billing or Booking.
+
+```java
+public final class PlanFactory {
+    private static final Map<PlanType, Supplier<Plan>> PLANS = new EnumMap<>(Map.of(
+            PlanType.MONTHLY, MonthlyPlan::new,
+            PlanType.ANNUAL, AnnualPlan::new,
+            PlanType.STUDENT, StudentPlan::new,
+            PlanType.OFF_PEAK, OffPeakPlan::new));
+
+    public static Plan create(PlanType type) {
+        Supplier<Plan> plan = PLANS.get(type);
+        if (plan == null) {
+            throw new IllegalArgumentException("No plan is registered for " + type);
+        }
+        return plan.get();
+    }
+
+    public static List<Plan> all() {
+        return PLANS.keySet().stream().map(PlanFactory::create).toList();
+    }
+}
+```
+
+*The factory (`gym/domain/PlanFactory.java`, comments left out)*
+
+```java
+public class OffPeakPlan extends Plan {
+    private static final LocalTime OPENS = LocalTime.of(10, 0);
+    private static final LocalTime CLOSES = LocalTime.of(16, 0);
+
+    @Override
+    public boolean allowsCheckIn(LocalDateTime at) {
+        DayOfWeek day = at.getDayOfWeek();
+        boolean weekday = day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY;
+        LocalTime time = at.toLocalTime();
+        return weekday && !time.isBefore(OPENS) && time.isBefore(CLOSES);
+    }
+}
+
+// in MembershipService.signUp
+Plan plan = PlanFactory.create(type);
+```
+
+*One of the products, with only the rule it changes, and where the factory is used (`gym/domain/OffPeakPlan.java`, `gym/service/MembershipService.java`)*
+
+```java
+@Test
+void createsThePlanClassForEachType() {
+    assertInstanceOf(MonthlyPlan.class, PlanFactory.create(PlanType.MONTHLY));
+    assertInstanceOf(AnnualPlan.class, PlanFactory.create(PlanType.ANNUAL));
+    assertInstanceOf(StudentPlan.class, PlanFactory.create(PlanType.STUDENT));
+    assertInstanceOf(OffPeakPlan.class, PlanFactory.create(PlanType.OFF_PEAK));
+}
+
+@Test
+void offersEveryPlanType() {
+    assertEquals(Arrays.asList(PlanType.values()),
+            PlanFactory.all().stream().map(Plan::type).toList());
+}
+```
+
+*The tests that prove the factory (`PlanFactoryTest`). The second one fails if a `PlanType` is added without its plan class*
 
 ## Automated Tests
 
