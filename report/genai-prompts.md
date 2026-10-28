@@ -79,5 +79,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 72 | 28 Oct | Dhruv | "fill and commit the changes in diary week from 5-8 on all the work i have done" | My diary rows for Weeks 5 to 8, from my commits and pull requests (#59) |
 | 73 | 28 Oct | Dhruv | "use this resume to fill in industry experience in the report" | My row in the §3 industry experience table (#61) |
 | 74 | 28 Oct | Dhruv | "the AI log is showing text lines after log no 61, how to fix that?" | Removed the blank line that split this table after row 61 (#67) |
+| 75 | 28 Oct | Dhruv | "write some material for section 4 for reference which i will edit later" | A full draft of §4 (use case introduction, UC1 and UC2, the two quality attributes, the two GUI prototypes), merged as written, for me to rewrite in my own words before submission (#68–#72) |
 
 Table: GenAI prompts, all to Claude (Claude Code)
