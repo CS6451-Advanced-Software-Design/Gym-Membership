@@ -55,4 +55,4 @@ Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 f
 | DineshReddy | | | |
 | Dhruv | Six hand-drawn Membership sketches: membership life, State, Plan Factory, sign-up, daily checks, booking and check-in (PR #44). Updated my row in `roles.md` (PR #45). Set up signed commits | §1, §4 and my §6 text not started yet, with the deadline on Sunday | Before 1 Nov: §4 (UC1, UC2, two quality attributes, two GUI prototypes), §6 candidate objects and captions, State and Factory snippets in §8, §1, my reflection |
 
-**Notes:** Submission due 23:59 Sun 1 Nov.
+**Notes:** Submission due 23:59 Wed 4 Nov (moved from Sun 1 Nov).
