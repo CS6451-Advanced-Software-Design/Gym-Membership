@@ -1,0 +1,5 @@
+<plugin id="blueprint" name="Blueprint" description="Builds the recovered blueprints" provider="CS6451" class="blueprint.Blueprint">
+  <runtime>
+    <library path="classes" relativePath="true"/>
+  </runtime>
+</plugin>
