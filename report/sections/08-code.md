@@ -212,6 +212,39 @@ void freezingStopsBookingAndCheckInAndMovesTheEndDate() {
 
 *The same request, freeze, refused by one state and carried out by another (`MembershipStateTest`, which has a test for every arrow of the state chart)*
 
+### Factory
+
+We used a Factory for creating the four plans: Monthly, Annual, Student and Off-Peak.
+
+1. Each plan is its own class with its own rules: its price, whether it has a trial, its end date, when it allows check-in and classes, and who is eligible.
+2. `PlanFactory` is the only class that knows which class goes with which plan type. The sign-up request names a `PlanType`, and the service asks the factory for the plan.
+3. Callers only ever see the abstract `Plan`, so they never name a plan class.
+4. Adding a plan means one new `Plan` subclass, one `PlanType` value with its price and one entry in the factory's map. No change is needed to `MembershipService`, Billing or Booking.
+
+```java
+public final class PlanFactory {
+    private static final Map<PlanType, Supplier<Plan>> PLANS = new EnumMap<>(Map.of(
+            PlanType.MONTHLY, MonthlyPlan::new,
+            PlanType.ANNUAL, AnnualPlan::new,
+            PlanType.STUDENT, StudentPlan::new,
+            PlanType.OFF_PEAK, OffPeakPlan::new));
+
+    public static Plan create(PlanType type) {
+        Supplier<Plan> plan = PLANS.get(type);
+        if (plan == null) {
+            throw new IllegalArgumentException("No plan is registered for " + type);
+        }
+        return plan.get();
+    }
+
+    public static List<Plan> all() {
+        return PLANS.keySet().stream().map(PlanFactory::create).toList();
+    }
+}
+```
+
+*The factory (`gym/domain/PlanFactory.java`, comments left out)*
+
 ## Automated Tests
 
 We divided the testing strategy into 3 popular ones that most of the industry follows - unit, integration and end-to-end. JUnit 5 was used for all three, and the unit tests use in-memory fakes of ports like `InMemoryRepository`. All three strategies run in their own lane in CI/CD. Since 25 Oct, we also enforced that a new PR cannot be merged without having all testing CI lanes pass first.
