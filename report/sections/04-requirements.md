@@ -49,6 +49,29 @@ The club will want new plans, such as a weekend-only plan, and each plan has its
 
 The same tactics make the other rules extensible. A new discount is one more `DiscountPolicy` class added to `BestDiscount` (Strategy), and a new membership state is one more `MembershipState` subclass (State). `PlanFactoryTest` fails if any `PlanType` has no plan class, so a half-added plan can't be released.
 
+### QA2: Testability
+
+Most of the business rules depend on dates: a trial ends after 7 days, a membership lapses after two failed payments, and is cancelled after 60 days in Lapsed. We want every one of these rules to be tested quickly and repeatably, without waiting for real days to pass, charging real cards or writing real files.
+
+| Part | QA2: testing a time-based rule |
+| --- | --- |
+| Source | A developer, or the CI pipeline on every pull request |
+| Stimulus | A business rule is added or changed, for example the 60-day rule for Lapsed memberships (BR-M6) |
+| Artefact | The services and domain classes behind the use cases |
+| Environment | Development and CI, with no network, database or payment provider |
+| Response | Unit tests move a test clock forward day by day, use in-memory repositories and a fake payment gateway, and check the outcome of the rule |
+| Response measure | Every business rule built so far has a unit test; the 108 unit tests run with no files, network or real clock; a failing test blocks the merge |
+
+| Tactic (Bass et al. 2019, testability) | Where it is applied |
+| --- | --- |
+| Limit nondeterminism | The services take a `java.time.Clock` instead of reading the system time, and tests pass a `TestClock` they can move forward, so "60 days later" takes no time and gives the same result every run |
+| Abstract data sources | Services only see the repository ports in `port.out`, so tests swap the JSON files for `InMemoryRepository` |
+| Specialised interfaces | `PaymentGateway` and `NotificationSender` are ports, so tests use a fake gateway that declines chosen cards and check the notifications sent |
+| Limit structural complexity | `ArchitectureTest` (ArchUnit) keeps the dependencies pointing inwards, so a domain class can be tested on its own with only the JDK |
+| Sandbox | The integration and end-to-end tests run the whole app against a temporary data folder, apart from the real data |
+
+This is why the State pattern tests could follow every arrow of the state chart (`MembershipStateTest`) and the daily checks could be tested a day at a time (`MembershipServiceTest`, `MembershipE2E`).
+
 ## GUI Prototypes
 
 *Two prototypes, e.g. Book a Class and Front-desk Check-in.*
