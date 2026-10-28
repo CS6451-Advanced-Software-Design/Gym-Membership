@@ -81,6 +81,30 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- Fails the build early, with a clear reason, if the JDK running it isn't 21 (what CI uses and what
+			     ${java.version} targets). Catches it here instead of as a cryptic PMD crash: PMD's bundled ASM
+			     can't parse class files from a newer JDK (e.g. 27) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.5.0</version>
+				<executions>
+					<execution>
+						<id>require-java-21</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireJavaVersion>
+									<version>[21,22)</version>
+									<message>This project builds with JDK 21, the version CI and PMD are pinned to. A newer JDK compiles fine but breaks PMD, which can't parse its class files. Install Temurin 21 and point JAVA_HOME at it.</message>
+								</requireJavaVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<!-- Keeps the Javadoc in the compiled classes, so springdoc can read it at runtime -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
