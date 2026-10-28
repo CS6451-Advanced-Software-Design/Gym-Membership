@@ -245,6 +245,26 @@ public final class PlanFactory {
 
 *The factory (`gym/domain/PlanFactory.java`, comments left out)*
 
+```java
+public class OffPeakPlan extends Plan {
+    private static final LocalTime OPENS = LocalTime.of(10, 0);
+    private static final LocalTime CLOSES = LocalTime.of(16, 0);
+
+    @Override
+    public boolean allowsCheckIn(LocalDateTime at) {
+        DayOfWeek day = at.getDayOfWeek();
+        boolean weekday = day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY;
+        LocalTime time = at.toLocalTime();
+        return weekday && !time.isBefore(OPENS) && time.isBefore(CLOSES);
+    }
+}
+
+// in MembershipService.signUp
+Plan plan = PlanFactory.create(type);
+```
+
+*One of the products, with only the rule it changes, and where the factory is used (`gym/domain/OffPeakPlan.java`, `gym/service/MembershipService.java`)*
+
 ## Automated Tests
 
 We divided the testing strategy into 3 popular ones that most of the industry follows - unit, integration and end-to-end. JUnit 5 was used for all three, and the unit tests use in-memory fakes of ports like `InMemoryRepository`. All three strategies run in their own lane in CI/CD. Since 25 Oct, we also enforced that a new PR cannot be merged without having all testing CI lanes pass first.
