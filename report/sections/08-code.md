@@ -153,14 +153,13 @@ Table: Automated tests on main (CI run of 28 Oct)
 
 <!--
 A sentence or two of your own. Facts:
-- 50 pull requests merged into main (plus 2 from Dependabot; #12 was merged into a feature branch instead).
-  16 commits went straight to main without one, the last on 24 Oct; since 25 Oct a ruleset on main requires a pull
-  request and the three test jobs to pass.
-- A pull request counts for whoever wrote most of its commits. Bharat's one commit is GitHub's "Initial commit"
-  that created the team repository; DineshReddy has no commits on main yet.
-- Be honest about the split; your reflection (§12) is the place for how it felt.
+- 53 pull requests merged into main, 2 of them from Dependabot (#12 was merged into a feature branch, so it isn't
+  counted). CI has run the tests on every pull request since 21 Oct, and the report build since 25 Oct.
+- 16 commits went straight to main without a pull request, the last on 24 Oct. Since 25 Oct (the dashed line) a
+  ruleset on main requires a pull request and the three test jobs to pass.
+- Both charts are drawn from the git history by report/version-control/charts.py.
 -->
 
-![Commits to main per week, by member](../version-control/contributors.png){width=100%}
+![Commits to main per week](../version-control/commits.png){width=100%}
 
-![Pull requests merged into main over time, by member](../version-control/pulls.png){width=100%}
+![Pull requests merged into main over time](../version-control/pulls.png){width=100%}
