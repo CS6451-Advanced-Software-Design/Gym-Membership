@@ -20,4 +20,4 @@ Evidence: report/roles.md, the GitHub milestones, the plan table in the course R
 | Chirag Aggarwal | Cloud backend platform (Appwrite, Platform Engineer, Dec 2024 to now); ed-tech (Skillarena, Backend Developer, 2024); AI wellness (Clearmind AI, Full-stack Developer, 2023) | PHP, Go, TypeScript, JavaScript, Python | Swoole, Node.js, Express, React, MongoDB, FastAPI, PostgreSQL, Docker, Kubernetes, Grafana, OpenTelemetry, Stripe |
 | Bharat Doodi | | | |
 | DineshReddy Mogili | | | |
-| Dhruv Punj | | | |
+| Dhruv Punj | AI and data science for a media company's web portal: recommendation engine and virtual assistant (Admix Media, AI and Data Science Intern, remote, Feb to Jun 2025) | Python, SQL, JavaScript, PHP, C++ | TensorFlow, Keras, NumPy, Pandas, Matplotlib, Streamlit; Agile |
