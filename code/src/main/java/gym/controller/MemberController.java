@@ -22,9 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Shows a member's profile and checks them in for a visit.
  *
- * <p>A check-in is only recorded if the member's current membership isn't <code>CANCELLED</code>, and
- * their plan and state allow a visit right now (e.g. a <code>FROZEN</code> membership refuses, see
- * {@link gym.domain.Membership#canCheckIn}).
+ * <p>A check-in is only recorded if the member's current membership lets them in right now:
+ * <ul>
+ *   <li><b>State:</b> a <code>TRIAL</code> or <code>ACTIVE</code> membership can check in; a <code>FROZEN</code>,
+ *       <code>LAPSED</code> or <code>CANCELLED</code> one can't.</li>
+ *   <li><b>Plan:</b> an Off-Peak plan only lets the member in on weekdays, from 10:00 to 16:00.</li>
+ * </ul>
  */
 @Tag(name = "Members")
 @Order(4)
@@ -44,6 +47,9 @@ public class MemberController {
     /**
      * Shows a member.
      *
+     * <p>The member's profile: their name and email, and the student ID, employer or family that make them
+     * eligible for the Student plan or a discount.
+     *
      * @param memberId the member to show
      * @return The member
      */
@@ -51,7 +57,7 @@ public class MemberController {
     @ResponseStatus(HttpStatus.OK)
     @ApiResponse(responseCode = "404", description = "No member has this id",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public MemberResponse member(@Parameter(example = "m-3f9c2a71") @PathVariable String memberId) {
+    public MemberResponse member(@Parameter(example = "m-8d14e6b2") @PathVariable String memberId) {
         return MemberResponse.from(view.member(memberId));
     }
 
@@ -69,12 +75,14 @@ public class MemberController {
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
     @ApiResponse(responseCode = "422", description = "The membership's state or plan refuses the check-in",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public CheckInResponse checkIn(@Parameter(example = "m-3f9c2a71") @PathVariable String memberId) {
+    public CheckInResponse checkIn(@Parameter(example = "m-8d14e6b2") @PathVariable String memberId) {
         return CheckInResponse.from(checkIns.checkIn(memberId));
     }
 
     /**
      * Lists a member's check-ins.
+     *
+     * <p>Every visit the member has checked in for, across all their memberships, oldest first.
      *
      * @param memberId the member
      * @return Every check-in, oldest first
@@ -83,7 +91,7 @@ public class MemberController {
     @ResponseStatus(HttpStatus.OK)
     @ApiResponse(responseCode = "404", description = "No member has this id",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public List<CheckInResponse> history(@Parameter(example = "m-3f9c2a71") @PathVariable String memberId) {
+    public List<CheckInResponse> history(@Parameter(example = "m-8d14e6b2") @PathVariable String memberId) {
         return checkIns.history(memberId).stream().map(CheckInResponse::from).toList();
     }
 }

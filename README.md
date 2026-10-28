@@ -10,7 +10,7 @@ A monolithic (package-by-layer MVC + Hexagonal, with Interceptor) business tier 
 
 **Try it, no setup needed:** the app is live at https://gym-membership-production-a725.up.railway.app, which opens its Swagger UI. The public [Postman workspace](https://www.postman.com/spaceflight-geoscientist-47956182/gym-membership/collection/g5aqom5/gym-membership-api) has every endpoint, documented from the code, and sends to the live app by default. Pick the **mock** environment for Postman's saved examples, or **local** for the app on your machine. See [code/README.md](code/README.md#postman).
 
-![Signing someone up in the public Postman workspace, with its saved example response](report/screenshots/postman.png)
+![Checking a member in, in the public Postman workspace, with its saved example response](report/screenshots/postman.png)
 
 ## Team
 
