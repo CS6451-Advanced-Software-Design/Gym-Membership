@@ -19,3 +19,9 @@ Add a lesson in the PR where it happened, while it's fresh. Say what we tried, w
 | Remove what doesn't earn its place | We dropped a smoke test because another test already started the app, and a demo Postman collection because the generated one covered it | GenAI #34, #35 | §9, §12 |
 | Keep logs compact as you go | The GenAI log grew to 6 pages of the PDF before we shortened the entries to 2 | GenAI #47–48 | §13 |
 | Check the samples against the spec | One AY25/26 sample report ran its §2 to 4 pages against a 2-page limit, and one had no references. Our build fails if a section goes over its limit | GenAI #45; `report/pdf/build.sh` | §12 |
+
+## DineshReddy
+
+| Lesson | What happened | Evidence | Fits |
+| --- | --- | --- | --- |
+| The Observer plumbing already paid for itself | Wiring check-in notifications for the Member feature, I expected to build a new notification channel. `NotificationSender`, `EventNotificationSender` (Spring's event bus) and `NotificationLog` already existed from the Membership and Billing work. Calling `notifications.send(...)` from `MemberService` was the whole cost; no new adapter, no new listener. A fourth feature using Observer confirms it: adding a notification site is a one-line call, not a new publisher/subscriber pair | `MemberService`; `EventNotificationSender`, `NotificationLog` | §5, §8, §12 |
