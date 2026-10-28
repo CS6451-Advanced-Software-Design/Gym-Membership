@@ -34,6 +34,8 @@ The state chart is for `Membership`, the object from the sequence diagram and th
 
 ![ER diagram](../analysis/er-diagram.png)
 
+The ER diagram has fewer boxes than the class diagram because only stored data becomes an entity. Each stored class has one entity with the same attributes and the same cardinality, shown in crow's foot notation: a member holds many memberships over time, a membership has many freezes, invoices and charges, and a charge belongs to at most one invoice until it is billed. The referral is a reflexive relationship on `MEMBER`. The four plans share one `PLAN` table told apart by its type, and the five states are a single `state` column on `MEMBERSHIP`, since a state has behaviour but no data of its own. The waitlist becomes one `WAITLIST_ENTRY` row per member, ordered by position. Things that aren't stored have no entity: the discount strategies, `PlanFactory`, and the payment and notification ports. In the prototype these entities are saved as JSON files through the repository ports, not in a database.
+
 ## Rough Work
 
 ::: {.grid columns=2}
