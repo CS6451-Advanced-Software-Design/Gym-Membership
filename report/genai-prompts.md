@@ -66,7 +66,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 59 | 28 Oct | Chirag | "yes prepare no. 8" | §8's use case → classes table, the Strategy snippets and test, the test counts and coverage table, the version control charts (`report/version-control/charts.py`), and hint comments with the facts from the code |
 | 60 | 28 Oct | Chirag | "was it mentioned to add this commits graph?" then "yeah lets do that create pr" | Team-level version control charts in §8 (commits per week, pull requests merged over time) instead of the per-member ones |
 | 61 | 28 Oct | Chirag | "added more words", "what is JaCoCo", "added more lines" and "added last line" | Grammar and factual fixes to my §8 prose, and the version control charts laid out side by side |
-
 | 62 | 27 Oct | DineshReddy | What's actually been built for the Member feature so far, and what's left under my name | Status review of the repo (found zero prior commits); a personal task list kept outside the repo |
 | 63 | 28 Oct | DineshReddy | How to prove the check-in rule and its notification, how it works and what its usage is | `CheckIn` domain/ports, `MemberService`/`MemberController`, unit and end-to-end tests |
 | 64 | 28 Oct | DineshReddy | Why the OpenAPI spec and Postman collection kept drifting out of sync, and why PMD kept failing locally | Regenerated the spec/collection after a stale-spec build failure; traced the PMD failures to a JDK mismatch, fixed with an enforcer rule |
