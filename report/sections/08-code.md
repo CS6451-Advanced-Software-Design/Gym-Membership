@@ -187,6 +187,31 @@ public Membership freeze(int months, LocalDate today) {
 
 *The context: `Membership` hands every operation to its current state (`gym/domain/Membership.java`)*
 
+```java
+@Test
+void aTrialCannotBeFrozen() {
+    RuleViolationException refused = assertThrows(RuleViolationException.class,
+            () -> trial().freeze(1, JOINED));
+
+    assertEquals("Membership ms1 is Trial, so it can't be frozen", refused.getMessage());
+}
+
+@Test
+void freezingStopsBookingAndCheckInAndMovesTheEndDate() {
+    // BR-M3: an Annual plan frozen for 2 months ends 2 months later
+    Membership annual = Membership.signUp("ms2", "m2", new AnnualPlan(), JOINED);
+
+    Membership frozen = annual.freeze(2, JOINED.plusMonths(1));
+
+    assertEquals(MembershipStatus.FROZEN, frozen.status());
+    assertFalse(frozen.canBook());
+    assertFalse(frozen.canCheckIn(MONDAY_EVENING));
+    assertEquals(JOINED.plusYears(1).plusMonths(2), frozen.endDate());
+}
+```
+
+*The same request, freeze, refused by one state and carried out by another (`MembershipStateTest`, which has a test for every arrow of the state chart)*
+
 ## Automated Tests
 
 We divided the testing strategy into 3 popular ones that most of the industry follows - unit, integration and end-to-end. JUnit 5 was used for all three, and the unit tests use in-memory fakes of ports like `InMemoryRepository`. All three strategies run in their own lane in CI/CD. Since 25 Oct, we also enforced that a new PR cannot be merged without having all testing CI lanes pass first.
