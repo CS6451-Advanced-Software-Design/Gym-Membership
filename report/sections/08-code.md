@@ -171,6 +171,22 @@ public class ActiveState extends MembershipState {
 
 *The State and one of its five states (`gym/domain`, the shared instances and other operations left out)*
 
+```java
+public MembershipState state() {
+    return MembershipState.of(status);
+}
+
+public boolean canBook() {
+    return state().canBook(this);
+}
+
+public Membership freeze(int months, LocalDate today) {
+    return state().freeze(this, months, today);
+}
+```
+
+*The context: `Membership` hands every operation to its current state (`gym/domain/Membership.java`)*
+
 ## Automated Tests
 
 We divided the testing strategy into 3 popular ones that most of the industry follows - unit, integration and end-to-end. JUnit 5 was used for all three, and the unit tests use in-memory fakes of ports like `InMemoryRepository`. All three strategies run in their own lane in CI/CD. Since 25 Oct, we also enforced that a new PR cannot be merged without having all testing CI lanes pass first.
