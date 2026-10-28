@@ -1,0 +1,29 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/members/:memberId/check-ins"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: memberId
+      value: m-3f9c2a71
+      disabled: false
+      description: (Required) the member checking in
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity (WebDAV) (RFC 4918)
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "title": "Unprocessable Content",
+        "status": 422,
+        "detail": "Membership ms-3f9c2a71 can't check in right now",
+        "instance": "/members/m-8d14e6b2/check-ins"
+      }
+order: 3000

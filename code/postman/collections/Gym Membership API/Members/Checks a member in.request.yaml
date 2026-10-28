@@ -1,0 +1,14 @@
+$kind: http-request
+description: Checks a member in. <p>Records a visit against the member's current membership, and sends them a notification.
+url: "{{baseUrl}}/members/:memberId/check-ins"
+method: POST
+headers:
+  Accept: application/json
+pathVariables:
+  - key: memberId
+    value: m-3f9c2a71
+    disabled: false
+    description: (Required) the member checking in
+settings: {}
+examples: ./.resources/Checks a member in.resources/examples
+order: 2000
