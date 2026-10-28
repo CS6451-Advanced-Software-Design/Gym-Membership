@@ -28,6 +28,8 @@ The sequence diagram follows UC2 Book Class through the hexagon: the request com
 
 ![Membership state chart](../analysis/membership-statechart.png)
 
+The state chart is for `Membership`, the object from the sequence diagram and the one the State pattern implements. Every transition is written as `event [guard] / action`. A new membership starts in Trial, except an Annual one, which is paid for the year and starts Active. The trial ends after 7 days: Active if the first charge was paid, Lapsed if it failed (BR-M2). An Active membership can be frozen for 1 to 3 months, at most once in 12 months (BR-M3), and a second failed payment in a row makes it Lapsed (BR-M4). Paying the arrears brings it back to Active, and 60 days in Lapsed cancels it (BR-M6). Cancelling an Annual plan within 6 months adds the €50 early exit fee. The Clock drives `endTrial()`, the unfreeze at the end of a freeze and `expire()` through UC13. In the code each state is a class (`TrialState`, `ActiveState`, `FrozenState`, `LapsedState`, `CancelledState`), each event is a method on `Membership` that it hands to its current state, and `MembershipStateTest` follows every arrow of this chart.
+
 ## Entity Relationship Diagram
 
 ![ER diagram](../analysis/er-diagram.png)
