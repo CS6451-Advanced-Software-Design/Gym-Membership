@@ -65,5 +65,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 58 | 28 Oct | Chirag | "lets remove/trim down on more text that is needed in these blueprints pages, we mainly want to show diagrams", "yes choose one and do it", "do fix the facts too if u can" and "make fixes as needed" | Grammar and factual fixes to my §10 prose, shorter §10 tables, and a landscape page for the component diagram |
 | 59 | 28 Oct | Chirag | "yes prepare no. 8" | §8's use case → classes table, the Strategy snippets and test, the test counts and coverage table, the version control charts (`report/version-control/charts.py`), and hint comments with the facts from the code |
 | 60 | 28 Oct | Chirag | "was it mentioned to add this commits graph?" then "yeah lets do that create pr" | Team-level version control charts in §8 (commits per week, pull requests merged over time) instead of the per-member ones |
+| 61 | 28 Oct | Chirag | "added more words", "what is JaCoCo", "added more lines" and "added last line" | Grammar and factual fixes to my §8 prose, and the version control charts laid out side by side |
 
 Table: GenAI prompts, all to Claude (Claude Code)

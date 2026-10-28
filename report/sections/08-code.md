@@ -9,10 +9,7 @@ Evidence: the Patterns table in the root README.md.
 
 ## Use Cases and Their Classes
 
-<!--
-One or two sentences of your own: every use case enters through a controller (or a scheduled job), goes through its
-port.in interface and lands in one service, so the table can be read left to right as the request's path.
--->
+We designed all our use cases to enter through a controller (or a scheduled job), going through a `port.in` interface and then landing on a service. It's easy to read this flow from left to right following the request path.
 
 | Use case | Entry point | Port (`port.in`, without "UseCase") | Service | Domain classes |
 | --- | --- | --- | --- | --- |
@@ -67,16 +64,12 @@ public UseCaseDispatcher useCaseDispatcher() {
 
 ### Strategy
 
-<!--
-Your words, 2–3 sentences. Facts:
-- BR-P2: discounts don't stack; the member gets only the largest one they qualify for (corporate 15%, family 10%,
-  loyalty 5% after more than 24 months).
-- DiscountPolicy is the Strategy; CorporateDiscount, FamilyDiscount and LoyaltyDiscount are the concrete strategies.
-- BestDiscount is itself a DiscountPolicy that asks every policy and keeps the largest, so BillingService only ever
-  sees one DiscountPolicy (BillingService.java, `discounts.discountFor(account, planFees)`).
-- BillingConfiguration chooses the list, so a new discount is a new class plus one entry there, with no change to
-  BillingService. It is the same kind of change as the QA1 modifiability scenario (a new plan), but for discounts.
--->
+We used the Strategy design pattern for designing the discounting logic in our application.
+
+1. Discounts cannot be stacked. If a member qualifies for more than one discount, we use the best one out of them.
+2. Each new discount strategy can be easily added like the current ones - CorporateDiscount, FamilyDiscount and LoyaltyDiscount.
+3. There is a shared policy called BestDiscount.
+4. No change is needed to BillingService when adding a discount strategy, only one entry in BillingConfiguration.
 
 ```java
 public interface DiscountPolicy {
@@ -131,14 +124,9 @@ void theBestDiscountWinsAndDiscountsDontStack() {
 
 ## Automated Tests
 
-<!--
-A sentence or two of your own. Facts:
-- JUnit 5 throughout. Unit tests use in-memory fakes of the driven ports (test/support: InMemoryRepository,
-  TestClock), which Hexagonal makes possible; integration tests start Spring; end-to-end tests call the REST API.
-- Each kind runs as its own CI job on every pull request; since 25 Oct, a pull request can't merge unless all three
-  pass.
-- Coverage is merged across the three kinds by JaCoCo in the Metrics job.
--->
+We divided the testing strategy into 3 popular ones that most of the industry follows - unit, integration and end-to-end. JUnit 5 was used for all three, and the unit tests use in-memory fakes of ports like `InMemoryRepository`. All three strategies run in their own lane in CI/CD. Since 25 Oct, we also enforced that a new PR cannot be merged without having all testing CI lanes pass first.
+
+Coverage of the tests is measured by JaCoCo (Java Code Coverage), and reported by its own CI job.
 
 | Kind | Tests | Line coverage |
 | --- | --- | --- |
@@ -151,15 +139,10 @@ Table: Automated tests on main (CI run of 28 Oct)
 
 ## Version Control
 
-<!--
-A sentence or two of your own. Facts:
-- 53 pull requests merged into main, 2 of them from Dependabot (#12 was merged into a feature branch, so it isn't
-  counted). CI has run the tests on every pull request since 21 Oct, and the report build since 25 Oct.
-- 16 commits went straight to main without a pull request, the last on 24 Oct. Since 25 Oct (the dashed line) a
-  ruleset on main requires a pull request and the three test jobs to pass.
-- Both charts are drawn from the git history by report/version-control/charts.py.
--->
+We used the most popular version control system, Git, along with the most popular Git provider, GitHub. We enabled GitHub's own bot, Dependabot, to allow automatic version updates to our dependencies (2 of its pull requests already merged).
 
+::: {.grid columns=2}
 ![Commits to main per week](../version-control/commits.png){width=100%}
 
 ![Pull requests merged into main over time](../version-control/pulls.png){width=100%}
+:::

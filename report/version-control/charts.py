@@ -42,12 +42,13 @@ def commits() -> None:
     weeks = [first + timedelta(weeks=index) for index in range((last - first).days // 7 + 1)]
     counts = Counter(monday(day) for day in days)
 
-    figure, axes = pyplot.subplots(figsize=(8, 3))
+    figure, axes = pyplot.subplots(figsize=(4.5, 3.2))
     axes.bar(weeks, [counts[week] for week in weeks], width=5, color=COLOUR)
     axes.set_ylabel('Commits')
-    axes.set_title(f'Commits to main per week ({len(days)} in all, merge commits left out)', fontsize=10)
+    axes.set_title(f'Commits to main per week ({len(days)})', fontsize=10)
     axes.set_xticks(weeks)
     axes.xaxis.set_major_formatter(dates.DateFormatter('%d %b'))
+    axes.tick_params(axis='x', labelsize=8)
     axes.spines[['top', 'right']].set_visible(False)
     figure.tight_layout()
     figure.savefig(HERE / 'commits.png', dpi=200)
@@ -62,14 +63,16 @@ def pulls() -> None:
         if subject.startswith('Merge pull request #') or (len(parents) == 1 and re.search(r'\(#\d+\)$', subject)):
             merged.append(datetime.fromisoformat(moment))
 
-    figure, axes = pyplot.subplots(figsize=(8, 3))
+    figure, axes = pyplot.subplots(figsize=(4.5, 3.2))
     axes.step(merged, range(1, len(merged) + 1), where='post', color=COLOUR, linewidth=1.8)
     axes.axvline(PROTECTED, color='#888888', linestyle='--', linewidth=1)
-    axes.annotate('main requires a pull request\nand passing tests', (PROTECTED, len(merged) * 0.8),
+    axes.annotate('pull request and\npassing tests\nrequired', (PROTECTED, len(merged) * 0.8),
                   xytext=(-8, 0), textcoords='offset points', ha='right', fontsize=8, color='#555555')
     axes.set_ylabel('Pull requests merged')
-    axes.set_title(f'Pull requests merged into main over time ({len(merged)} in all)', fontsize=10)
+    axes.set_title(f'Pull requests merged into main ({len(merged)})', fontsize=10)
+    axes.xaxis.set_major_locator(dates.WeekdayLocator(byweekday=dates.MO))
     axes.xaxis.set_major_formatter(dates.DateFormatter('%d %b'))
+    axes.tick_params(axis='x', labelsize=8)
     axes.spines[['top', 'right']].set_visible(False)
     figure.tight_layout()
     figure.savefig(HERE / 'pulls.png', dpi=200)
