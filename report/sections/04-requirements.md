@@ -40,6 +40,18 @@ The use case drafts in report/requirements/use-cases came from GenAI (prompt #2)
 | | 6 | The system shows any premium surcharge (€8, BR-B6) and the member confirms |
 | | 7 | The system creates the booking, records the surcharge for the next bill, counts the booking if the membership is in Trial, and confirms |
 
+| EXTENSIONS | Step | Branching Action |
+| --- | --- | --- |
+| | 2a | The member is suspended: 2a1. The system refuses and says when the suspension ends |
+| | 3a | The member already holds 5 future bookings: 3a1. The system refuses |
+| | 4a | The state or the plan says no, for example a Frozen membership or an Off-Peak member choosing an evening class: 4a1. The system refuses and gives the reason |
+| | 5a | The class is full: 5a1. «extend» Join Waitlist: the member goes to the end of the waitlist and is told their position. 5a2. When someone cancels, the first person waiting is booked automatically and notified (BR-B2, UC3) |
+
+| VARIATIONS | Step | Branching Action |
+| --- | --- | --- |
+| | 1 | The member books online, or Front Desk Staff book for them |
+| | 6 | Annual members pay no premium surcharge, and an ordinary class has none |
+
 ## Quality Attributes
 
 *QA1 (extensibility) and QA2, each as a six-part scenario with its tactics, to be written by Dhruv.*
