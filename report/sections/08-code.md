@@ -61,7 +61,7 @@ public UseCaseDispatcher useCaseDispatcher() {
 
 ## Design Patterns
 
-*State and Factory (Dhruv), Observer (Bharat), each with a snippet and its test.*
+*Observer (Bharat), with a snippet and its test.*
 
 ### Strategy
 
