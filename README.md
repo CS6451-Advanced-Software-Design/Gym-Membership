@@ -4,7 +4,7 @@ CS6451 Advanced Software Design, Team-Based Assignment Part 1 (Brightspace Group
 
 A monolithic (package-by-layer MVC + Hexagonal, with Interceptor) business tier for a gym and fitness club: membership plans and billing, class bookings with capacity and waitlists, check-in, freezes, penalties, and referral credits. The front end is simulated with Postman and the data layer with file I/O behind repositories and DTOs.
 
-**Deadline: 23:59 Sun 1 Nov 2026.**
+**Deadline: 23:59 Wed 4 Nov 2026** (moved from Sun 1 Nov).
 
 **The report:** the [latest draft PDF](https://github.com/CS6451-Advanced-Software-Design/Gym-Membership/releases/download/report-latest/report.pdf) is rebuilt from [report/sections](report/sections) on every merge to `main`. Each release has the report as it stood at that version.
 
