@@ -24,7 +24,7 @@ One hacky workaround we did was the feature was not available in the CE, so we t
 | Drawn by an Open API plugin (GenAI #57) | The three diagrams, in `report/blueprints/gym-membership.vpp` |
 | Exported from Community Edition 18.1 | PNGs with a small Community Edition mark |
 
-Table: How the blueprints were recovered
+Table: How the blueprints were recovered (on 27 Oct, before the Member feature in #58)
 
 When using source code for reverse engineering, we found 19 of the 85 types (every DTO and the core domain classes) were missing from the reversed model. The issue was our source code using the `record` feature from Java. Example -
 
@@ -54,7 +54,7 @@ This is the real package diagram as interpreted by the Visual Paradigm software 
 | `adapter.persistence` → `domain` (4) | The JSON adapter stores domain objects (§5's liability) |
 | Root package `gym` | Composition root: wires the Strategy and the Interceptor |
 | No stereotypes | Intent isn't in the code |
-| No booking or member management | Not built yet |
+| No booking or member management | Booking isn't built yet; member management and check-in came after the recovery (#58) |
 
 Table: Design-time against recovered package diagram
 

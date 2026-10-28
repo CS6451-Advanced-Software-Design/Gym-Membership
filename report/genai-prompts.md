@@ -67,9 +67,10 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 60 | 28 Oct | Chirag | "was it mentioned to add this commits graph?" then "yeah lets do that create pr" | Team-level version control charts in §8 (commits per week, pull requests merged over time) instead of the per-member ones |
 | 61 | 28 Oct | Chirag | "added more words", "what is JaCoCo", "added more lines" and "added last line" | Grammar and factual fixes to my §8 prose, and the version control charts laid out side by side |
 
-| 57 | 27 Oct | DineshReddy | What's actually been built for the Member feature so far, and what's left under my name | Status review of the repo (found zero prior commits); a personal task list kept outside the repo |
-| 58 | 28 Oct | DineshReddy | How to prove the check-in rule and its notification, how it works and what its usage is | `CheckIn` domain/ports, `MemberService`/`MemberController`, unit and end-to-end tests |
-| 59 | 28 Oct | DineshReddy | Why the OpenAPI spec and Postman collection kept drifting out of sync, and why PMD kept failing locally | Regenerated the spec/collection after a stale-spec build failure; traced the PMD failures to a JDK mismatch, fixed with an enforcer rule |
-| 60 | 28 Oct | DineshReddy | Figuring out what counts as a real lesson for §11/§12 versus just a note about a git mistake | A lesson on reusing the existing Observer notification plumbing, in place of a first-draft workflow note |
+| 62 | 27 Oct | DineshReddy | What's actually been built for the Member feature so far, and what's left under my name | Status review of the repo (found zero prior commits); a personal task list kept outside the repo |
+| 63 | 28 Oct | DineshReddy | How to prove the check-in rule and its notification, how it works and what its usage is | `CheckIn` domain/ports, `MemberService`/`MemberController`, unit and end-to-end tests |
+| 64 | 28 Oct | DineshReddy | Why the OpenAPI spec and Postman collection kept drifting out of sync, and why PMD kept failing locally | Regenerated the spec/collection after a stale-spec build failure; traced the PMD failures to a JDK mismatch, fixed with an enforcer rule |
+| 65 | 28 Oct | DineshReddy | Figuring out what counts as a real lesson for §11/§12 versus just a note about a git mistake | A lesson on reusing the existing Observer notification plumbing, in place of a first-draft workflow note |
+| 66 | 28 Oct | Chirag | "lets exclude those for now, witha  small comment those can bea dded too" (the SonarQube Cloud numbers) and "i think DineshReddy merged in changes", then "lets do 2 for now" (label §10's diagrams as a snapshot) | §11's subheadings, metrics table and hint comments with the facts from the code and CI; §8's test counts and use case table brought up to date with the Member feature (#58); DineshReddy's rows renumbered 62–65, as they clashed with 57–60; §10's diagrams labelled as recovered before #58 |
 
 Table: GenAI prompts, all to Claude (Claude Code)
