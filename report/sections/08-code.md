@@ -265,6 +265,24 @@ Plan plan = PlanFactory.create(type);
 
 *One of the products, with only the rule it changes, and where the factory is used (`gym/domain/OffPeakPlan.java`, `gym/service/MembershipService.java`)*
 
+```java
+@Test
+void createsThePlanClassForEachType() {
+    assertInstanceOf(MonthlyPlan.class, PlanFactory.create(PlanType.MONTHLY));
+    assertInstanceOf(AnnualPlan.class, PlanFactory.create(PlanType.ANNUAL));
+    assertInstanceOf(StudentPlan.class, PlanFactory.create(PlanType.STUDENT));
+    assertInstanceOf(OffPeakPlan.class, PlanFactory.create(PlanType.OFF_PEAK));
+}
+
+@Test
+void offersEveryPlanType() {
+    assertEquals(Arrays.asList(PlanType.values()),
+            PlanFactory.all().stream().map(Plan::type).toList());
+}
+```
+
+*The tests that prove the factory (`PlanFactoryTest`). The second one fails if a `PlanType` is added without its plan class*
+
 ## Automated Tests
 
 We divided the testing strategy into 3 popular ones that most of the industry follows - unit, integration and end-to-end. JUnit 5 was used for all three, and the unit tests use in-memory fakes of ports like `InMemoryRepository`. All three strategies run in their own lane in CI/CD. Since 25 Oct, we also enforced that a new PR cannot be merged without having all testing CI lanes pass first.
