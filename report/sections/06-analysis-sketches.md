@@ -16,6 +16,8 @@ Evidence: report/analysis/README.md, report/sketches/README.md.
 
 ![Class diagram](../analysis/class-diagram.png)
 
+The class diagram keeps the candidates from the table above, with only the attributes and operations the business rules need. It shows generalisation (`Plan` and its four plans, `MembershipState` and its five states), realisation (the three discounts implement `DiscountPolicy`), composition (`Membership` owns its `MembershipState` and its `Freeze` records, and a `GymClass` owns its `Waitlist`), aggregation (`Invoice` collects `Charge`s), associations with multiplicities, dependencies (`PlanFactory` creates `Plan`s), visibility and enumerations. The interfaces carry their pre- and postconditions as notes: a `DiscountPolicy` never gives back more than the amount it was given, and the `PaymentGateway` charges a positive amount exactly once or not at all. `noShowsLast30Days` is a derived attribute, counted from the `NO_SHOW` bookings, so no attribute or operation appears twice. The two patterns the rules called for are already visible: the `MembershipState` hierarchy (State) and `PlanFactory` (Factory). The `Membership`, `MembershipState`, `Plan` and `PlanFactory` boxes were redrawn after the Membership code was written, so they match it.
+
 ## Sequence Diagram: Book Class
 
 ![UC2 Book Class sequence diagram](../analysis/sequence-book-class.png)
