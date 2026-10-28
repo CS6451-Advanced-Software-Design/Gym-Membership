@@ -10,81 +10,66 @@ Evidence: report/blueprints/ (the Visual Paradigm project, the exported diagrams
 
 ## Workbench
 
-<!--
-Why Visual Paradigm (your words). Points you could cover:
-- The spec asks for a UML workbench from the community editions and rules out Word and PowerPoint.
-- Visual Paradigm Community Edition is free for non-commercial use and draws all three diagram types.
-- It reverse engineers Java into a model (Instant Reverse), so the diagrams come from the code, not from memory.
-- The catch: Instant Reverse is not in Community Edition. You reversed the code under the 30-day Enterprise
-  evaluation (18.1, build 20261012) and exported from Community Edition, because evaluation exports are covered
-  in a watermark.
-- Anything you'd compare it with (StarUML, Modelio, Papyrus) only if you looked at them.
--->
+The specification asked us to use a UML workbench, choosing from the community edition tools. On doing some research Visual Paradigm came out on top, offering a Community Edition as well which was completely free. It supported the three diagrams we wanted to make as well.
 
-| Step | How | What came out |
-| --- | --- | --- |
-| Reverse the source | Instant Reverse on `code/src/main/java` | 66 of the 85 types. All 19 Java `record` types (`Membership`, `Member`, `Money`, `Invoice`, `Charge` and every DTO) were silently dropped: the Java parser predates records |
-| Reverse the bytecode | Instant Reverse on `code/target/classes` | All 85 types, 14 packages, 24 realizations, 17 generalizations, 84 associations |
-| Package dependencies | The `import` lines in the code, one edge per package pair | 19 edges. Instant Reverse records realization, generalization and association, but not imports |
-| Draw | A Visual Paradigm Open API plugin, run headless, placed the reversed packages and port interfaces (GenAI #57) | The three diagrams below, in `report/blueprints/gym-membership.vpp` |
-| Export | Visual Paradigm Community Edition 18.1 | PNGs with only the small Community Edition mark |
+None of us had any experience with the software, so we did a little research and found we could use the `Instant Reverse` feature on it so the model behind the diagrams comes from the code itself.
+
+One hacky workaround we did was the feature was not available in the CE, so we took a 30-day trial of the Enterprise version to use it, and then used the CE version to export it and avoid the evaluation watermark.
+
+| Step | What came out |
+| --- | --- |
+| Instant Reverse on `code/src/main/java` | 66 of 85 types: all 19 `record` types silently dropped |
+| Instant Reverse on `code/target/classes` | All 85 types and 14 packages |
+| Package edges from the `import` lines | 19 edges (Instant Reverse skips imports) |
+| Drawn by an Open API plugin (GenAI #57) | The three diagrams, in `report/blueprints/gym-membership.vpp` |
+| Exported from Community Edition 18.1 | PNGs with a small Community Edition mark |
 
 Table: How the blueprints were recovered
 
-<!-- One or two sentences on what the records finding says about tools lagging the language, if you want it here
-rather than in the Critique. -->
+When using source code for reverse engineering, we found 19 of the 85 types (every DTO and the core domain classes) were missing from the reversed model. The issue was our source code using the `record` feature from Java. Example -
+
+a domain record, Charge (gym/domain/Charge.java, trimmed):
+```java
+public record Charge(String id, String membershipId, ChargeType type,
+                     Money amount, LocalDate date, String invoiceId) {
+    public Charge {
+        Objects.requireNonNull(id, "id");
+        ...
+    }
+}
+```
+
+It's a common way of defining data classes in Java since Java 16, a class whose only job is to hold some data and never change it. Visual Paradigm did not support this new syntax. So we compiled the code and used the `code/target/classes` folder, which holds the compiled bytecode instead of source code.
 
 ## Design-Time Package Diagram
 
 ![Recovered package diagram. A triangle marks a package whose classes implement interfaces in the other](../blueprints/package-diagram.png){width=100%}
 
-<!--
-Note under the diagram (your words): what it shows. Then compare it with the design-time diagram in §5 (Architecture).
-What matches: domain depends on nothing; interceptor imports no business package; service implements port.in and
-uses port.out; nothing imports service or the adapters.
--->
+This is the real package diagram as interpreted by the Visual Paradigm software using our codebase, with the arrows taken from the imports. It mostly matches the design we created. Just a few differences exist that you can see below:
 
-| Difference | Design (§5) | Recovered | Why |
-| --- | --- | --- | --- |
-| `dto` → `domain` | No edge | 16 imports | The response DTOs are built straight from domain objects |
-| `controller` → `domain` | No edge | 2 imports | ErrorHandler maps NotFoundException and RuleViolationException to HTTP errors |
-| `adapter.persistence` → `domain` | No edge | 4 imports | The JSON adapter stores domain objects directly: the liability admitted in §5 |
-| Root package `gym` | Not drawn | BillingConfiguration → `domain`; InterceptorConfiguration → `interceptor`, `adapter.logging` | The composition root: Spring wiring of the discount Strategy and the Interceptor |
-| Stereotypes | «driving adapter», «MVC model» … | None | Intent isn't in the code, so the recovered diagram can't show it |
-| Booking, Member | Planned | Not in the code yet | Future release (Bharat's Command and Observer, DineshReddy's Member) |
+| Recovered, not in §5 | Why |
+| --- | --- |
+| `dto` → `domain` (16 imports) | DTOs are built from domain objects |
+| `controller` → `domain` (2) | ErrorHandler maps domain exceptions to HTTP errors |
+| `adapter.persistence` → `domain` (4) | The JSON adapter stores domain objects (§5's liability) |
+| Root package `gym` | Composition root: wires the Strategy and the Interceptor |
+| No stereotypes | Intent isn't in the code |
+| No booking or member management | Not built yet |
 
 Table: Design-time against recovered package diagram
 
-<!-- Your take: which differences are drift we should fix, and which are the design being too tidy. -->
+I believe the biggest issue to fix would be the `adapter.persistence` → `domain` drift. Currently the saved JSON files being directly tied to the domain objects can cause storage-level errors if in future we decide to modify the domain logic. For example, if we add a new field, the existing JSON files would just lead to errors when loading existing data, instead of cleanly handling it through optional logic.
 
+::: landscape
 ## Component Diagram
 
 ![Component diagram, built on the reversed port interfaces](../blueprints/component-diagram.png){width=100%}
 
-<!--
-Note under the diagram (your words): what it shows. Facts you could use:
-- Each component is the class or classes named in it. Its stereotype is its Hexagonal role.
-- A triangle from an interface means the component provides it; a dashed arrow to it means the component requires it.
-- MembershipService requires four of Billing's use cases (CalculateCharges, RecordCharge, PayArrears, ViewInvoices),
-  so Membership depends on Billing through port.in, not on BillingService directly. The design-time diagram doesn't
-  show this coupling.
-- BillingService needs all six driven ports. MembershipService needs three.
-- UseCaseDispatcher wraps every port.in call in a dynamic proxy and calls LoggingInterceptor through UseCaseInterceptor.
-- Every component also uses gym.domain; those edges are left out.
--->
+Here the diagram shows components as per the classes we needed in our code. BillingService is in the centre acting as the core of the Hexagonal architecture we intended, with all six driven ports around it. UseCaseDispatcher wraps all the use case (`port.in`) ports, as the Interceptor pattern intended, and then calls the LoggingInterceptor.
+:::
 
 ## Deployment Diagram
 
 ![Deployment diagram](../blueprints/deployment-diagram.png){width=100%}
 
-<!--
-Note under the diagram (your words): what it shows. Facts you could use (code/Dockerfile, .railway/railway.ts):
-- Railway (region iad) builds code/Dockerfile and redeploys main once CI passes (GitHub check suites).
-- The Docker image is two stages: build on eclipse-temurin:21-jdk-noble, run on eclipse-temurin:21-jre-noble.
-- Railway's proxy ends HTTPS and forwards to the jar's embedded Tomcat on $PORT.
-- The JSON files live on the 500 MB gym-data volume at /data (GYM_PERSISTENCE_DIRECTORY=/data), so they survive
-  redeploys. Health check: /actuator/health.
-- Clients: Postman with live, mock and local environments, and the Swagger UI. The mock environment talks to
-  Postman's mock server, not to Railway.
-- How this maps to the hosting stack in §5: web server, application server, EIS (the volume), no message bus.
--->
+Although actually hosting the app was not required as per the specifications of the project, we had a fun time exploring different services and ultimately landing on Railway as a simple deployment infrastructure provider. We define the service via a Dockerfile that Railway can deploy directly, and a Railway volume instead of a database for persisting our JSON files.

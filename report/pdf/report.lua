@@ -10,6 +10,8 @@
 -- `widths` (each column's share of the page width, e.g. "0.1 0.9") and `size` (its text size, e.g. "8pt").
 -- Grids: a div such as ::: {.grid columns=2} ::: lays its figures out side by side, `columns` to a row, so a page
 -- holds more of them. Give each image a width (e.g. {width=100%}), which is then a share of its column.
+-- Landscape: a div such as ::: landscape ::: gets a page of its own turned sideways, for a diagram too wide to read
+-- at portrait width.
 
 local REPOSITORY = 'https://github.com/CS6451-Advanced-Software-Design/Gym-Membership/blob/main/'
 
@@ -120,6 +122,13 @@ local function grid(div)
   return blocks
 end
 
+local function landscape(div)
+  local blocks = pandoc.Blocks({ pandoc.RawBlock('typst', '#page(flipped: true)[') })
+  blocks:extend(div.content)
+  blocks:insert(pandoc.RawBlock('typst', ']'))
+  return blocks
+end
+
 function Pandoc(document)
   local source = PANDOC_STATE.input_files[1]
   local base = directory(source)
@@ -130,6 +139,9 @@ function Pandoc(document)
       end
       if div.classes:includes('grid') then
         return grid(div)
+      end
+      if div.classes:includes('landscape') then
+        return landscape(div)
       end
     end,
   })
