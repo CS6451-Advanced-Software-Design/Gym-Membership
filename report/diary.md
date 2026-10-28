@@ -42,7 +42,7 @@ Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 f
 | Chirag | Spring Boot skeleton: `Repository` port and JSON adapter, ArchUnit, CI that fails on any test failure. Interceptor with logging. Billing feature: invoices, best-discount Strategy, referral cap, pro-rating, freeze, early-exit fee, arrears; `BillingJob`. Postman workspace, test split, CI metrics, Railway deploy, `v0.1.0`, report PDF build. GenAI #19–48, #51 | One week left; Booking and Member not built | §5; then §10 in Visual Paradigm and §11 |
 | Bharat | | | |
 | DineshReddy | | | |
-| Dhruv | | | |
+| Dhruv | Split the repo into `report/` and `code/`. Redrew the use case, class, sequence, state chart, ER and package diagrams. Shared `Money` type, payment and notification ports (PR #13). Membership feature (PR #38): State pattern for the five states, `PlanFactory` for the four plans, UC1 sign-up, UC5 freeze, UC6 cancel, UC13 daily checks (`MembershipChecksJob`), UC14 pay arrears, with unit, integration and E2E tests. GenAI #18, #25–26, #49–50 | Membership had to bill through Billing's ports without changing `BillingService`; memberships already saved on Railway had to keep loading; `main` became protected, so everything goes through a PR | Draw the Membership sketches by hand; start §4 |
 
 **Notes:**
 
