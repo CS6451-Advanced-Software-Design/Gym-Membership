@@ -3,29 +3,27 @@ request:
   url: "{{baseUrl}}/members/:memberId"
   method: GET
   headers:
-    Accept: application/json
+    Accept: application/problem+json
   pathVariables:
     - key: memberId
-      value: m-3f9c2a71
+      value: m-8d14e6b2
       disabled: false
       description: (Required) the member to show
   body:
     type: text
     content: ""
 response:
-  statusCode: 200
-  statusText: OK
+  statusCode: 404
+  statusText: Not Found
   headers:
-    Content-Type: application/json
+    Content-Type: application/problem+json
   body:
     type: json
     content: |-
       {
-        "memberId": "m-8d14e6b2",
-        "name": "Ann Example",
-        "email": "ann@example.com",
-        "studentId": null,
-        "employer": null,
-        "familyId": null
+        "title": "Not Found",
+        "status": 404,
+        "detail": "Member m-42 not found",
+        "instance": "/members/m-42"
       }
-order: 1000
+order: 2000

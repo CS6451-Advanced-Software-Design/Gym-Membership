@@ -1,0 +1,14 @@
+$kind: http-request
+description: "Shows a member. <p>The member's profile: their name and email, and the student ID, employer or family that make them eligible for the Student plan or a discount."
+url: "{{baseUrl}}/members/:memberId"
+method: GET
+headers:
+  Accept: application/json
+pathVariables:
+  - key: memberId
+    value: m-8d14e6b2
+    disabled: false
+    description: (Required) the member to show
+settings: {}
+examples: ./.resources/Shows a member.resources/examples
+order: 3000
