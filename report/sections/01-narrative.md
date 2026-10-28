@@ -7,4 +7,4 @@ plans and pricing, freezes, lapsing, discounts that don't stack, referral credit
 Evidence: the business rules in report/requirements/README.md, the worked invoice sketch in report/sketches.
 -->
 
-*To be written by Dhruv.*
+KISS Solutions has been asked to build the membership system for a gym and fitness club. The club sells memberships on four plans, runs a timetable of classes with a limited number of places, and bills its members every month. Today most of this is done by hand at the front desk: staff work out what a new member owes for the rest of the month, keep track of who has frozen their membership, chase failed payments, and decide whether a member may still book a class. Each of these decisions follows a rule, and the rules depend on each other, which is where mistakes and arguments with members come from.
