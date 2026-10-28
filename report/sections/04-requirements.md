@@ -52,6 +52,19 @@ The use case drafts in report/requirements/use-cases came from GenAI (prompt #2)
 | | 1 | The member books online, or Front Desk Staff book for them |
 | | 6 | Annual members pay no premium surcharge, and an ordinary class has none |
 
+| RELATED INFORMATION | Book Class |
+| --- | --- |
+| Priority | Top: booking is what members do most |
+| Performance | Answers in under 1 second. When two members try to book the last place at the same time, only one of them gets it |
+| Frequency | About 500 a day, with a peak when the next week's timetable opens |
+| Channel to actors | REST API (`POST /bookings`); the Book a Class screen in the second GUI prototype |
+| OPEN ISSUES | Can a member book two classes that overlap in time? |
+| | Should a member on the waitlist of a class that starts within 2 hours still be promoted, when they may not see the notification in time? |
+| | Booking is still being implemented, so this description and the sequence diagram in §6 are the design it follows |
+| Due Date | Release 1.0 |
+| Superordinates | Manage bookings |
+| Subordinates | Verify Membership Status, Join Waitlist |
+
 ## Quality Attributes
 
 *QA1 (extensibility) and QA2, each as a six-part scenario with its tactics, to be written by Dhruv.*
