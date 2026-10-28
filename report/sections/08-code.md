@@ -14,6 +14,7 @@ We designed all our use cases to enter through a controller (or a scheduled job)
 | Use case | Entry point | Port (`port.in`, without "UseCase") | Service | Domain classes |
 | --- | --- | --- | --- | --- |
 | UC1 Sign Up | `POST /memberships` | SignUp | MembershipService | PlanFactory, Plan, Member, Membership; Billing's CalculateCharges |
+| UC4 Check In | `POST /members/{memberId}/check-ins` | CheckIn | MemberService | Member, Membership (`canCheckIn`), CheckIn |
 | UC5 Freeze / Unfreeze | `POST …/freeze`, `…/unfreeze` | FreezeMembership | MembershipService | Membership, Freeze, FrozenState |
 | UC6 Cancel Membership | `POST …/cancel` | CancelMembership | MembershipService | Membership, CancelledState; Billing's final invoice and early-exit fee |
 | UC7 Run Monthly Billing | BillingJob (monthly), `POST /billing-runs` | RunMonthlyBilling | BillingService | BestDiscount (Strategy), Charge, Invoice |
@@ -23,7 +24,7 @@ We designed all our use cases to enter through a controller (or a scheduled job)
 
 Table: Each use case built so far, from where it enters to the classes that carry it out ("…" is `/memberships/{membershipId}`)
 
-<!-- UC2–UC4, UC8–UC10 and UC12 (bookings, attendance, plans, schedule, reports) aren't built yet. -->
+<!-- UC2, UC3, UC8–UC10 and UC12 (bookings, attendance, plans, schedule, reports) aren't built yet. -->
 
 
 ## Architectural Patterns
@@ -130,10 +131,10 @@ Coverage of the tests is measured by JaCoCo (Java Code Coverage), and reported b
 
 | Kind | Tests | Line coverage |
 | --- | --- | --- |
-| Unit | 101 | 75.4% |
-| Integration | 20 | 40.6% |
-| End-to-end | 11 | 74.0% |
-| **All** | **132** | **95.8%** (801 of 836 lines) |
+| Unit | 108 | 75.2% |
+| Integration | 21 | 40.6% |
+| End-to-end | 14 | 76.0% |
+| **All** | **143** | **96.1%** (848 of 882 lines) |
 
 Table: Automated tests on main (CI run of 28 Oct)
 
