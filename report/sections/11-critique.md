@@ -21,7 +21,7 @@ Your words, 2–3 sentences. Facts (from §10's table):
 
 <!--
 Your take, 2–3 sentences. Facts:
-- Coverage: 96.1% combined, but coverage shows which lines ran, not which results a test checked.
+- Coverage: 96.3% combined, but coverage shows which lines ran, not which results a test checked.
 - The same three classes top both CK and PMD: BillingService is flagged as a GodClass (WMC 54, RFC 75, 192 lines) with
   too many methods; MembershipService couples to the most classes after its controller (CBO 28). The services are
   where the logic gathers, which Hexagonal allows but doesn't prevent.
@@ -35,8 +35,8 @@ Your take, 2–3 sentences. Facts:
 
 | Tool | Result | Where it points |
 | --- | --- | --- |
-| JaCoCo | 96.1% line coverage (848 of 882) | Unit 75.2%, end-to-end 76.0%, integration 40.6% |
-| PMD | 48 violations | BillingService: GodClass, TooManyMethods |
+| JaCoCo | 96.3% line coverage (897 of 931) | Unit 76.5%, end-to-end 72.0%, integration 38.5% |
+| PMD | 49 violations | BillingService: GodClass, TooManyMethods |
 | CK | Highest CBO 29, highest WMC 54 | MembershipController (CBO), BillingService (WMC 54, RFC 75) |
 
 Table: Code metrics on main (CI, 28 Oct)
