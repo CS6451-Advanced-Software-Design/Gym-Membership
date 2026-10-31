@@ -98,7 +98,7 @@ jobs:
       # Each lane recorded its own coverage. Merge them so the report covers every kind of test
       - name: Coverage
         run: |
-          curl -sLo "$RUNNER_TEMP/jacococli.jar" "https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/$JACOCO_VERSION/org.jacoco.cli-$JACOCO_VERSION-nodeps.jar"
+          curl -sLfo "$RUNNER_TEMP/jacococli.jar" "https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/$JACOCO_VERSION/org.jacoco.cli-$JACOCO_VERSION-nodeps.jar"
           java -jar "$RUNNER_TEMP/jacococli.jar" merge target/coverage/*/jacoco.exec --destfile target/jacoco.exec
           mkdir -p target/site/jacoco
           java -jar "$RUNNER_TEMP/jacococli.jar" report target/jacoco.exec --classfiles target/classes --sourcefiles src/main/java \
@@ -111,7 +111,7 @@ jobs:
       # CK logs through log4j 1.x, which warns when it has no config, so give it one that only prints warnings and errors
       - name: CK
         run: |
-          curl -sLo "$RUNNER_TEMP/ck.jar" "https://repo1.maven.org/maven2/com/github/mauricioaniche/ck/$CK_VERSION/ck-$CK_VERSION-jar-with-dependencies.jar"
+          curl -sLfo "$RUNNER_TEMP/ck.jar" "https://repo1.maven.org/maven2/com/github/mauricioaniche/ck/$CK_VERSION/ck-$CK_VERSION-jar-with-dependencies.jar"
           printf '%s\n' 'log4j.rootLogger=WARN, console' 'log4j.appender.console=org.apache.log4j.ConsoleAppender' 'log4j.appender.console.layout=org.apache.log4j.SimpleLayout' > "$RUNNER_TEMP/log4j.properties"
           mkdir -p target/ck
           java -Dlog4j.configuration="file:$RUNNER_TEMP/log4j.properties" -jar "$RUNNER_TEMP/ck.jar" src/main/java false 0 false target/ck/
