@@ -21,6 +21,7 @@ jobs:
   tests:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -74,6 +75,7 @@ jobs:
     name: Metrics
     needs: tests
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       pull-requests: write
