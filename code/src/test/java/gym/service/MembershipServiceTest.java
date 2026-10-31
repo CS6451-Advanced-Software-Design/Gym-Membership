@@ -49,7 +49,7 @@ class MembershipServiceTest {
 
     private final BillingService billing = new BillingService(
             memberships,
-            members,
+            new BillingAccountFactory(memberships, members, clock),
             charges,
             new InMemoryInvoiceRepository(),
             new BestDiscount(List.of(new CorporateDiscount(), new FamilyDiscount(), new LoyaltyDiscount())),
