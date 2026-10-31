@@ -85,5 +85,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 78 | 28 Oct | Dhruv | "give some outline for section 12:reflection, i will write it in my own words" | A full draft of my §12 reflection from what happened in the project, merged as written, which I am rewriting in my own words before submission (#78) |
 | 79 | 31 Oct | Chirag | "see my https://github.com/CS6451-Advanced-Software-Design/Gym-Membership work so far, my friends added lot more work, so i need handle syncing of it etc. for eg. updating screenshots, approving the railway deployment so everything is live" | The Booking deploy approved on Railway, the version control charts redrawn and the §8 test table brought up to date with the Booking tests |
 | 80 | 31 Oct | Chirag | "help me start work on §11 Critique" | The §11 metrics table and fact notes brought up to date with the CI run on 89e9630, then explanations of each subsection's facts and grammar and factual fixes to the §11 lines I wrote |
+| 81 | 31 Oct | Chirag | "help me start reflection", "i want mine in more of a points format", then "added my lines, refine and create pr" and "try keep my original language as much as possible" | Facts to draw on from the lessons, roles and diary, a points layout, and grammar and factual fixes to the reflection I wrote |
 
 Table: GenAI prompts, all to Claude (Claude Code)
