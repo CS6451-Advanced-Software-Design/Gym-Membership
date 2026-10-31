@@ -28,6 +28,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
@@ -152,8 +153,8 @@ public class MembershipService implements SignUpUseCase, ViewMembershipUseCase, 
             }
             memberships.save(after);
             if (after.status() != before.status()) {
-                notifications.send(new Notification(after.memberId(), "Membership " + after.status().name().toLowerCase(),
-                        "Your membership is now " + after.status().name().toLowerCase() + "."));
+                String status = after.status().name().toLowerCase(Locale.ROOT);
+                notifications.send(new Notification(after.memberId(), "Membership " + status, "Your membership is now " + status + "."));
             }
             changed.add(after);
         }
