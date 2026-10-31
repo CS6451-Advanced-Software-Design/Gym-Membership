@@ -88,5 +88,7 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 81 | 31 Oct | Chirag | "help me start reflection", "i want mine in more of a points format", then "added my lines, refine and create pr" and "try keep my original language as much as possible" | Facts to draw on from the lessons, roles and diary, a points layout, and grammar and factual fixes to the reflection I wrote |
 | 82 | 31 Oct | Bharat | "get all my tasks on name Bharat and tell me what tasks are completed and what need to be done, go through complete folder" | Status review of the repo; a personal task list kept outside the repo |
 | 83 | 31 Oct | Bharat | "can you run this in locally" | The app run locally and its endpoints tried; nothing committed |
+| 84 | 31 Oct | Bharat | "In our hexagonal Java project, CheckInRepository extends `Repository<CheckIn, String>` and has no body. Explain in simple words what a port interface like this is for, what the generics mean, and what I need to write for GymClassRepository for my GymClass record (key is classId)" | Explanation of port interfaces and generics, and the `GymClassRepository` port |
 
+| 85 | 31 Oct | Bharat | "I wrote GymClassRepository. What is different for BookingRepository, whose record is Booking and key is bookingId? Describe the steps and check my file when I paste it." | The steps for the `BookingRepository` port and a check of the file |
 Table: GenAI prompts, all to Claude (Claude Code)
