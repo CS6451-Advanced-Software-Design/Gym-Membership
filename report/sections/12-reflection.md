@@ -7,7 +7,21 @@ the project. Be specific, and write about yourself, not the team. Notes with evi
 
 ## Chirag Aggarwal
 
-*To be written by Chirag.*
+As the "Architect" of the team, which I feel is a very heavy word, I mostly turned the overall architecture, which we all decided together, into diagrams the team could use for a consistent implementation.
+
+1. Hosting: even though hosting was not required, I really wanted it there. At the same time, I really wanted to use Java. So even though I wanted to use Appwrite for hosting, it didn't support a long-running Java server, and we had to switch to Railway.
+2. The Hexagonal pattern was very abstract on the surface, and it needed something more concrete to stay in place. So designing `ArchitectureTest` helped a lot in enforcing it.
+3. While matching the documentation with the code, we saw a `BillingJob` described that our first implementation never had. So I found the importance of keeping docs up to date even more.
+
+Diagrams were where most of our effort went. GenAI was very good at generating them, but sometimes they were too complicated, out of scope, or not what we had in mind. Because of this our implementation started a bit later than we expected, but I would still say the time spent there was well worth it.
+
+Decisions that ended up being super valuable:
+
+- Enforcing strict CI from the first line of code: tests should always pass, and each merge is deployed to Railway for everyone to see.
+- Using Infrastructure as Code to define our configs meant we had a much clearer view, even though not everyone could see the Railway dashboard.
+- Our GenAI usage, as you can see, was on the higher end, but most of our prompts were for our own understanding and for breaking down processes that would have taken hours or weeks to do manually.
+
+At Appwrite I already follow a lot of these design and best practices, so I could enforce them here easily. As a learning challenge, I tried my best to concern myself with "boring" stuff like diagrams, which I now value more than I did before.
 
 ## Bharat Doodi
 
