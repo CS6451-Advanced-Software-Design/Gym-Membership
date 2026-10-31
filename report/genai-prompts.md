@@ -91,4 +91,7 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 84 | 31 Oct | Bharat | "In our hexagonal Java project, CheckInRepository extends `Repository<CheckIn, String>` and has no body. Explain in simple words what a port interface like this is for, what the generics mean, and what I need to write for GymClassRepository for my GymClass record (key is classId)" | Explanation of port interfaces and generics, and the `GymClassRepository` port |
 
 | 85 | 31 Oct | Bharat | "I wrote GymClassRepository. What is different for BookingRepository, whose record is Booking and key is bookingId? Describe the steps and check my file when I paste it." | The steps for the `BookingRepository` port and a check of the file |
+
+| 86 | 31 Oct | Bharat | "Explain line by line what JsonFileCheckInRepository does: extends JsonFileRepository, implements, @Repository, and each argument of super(...). Then tell me which four values I need for classes.json with classId as the key" | Explanation of the JSON adapter, and `JsonFileGymClassRepository` |
+
 Table: GenAI prompts, all to Claude (Claude Code)
