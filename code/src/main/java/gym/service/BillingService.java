@@ -279,7 +279,7 @@ public class BillingService implements CalculateChargesUseCase, PayArrearsUseCas
      * BR-P2: the Family discount is for the second and later members of a family.
      */
     private boolean hasFamilyWhoJoinedEarlier(Member member, Membership membership) {
-        if (member.familyId() == null) {
+        if (!member.hasFamily()) {
             return false;
         }
         for (Membership other : memberships.findAll()) {

@@ -23,4 +23,8 @@ public record Member(String memberId, String name, String email, String studentI
     public boolean isCorporate() {
         return employer != null && !employer.isBlank();
     }
+
+    public boolean hasFamily() {
+        return familyId != null && !familyId.isBlank();
+    }
 }
