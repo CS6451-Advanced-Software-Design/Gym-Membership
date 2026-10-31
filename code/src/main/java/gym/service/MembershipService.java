@@ -74,7 +74,7 @@ public class MembershipService implements SignUpUseCase, ViewMembershipUseCase, 
         LocalDate today = LocalDate.now(clock);
         Plan plan = PlanFactory.create(type);
 
-        Optional<Member> returning = memberByEmail(applicant.email());
+        Optional<Member> returning = members.findByEmail(applicant.email());
         returning.ifPresent(this::checkHasNoMembership);
         String memberId = returning.map(Member::memberId).orElseGet(() -> newId("m-"));
         Member member = new Member(memberId, applicant.name(), applicant.email(),
@@ -180,10 +180,6 @@ public class MembershipService implements SignUpUseCase, ViewMembershipUseCase, 
             updated = updated.recordPayment(false, today);
         }
         return updated;
-    }
-
-    private Optional<Member> memberByEmail(String email) {
-        return members.findAll().stream().filter(member -> member.email().equalsIgnoreCase(email)).findFirst();
     }
 
     /**
