@@ -2,22 +2,28 @@ package gym.service;
 
 import gym.domain.Booking;
 import gym.domain.BookingResult;
+import gym.domain.BookingStatus;
 import gym.domain.ChargeType;
 import gym.domain.GymClass;
 import gym.domain.Membership;
 import gym.domain.MembershipStatus;
 import gym.domain.Money;
+import gym.domain.NoShows;
 import gym.domain.NotFoundException;
 import gym.domain.PlanType;
 import gym.domain.RuleViolationException;
 import gym.port.in.BookClassUseCase;
 import gym.port.in.CancelBookingUseCase;
+import gym.port.in.ManageScheduleUseCase;
+import gym.port.in.RecordAttendanceUseCase;
 import gym.port.in.RecordChargeUseCase;
 import gym.port.out.BookingRepository;
 import gym.port.out.GymClassRepository;
 import gym.port.out.MembershipRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
@@ -28,7 +34,8 @@ import org.springframework.stereotype.Service;
  * {@link Membership}. This service loads them, asks them and saves the result.
  */
 @Service
-public class BookingService implements BookClassUseCase, CancelBookingUseCase {
+public class BookingService
+        implements BookClassUseCase, CancelBookingUseCase, RecordAttendanceUseCase, ManageScheduleUseCase {
 
     /**
      * BR-B6: what a premium class costs on top of the plan, unless the member is on Annual.
@@ -39,6 +46,11 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase {
      * BR-B3: what cancelling less than 2 hours before a class costs.
      */
     private static final Money LATE_CANCELLATION_FEE = Money.euros(5);
+
+    /**
+     * BR-B4: what missing a booked class costs.
+     */
+    private static final Money NO_SHOW_FEE = Money.euros(5);
 
     private final GymClassRepository classes;
     private final BookingRepository bookings;
@@ -77,6 +89,11 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase {
         if (!membership.rules().allowsClassAt(gymClass.startTime())) {
             throw new RuleViolationException("Membership " + membership.membershipId() + " doesn't allow a class at this time");
         }
+        if (isSuspended(memberId, now)) {
+            throw new RuleViolationException("Member " + memberId + " can't book: "
+                    + NoShows.LIMIT + " no-shows in " + NoShows.WINDOW_DAYS + " days suspend booking for "
+                    + NoShows.SUSPENSION_DAYS + " days");
+        }
         if (holdsAPlace(memberId, classId)) {
             throw new RuleViolationException("Member " + memberId + " already has a place in class " + classId);
         }
@@ -88,12 +105,19 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase {
             GymClass waiting = classes.save(gymClass.joinWaitlist(memberId));
             return BookingResult.waitlisted(waiting.waitlist().positionOf(memberId));
         }
+        return BookingResult.booked(takePlace(membership, gymClass, now));
+    }
+
+    /**
+     * Gives the member a place, whether they booked it or were promoted to it.
+     */
+    private Booking takePlace(Membership membership, GymClass gymClass, LocalDateTime now) {
         // Charged first: this is the step that can still fail, and there are no transactions to undo the saves below
         if (gymClass.premium() && membership.plan() != PlanType.ANNUAL) {
             charges.record(membership.membershipId(), ChargeType.PREMIUM_SURCHARGE, PREMIUM_SURCHARGE);
         }
         memberships.save(membership.recordBooking());
-        return BookingResult.booked(bookings.save(Booking.book(newId("b-"), memberId, classId, now)));
+        return bookings.save(Booking.book(newId("b-"), membership.memberId(), gymClass.classId(), now));
     }
 
     /**
@@ -101,9 +125,8 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase {
      */
     @Override
     public synchronized Booking cancel(String bookingId) {
-        Booking booking = bookings.findById(bookingId).orElseThrow(() -> new NotFoundException("Booking", bookingId));
-        GymClass gymClass = classes.findById(booking.classId())
-                .orElseThrow(() -> new NotFoundException("Class", booking.classId()));
+        Booking booking = findBooking(bookingId);
+        GymClass gymClass = classOf(booking);
         LocalDateTime now = LocalDateTime.now(clock);
         if (gymClass.hasStarted(now)) {
             throw new RuleViolationException("Class " + gymClass.classId() + " has already started");
@@ -113,7 +136,106 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase {
         if (gymClass.isLateToCancel(now)) {
             chargeLateCancellationFee(booking.memberId());
         }
-        return bookings.save(cancelled);
+        Booking saved = bookings.save(cancelled);
+        promoteFromWaitlist(gymClass, now);
+        return saved;
+    }
+
+    /**
+     * Capacity is checked here as well as in {@link GymClass}, so a bad request is a refused rule rather than a crash.
+     */
+    @Override
+    public GymClass addClass(String name, LocalDateTime startTime, int capacity, boolean premium) {
+        if (!startTime.isAfter(LocalDateTime.now(clock))) {
+            throw new RuleViolationException("A class can't be added at " + startTime + ", which has passed");
+        }
+        if (capacity < 1) {
+            throw new RuleViolationException("A class needs at least 1 place, not " + capacity);
+        }
+        return classes.save(GymClass.schedule(newId("c-"), name, startTime, capacity, premium));
+    }
+
+    @Override
+    public List<GymClass> schedule() {
+        LocalDateTime now = LocalDateTime.now(clock);
+        return classes.findAll().stream()
+                .filter(gymClass -> !gymClass.hasStarted(now))
+                .sorted(Comparator.comparing(GymClass::startTime))
+                .toList();
+    }
+
+    @Override
+    public synchronized Booking markAttended(String bookingId) {
+        return bookings.save(startedBooking(bookingId).attend());
+    }
+
+    @Override
+    public synchronized Booking markNoShow(String bookingId) {
+        // Marked first, so a booking that can't be a no-show is refused before any fee is charged
+        Booking noShow = startedBooking(bookingId).noShow();
+        findCurrentMembership(noShow.memberId())
+                .ifPresent(membership -> charges.record(membership.membershipId(), ChargeType.NO_SHOW, NO_SHOW_FEE));
+        return bookings.save(noShow);
+    }
+
+    /**
+     * Attendance can only be known once the class has started.
+     */
+    private Booking startedBooking(String bookingId) {
+        Booking booking = findBooking(bookingId);
+        if (!classOf(booking).hasStarted(LocalDateTime.now(clock))) {
+            throw new RuleViolationException("Class " + booking.classId() + " hasn't started yet");
+        }
+        return booking;
+    }
+
+    private Booking findBooking(String bookingId) {
+        return bookings.findById(bookingId).orElseThrow(() -> new NotFoundException("Booking", bookingId));
+    }
+
+    private GymClass classOf(Booking booking) {
+        return classes.findById(booking.classId()).orElseThrow(() -> new NotFoundException("Class", booking.classId()));
+    }
+
+    /**
+     * BR-B2: the place goes to the first member still able to take it. Anyone who can no longer book is taken
+     * off the waitlist, so they don't hold up the members behind them.
+     */
+    private void promoteFromWaitlist(GymClass gymClass, LocalDateTime now) {
+        GymClass remaining = gymClass;
+        while (remaining.waitlist().size() > 0) {
+            String memberId = remaining.waitlist().first().orElseThrow();
+            remaining = remaining.promoteFromWaitlist();
+            Optional<Membership> next = findCurrentMembership(memberId)
+                    .filter(membership -> canStillBook(membership, gymClass, now));
+            if (next.isPresent()) {
+                classes.save(remaining);
+                takePlace(next.get(), gymClass, now);
+                return;
+            }
+        }
+        classes.save(remaining);
+    }
+
+    /**
+     * The checks that may have changed since the member joined the waitlist.
+     */
+    private boolean canStillBook(Membership membership, GymClass gymClass, LocalDateTime now) {
+        return membership.canBook()
+                && membership.rules().allowsClassAt(gymClass.startTime())
+                && !isSuspended(membership.memberId(), now)
+                && futureBookings(membership.memberId(), now) < Booking.MAX_FUTURE_BOOKINGS;
+    }
+
+    /**
+     * BR-B4: worked out from the member's no-shows each time, so there is no suspension to store or clear.
+     */
+    private boolean isSuspended(String memberId, LocalDateTime now) {
+        return new NoShows(bookings.findAll().stream()
+                .filter(booking -> booking.status() == BookingStatus.NO_SHOW && booking.memberId().equals(memberId))
+                .map(booking -> classOf(booking).startTime())
+                .toList())
+                .suspendBookingAt(now);
     }
 
     /**
