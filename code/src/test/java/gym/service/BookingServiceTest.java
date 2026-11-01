@@ -714,6 +714,107 @@ class BookingServiceTest {
                 .orElseThrow();
     }
 
+    @Test
+    void attendingAClassStoresItAsAttended() {
+        Booking booking = bookingForAClassThatHasStarted();
+
+        Booking attended = service.markAttended(booking.bookingId());
+
+        assertEquals(BookingStatus.ATTENDED, attended.status());
+        assertEquals(Optional.of(attended), bookings.findById(booking.bookingId()));
+        assertTrue(charges.isEmpty());
+    }
+
+    @Test
+    void aNoShowCostsFiveEuros() {
+        // BR-B4
+        Booking booking = bookingForAClassThatHasStarted();
+
+        Booking noShow = service.markNoShow(booking.bookingId());
+
+        assertEquals(BookingStatus.NO_SHOW, noShow.status());
+        assertEquals(Optional.of(noShow), bookings.findById(booking.bookingId()));
+        assertEquals(1, charges.size());
+        Charge fee = charges.getFirst();
+        assertEquals("ms-m1", fee.membershipId());
+        assertEquals(ChargeType.NO_SHOW, fee.type());
+        assertEquals(Money.euros(5), fee.amount());
+    }
+
+    @Test
+    void aTrialMemberPaysTheNoShowFee() {
+        // BR-B3 exempts a Trial from the late fee only, and BR-B4 has no exemption
+        spinClass(10);
+        trialMembership("m1");
+        Booking booking = service.book("m1", "c1").booking();
+        clock.advanceDays(5);
+
+        service.markNoShow(booking.bookingId());
+
+        assertEquals(1, charges.size());
+    }
+
+    @Test
+    void attendanceCannotBeRecordedBeforeTheClassStarts() {
+        spinClass(10);
+        activeMembership("m1");
+        Booking booking = service.book("m1", "c1").booking();
+
+        assertThrows(RuleViolationException.class, () -> service.markAttended(booking.bookingId()));
+        assertThrows(RuleViolationException.class, () -> service.markNoShow(booking.bookingId()));
+        assertEquals(BookingStatus.BOOKED, bookings.findById(booking.bookingId()).orElseThrow().status());
+        assertTrue(charges.isEmpty());
+    }
+
+    @Test
+    void attendanceForAnUnknownBookingIsRefused() {
+        assertThrows(NotFoundException.class, () -> service.markAttended("nobody"));
+        assertThrows(NotFoundException.class, () -> service.markNoShow("nobody"));
+    }
+
+    @Test
+    void aNoShowCannotBeChargedTwice() {
+        Booking booking = bookingForAClassThatHasStarted();
+        service.markNoShow(booking.bookingId());
+
+        assertThrows(RuleViolationException.class, () -> service.markNoShow(booking.bookingId()));
+        assertEquals(1, charges.size());
+    }
+
+    @Test
+    void aCancelledBookingCannotBeMarked() {
+        spinClass(10);
+        activeMembership("m1");
+        Booking booking = service.book("m1", "c1").booking();
+        service.cancel(booking.bookingId());
+        clock.advanceDays(5);
+
+        assertThrows(RuleViolationException.class, () -> service.markNoShow(booking.bookingId()));
+        assertTrue(charges.isEmpty());
+    }
+
+    @Test
+    void aMemberWhoLeftTheGymIsMarkedWithoutAFee() {
+        spinClass(10);
+        Membership membership = activeMembership("m1");
+        Booking booking = service.book("m1", "c1").booking();
+        memberships.save(membership.cancel());
+        clock.advanceDays(5);
+
+        Booking noShow = service.markNoShow(booking.bookingId());
+
+        assertEquals(BookingStatus.NO_SHOW, noShow.status());
+        assertTrue(charges.isEmpty());
+    }
+
+    private Booking bookingForAClassThatHasStarted() {
+        spinClass(10);
+        activeMembership("m1");
+        Booking booking = service.book("m1", "c1").booking();
+        clock.advanceDays(5);
+        return booking;
+    }
+
     private void spinClass(int capacity) {
         classes.save(GymClass.schedule("c1", "Spin", SPIN_STARTS, capacity, false));
     }

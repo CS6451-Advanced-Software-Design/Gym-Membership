@@ -12,6 +12,7 @@ import gym.domain.PlanType;
 import gym.domain.RuleViolationException;
 import gym.port.in.BookClassUseCase;
 import gym.port.in.CancelBookingUseCase;
+import gym.port.in.RecordAttendanceUseCase;
 import gym.port.in.RecordChargeUseCase;
 import gym.port.out.BookingRepository;
 import gym.port.out.GymClassRepository;
@@ -28,7 +29,7 @@ import org.springframework.stereotype.Service;
  * {@link Membership}. This service loads them, asks them and saves the result.
  */
 @Service
-public class BookingService implements BookClassUseCase, CancelBookingUseCase {
+public class BookingService implements BookClassUseCase, CancelBookingUseCase, RecordAttendanceUseCase {
 
     /**
      * BR-B6: what a premium class costs on top of the plan, unless the member is on Annual.
@@ -39,6 +40,11 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase {
      * BR-B3: what cancelling less than 2 hours before a class costs.
      */
     private static final Money LATE_CANCELLATION_FEE = Money.euros(5);
+
+    /**
+     * BR-B4: what missing a booked class costs.
+     */
+    private static final Money NO_SHOW_FEE = Money.euros(5);
 
     private final GymClassRepository classes;
     private final BookingRepository bookings;
@@ -108,9 +114,8 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase {
      */
     @Override
     public synchronized Booking cancel(String bookingId) {
-        Booking booking = bookings.findById(bookingId).orElseThrow(() -> new NotFoundException("Booking", bookingId));
-        GymClass gymClass = classes.findById(booking.classId())
-                .orElseThrow(() -> new NotFoundException("Class", booking.classId()));
+        Booking booking = findBooking(bookingId);
+        GymClass gymClass = classOf(booking);
         LocalDateTime now = LocalDateTime.now(clock);
         if (gymClass.hasStarted(now)) {
             throw new RuleViolationException("Class " + gymClass.classId() + " has already started");
@@ -123,6 +128,39 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase {
         Booking saved = bookings.save(cancelled);
         promoteFromWaitlist(gymClass, now);
         return saved;
+    }
+
+    @Override
+    public synchronized Booking markAttended(String bookingId) {
+        return bookings.save(startedBooking(bookingId).attend());
+    }
+
+    @Override
+    public synchronized Booking markNoShow(String bookingId) {
+        // Marked first, so a booking that can't be a no-show is refused before any fee is charged
+        Booking noShow = startedBooking(bookingId).noShow();
+        findCurrentMembership(noShow.memberId())
+                .ifPresent(membership -> charges.record(membership.membershipId(), ChargeType.NO_SHOW, NO_SHOW_FEE));
+        return bookings.save(noShow);
+    }
+
+    /**
+     * Attendance can only be known once the class has started.
+     */
+    private Booking startedBooking(String bookingId) {
+        Booking booking = findBooking(bookingId);
+        if (!classOf(booking).hasStarted(LocalDateTime.now(clock))) {
+            throw new RuleViolationException("Class " + booking.classId() + " hasn't started yet");
+        }
+        return booking;
+    }
+
+    private Booking findBooking(String bookingId) {
+        return bookings.findById(bookingId).orElseThrow(() -> new NotFoundException("Booking", bookingId));
+    }
+
+    private GymClass classOf(Booking booking) {
+        return classes.findById(booking.classId()).orElseThrow(() -> new NotFoundException("Class", booking.classId()));
     }
 
     /**
