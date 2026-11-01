@@ -19,7 +19,7 @@ Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 f
 | --- | --- | --- | --- |
 | Chirag | Chose Hexagonal with the team. Drafted §5 (package diagram, hosting stack) and §6 (candidate objects, class, sequence, state chart, ER). GenAI #5–15 | Iteration 0 late (due 4 Oct). Open: when a Trial pays, whether Lapsed ends in Cancelled, whether family plans are in scope | Skeleton, JSON repository, CI |
 | Bharat | | | |
-| DineshReddy | | | |
+| DineshReddy | Took part in team discussions on the scenario and tech stack; reviewed Chirag's early §5/§6 drafts | No commits of my own yet; roles not settled until 7 Oct | Read up on the Member feature and the DevOps/CI role; review the report plan |
 | Dhruv | Reviewed Chirag's §5 and §6 drafts (package diagram, candidate objects, class, sequence, state chart and ER diagrams) | No commits of my own yet; roles not settled until 7 Oct | Read the scenario rules for the BA role; review the report plan |
 
 **Notes:**
