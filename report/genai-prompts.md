@@ -92,4 +92,7 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 85 | 31 Oct | Bharat | "I wrote GymClassRepository. What is different for BookingRepository, whose record is Booking and key is bookingId? Describe the steps and check my file when I paste it." | The steps for the `BookingRepository` port and a check of the file |
 | 86 | 31 Oct | Bharat | "Explain line by line what JsonFileCheckInRepository does: extends JsonFileRepository, implements, `@Repository`, and each argument of super(...). Then tell me which four values I need for classes.json with classId as the key" | Explanation of the JSON adapter, and `JsonFileGymClassRepository` |
 | 87 | 1 Nov | Bharat | "I wrote JsonFileGymClassRepository. Which parts change for bookings with bookings.json and bookingId? Review my code when I paste it." | The changes needed for `JsonFileBookingRepository`, and a review of the file |
+
+| 88 | 1 Nov | Bharat | "Explain what MemberPersistenceIT tests and why it creates a second repository object to read back. I want to test that a GymClass waitlist keeps its order and a Booking keeps its status after reload. What assertions should I make?" | Explanation of the persistence test, and the assertions for `BookingPersistenceIT` |
+
 Table: GenAI prompts, all to Claude (Claude Code)
