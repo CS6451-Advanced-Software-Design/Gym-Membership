@@ -46,8 +46,16 @@ SonarQube Cloud now runs in CI's `metrics` job, authenticated with a `SONAR_TOKE
 | Maintainability rating | A (0 code smells) |
 | Reliability rating | D (2 issues) |
 
-![SonarQube Cloud overview: quality gate passed, 2 issues, 0% duplication, 95.8% coverage](../screenshots/sonarqube-overview.jpg)
+![SonarQube Cloud overview: public project, quality gate passed, 2 issues, 0% duplication, 95.8% coverage](../screenshots/sonarqube-overview.png)
+
+Security, Security Hotspots and Maintainability are all A, with nothing open to explain:
+
+![SonarQube Cloud Security snapshot: rating A, 0 issues](../screenshots/sonarqube-security.png)
+
+![SonarQube Cloud Security Hotspot snapshot: review rating A, 0 hotspots](../screenshots/sonarqube-security-hotspot.png)
+
+![SonarQube Cloud Maintainability snapshot: rating A, 2 issues, 0 closed](../screenshots/sonarqube-maintainability.png)
 
 Reliability is the one rating not at A, and it is worth explaining rather than leaving as a number: SonarQube rates by the *worst* open issue's severity, not by count. The scan originally found 7 High-severity issues: 5 were `MembershipState` holding static references to its own 5 subclasses (rule `S2390`), real and now fixed by the `MembershipStateFactory` extraction above; the other 2 are `OffPeakPlan.java:22`'s `day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY` (rule `S8696`, "use `.equals()` not `==`"). That second pair is a false positive, left as `==` on purpose: `DayOfWeek` is an enum, so `!=` on its constants is JLS-guaranteed-safe and is the comparison Effective Java recommends - `java.time`'s "value-based class" Javadoc disclaimer is boilerplate copied onto its enums too, even though enums can't have the identity problem it warns about. Changing it to `.equals()` would read worse for a cosmetic rating change, so the rating stays D with those 2 issues open rather than being silently "fixed" for the wrong reason.
 
-![SonarQube Cloud Reliability snapshot: rating D, 2 issues (100% High), 5 closed in the last 30 days, 1.9 hour average fix time](../screenshots/sonarqube-reliability.jpg)
+![SonarQube Cloud Reliability snapshot: rating D, 2 issues (100% High), 5 closed in the last 30 days, 1.9 hour average fix time](../screenshots/sonarqube-reliability.png)

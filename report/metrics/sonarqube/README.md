@@ -35,4 +35,4 @@ class holding static references to all 5 of its own subclasses) were real and ar
 `MembershipStateFactory`, mirroring `PlanFactory`'s existing shape. See `dinesh-todo.md` and commit
 `88fe500`/`dd15c70`.
 
-Screenshots: `report/screenshots/sonarqube-overview.jpg`, `report/screenshots/sonarqube-reliability.jpg`.
+Screenshots: `report/screenshots/sonarqube-overview.png`, `sonarqube-security.png`, `sonarqube-security-hotspot.png`, `sonarqube-reliability.png`, `sonarqube-maintainability.png`.
