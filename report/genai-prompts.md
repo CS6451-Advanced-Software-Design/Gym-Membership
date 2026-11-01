@@ -98,5 +98,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 90 | 1 Nov | Chirag | "can we update readme to be upto date" | Observer moved to the patterns in place, `MemberController` and the new report folders (blueprints, metrics, version control, lessons) and the recovered package diagram added to the READMEs |
 | 91 | 1 Nov | Chirag | A screenshot of the recovered package diagram on a black background in the README, and "lets add white background" | The three §10 blueprint images flattened onto white, and the step added to the blueprints README |
 | 92 | 1 Nov | Chirag | "should we make next minor release", then "okay make 0.3.0" | The case for v0.3.0 before the final push, the version bump and the release notes |
+| 93 | 1 Nov | Chirag | Screenshots of the one-item check-in list and the member example with "Ann Example" and nulls: "improve the examples, for eg. here we should show multiple check ins" and "have better example fields" | Example responses rewritten as one consistent story: three check-ins, two months of invoices with the corporate discount, three daily-check changes, a member with an employer and family; spec and collection regenerated |
 
 Table: GenAI prompts, all to Claude (Claude Code)

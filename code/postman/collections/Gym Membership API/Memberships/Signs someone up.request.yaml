@@ -9,7 +9,7 @@ body:
   type: json
   content: |-
     {
-      "email": "ann@example.com",
+      "email": "ann.byrne@gmail.com",
       "name": "Ann Byrne",
       "plan": "MONTHLY",
       "studentId": "24123456",
