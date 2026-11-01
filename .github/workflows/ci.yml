@@ -16,6 +16,9 @@ permissions:
 env:
   CK_VERSION: 0.7.0
   JACOCO_VERSION: 0.8.15
+  # §9's refactoring must not be allowed to regress. Coverage is checked against the merged report (all three
+  # test lanes), not any single lane, since no lane alone reaches this on its own
+  COVERAGE_MIN: 90
 
 jobs:
   tests:
@@ -163,6 +166,19 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
         run: gh pr comment "$PR" --edit-last --create-if-none --body-file "$RUNNER_TEMP/metrics.md"
+
+      # After the comment, so a failing run still shows the team the numbers that failed it
+      - name: Coverage gate
+        run: |
+          awk -F, -v min="$COVERAGE_MIN" 'NR > 1 { missed += $8; covered += $9 }
+            END {
+              pct = 100 * covered / (missed + covered)
+              printf "Line coverage: %.1f%% (minimum: %s%%)\n", pct, min
+              if (pct < min) {
+                print "::error::Line coverage " pct "% is below the required " min "%"
+                exit 1
+              }
+            }' target/site/jacoco/jacoco.csv
 
       # Kept for every run, so the "before" numbers for §9 exist without anyone remembering to save them
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
