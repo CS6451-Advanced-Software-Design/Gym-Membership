@@ -105,5 +105,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 98 | 1 Nov | Chirag | A screenshot of `PlanFactoryTest` split across two pages: "i dont like code snippets being cut off, lets fix that too" | Code blocks in the PDF made unbreakable, so each one moves whole to the next page |
 | 99 | 1 Nov | Chirag | "also shorten 13 GenAI Prompts table, its gone too big", then "lets also try group entries so overall row count is reduced" | The PDF table grouped by date and member, without the Used for column, at 7pt: five pages down to two |
 | 100 | 1 Nov | Chirag | A screenshot of an empty §4 first page: "this seems way too empty, add the placeholder text about who is writing this" | A placeholder for Dhruv's introduction, and the use case diagram capped at 17 cm so it stays with its heading |
+| 101 | 1 Nov | Chirag | A screenshot of the §8.2 heading and intro left alone at the bottom of a page: "lets move subheading to next page too" | A paragraph that introduces a code block now stays on the same page as it |
 
 Table: GenAI prompts, all to Claude (Claude Code)

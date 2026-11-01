@@ -180,6 +180,23 @@ local function landscape(div)
   return blocks
 end
 
+-- Keeps a paragraph that introduces a code block on the same page as it, so a heading and its intro are not left
+-- alone at the bottom of a page when the (unbreakable) code moves to the next one
+local function introduce(blocks)
+  local result = pandoc.Blocks({})
+  for index, block in ipairs(blocks) do
+    local next = blocks[index + 1]
+    if block.t == 'Para' and next and next.t == 'CodeBlock' then
+      result:insert(pandoc.RawBlock('typst', '#block(sticky: true)['))
+      result:insert(block)
+      result:insert(pandoc.RawBlock('typst', ']'))
+    else
+      result:insert(block)
+    end
+  end
+  return result
+end
+
 function Pandoc(document)
   local source = PANDOC_STATE.input_files[1]
   local base = directory(source)
@@ -196,6 +213,6 @@ function Pandoc(document)
       end
     end,
   })
-  document.blocks = rewrite(blocks, base)
+  document.blocks = introduce(rewrite(blocks, base))
   return document
 end
