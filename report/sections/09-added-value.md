@@ -34,4 +34,20 @@ Both new classes carry zero PMD violations. Neither extraction needed any Spring
 
 ## SonarQube Cloud
 
-*Pending: SonarQube Cloud has not been run yet - confirming the organisation/project setup and the `SONAR_TOKEN` secret is in progress. Once wired into CI, the before snapshot will be taken against the pre-refactoring commit (`a41800d`, before the two extractions above) rather than the current `main`, so the before/after table here is a true comparison of the same refactoring, not just "whenever we got around to installing Sonar". The after snapshot follows once that's checked out. Dashboard screenshot and the numbers table (complexity, duplication, code smells, maintainability rating, coverage) to be added here.*
+SonarQube Cloud now runs in CI's `metrics` job, authenticated with a `SONAR_TOKEN` secret, after the coverage/PMD gates. There is no true before/after pair for it the way PMD/CK have one: Sonar wasn't wired up until after both refactorings above were already merged, so a "before" snapshot would mean checking out an old commit by hand rather than showing what the pipeline actually measured at the time - not something to fake. What follows is the first real scan, plus what changed in the three days since.
+
+| Metric | Value |
+| --- | --- |
+| Quality gate | Passed |
+| Coverage | 95.8% |
+| Duplication | 0.0% |
+| Security rating | A (0 vulnerabilities) |
+| Security review rating | A (0 hotspots) |
+| Maintainability rating | A (0 code smells) |
+| Reliability rating | D (2 issues) |
+
+![SonarQube Cloud overview: quality gate passed, 2 issues, 0% duplication, 95.8% coverage](../screenshots/sonarqube-overview.jpg)
+
+Reliability is the one rating not at A, and it is worth explaining rather than leaving as a number: SonarQube rates by the *worst* open issue's severity, not by count. The scan originally found 7 High-severity issues: 5 were `MembershipState` holding static references to its own 5 subclasses (rule `S2390`), real and now fixed by the `MembershipStateFactory` extraction above; the other 2 are `OffPeakPlan.java:22`'s `day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY` (rule `S8696`, "use `.equals()` not `==`"). That second pair is a false positive, left as `==` on purpose: `DayOfWeek` is an enum, so `!=` on its constants is JLS-guaranteed-safe and is the comparison Effective Java recommends - `java.time`'s "value-based class" Javadoc disclaimer is boilerplate copied onto its enums too, even though enums can't have the identity problem it warns about. Changing it to `.equals()` would read worse for a cosmetic rating change, so the rating stays D with those 2 issues open rather than being silently "fixed" for the wrong reason.
+
+![SonarQube Cloud Reliability snapshot: rating D, 2 issues (100% High), 5 closed in the last 30 days, 1.9 hour average fix time](../screenshots/sonarqube-reliability.jpg)
