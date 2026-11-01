@@ -7,25 +7,9 @@ import java.time.LocalDate;
  * overrides only the operations it allows. The rest are refused here, so a frozen membership can't book a
  * class without any {@code if} on the status in Membership or the services.
  *
- * <p>The states keep no fields, so one instance of each is shared.
+ * <p>The states keep no fields, so one instance of each is shared, created by {@link MembershipStateFactory}.
  */
 public abstract class MembershipState {
-
-    private static final TrialState TRIAL = new TrialState();
-    private static final ActiveState ACTIVE = new ActiveState();
-    private static final FrozenState FROZEN = new FrozenState();
-    private static final LapsedState LAPSED = new LapsedState();
-    private static final CancelledState CANCELLED = new CancelledState();
-
-    public static MembershipState of(MembershipStatus status) {
-        return switch (status) {
-            case TRIAL -> TRIAL;
-            case ACTIVE -> ACTIVE;
-            case FROZEN -> FROZEN;
-            case LAPSED -> LAPSED;
-            case CANCELLED -> CANCELLED;
-        };
-    }
 
     public abstract MembershipStatus status();
 
