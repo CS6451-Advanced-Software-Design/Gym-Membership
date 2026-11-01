@@ -22,7 +22,19 @@ response:
     content: |-
       [
         {
-          "checkInId": "ci-3f9c2a71",
+          "checkInId": "ci-5d0b8e14",
+          "memberId": "m-8d14e6b2",
+          "membershipId": "ms-3f9c2a71",
+          "at": "2026-10-19T18:42:00.000Z"
+        },
+        {
+          "checkInId": "ci-a71c39f2",
+          "memberId": "m-8d14e6b2",
+          "membershipId": "ms-3f9c2a71",
+          "at": "2026-10-23T07:05:00.000Z"
+        },
+        {
+          "checkInId": "ci-b42e7d19",
           "memberId": "m-8d14e6b2",
           "membershipId": "ms-3f9c2a71",
           "at": "2026-10-28T09:15:00.000Z"

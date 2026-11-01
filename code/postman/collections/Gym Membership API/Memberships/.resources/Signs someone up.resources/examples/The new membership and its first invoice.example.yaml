@@ -8,7 +8,7 @@ request:
     type: json
     content: |-
       {
-        "email": "ann@example.com",
+        "email": "ann.byrne@gmail.com",
         "name": "Ann Byrne",
         "plan": "MONTHLY",
         "studentId": "24123456",
@@ -49,8 +49,8 @@ response:
               "date": "2026-10-25T00:00:00.000Z"
             }
           ],
-          "discount": 0,
-          "total": 10.16,
+          "discount": 1.52,
+          "total": 8.64,
           "status": "PAID"
         }
       }

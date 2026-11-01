@@ -37,5 +37,5 @@ javac --release 11 -cp "$app/app/lib/openapi.jar" -d "$plugins/classes" report/b
 vp Plugin -project "$PWD/report/blueprints/gym-membership.vpp" -pluginid blueprint -pluginargs "$PWD/report/blueprints/edges.txt"
 ```
 
-Then open the project in Community Edition and export the diagrams with **Project > Export > Diagrams as Image**.
+Then open the project in Community Edition and export the diagrams with **Project > Export > Diagrams as Image**. The exports have a transparent background, which turns black on GitHub's dark theme, so flatten each onto white: `magick <diagram>.png -background white -alpha remove -alpha off <diagram>.png`.
 The evaluation's own exports are covered in a watermark.

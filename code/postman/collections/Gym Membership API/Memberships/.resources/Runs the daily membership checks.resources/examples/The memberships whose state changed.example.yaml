@@ -17,17 +17,43 @@ response:
     content: |-
       [
         {
-          "membershipId": "ms-3f9c2a71",
-          "memberId": "m-8d14e6b2",
+          "membershipId": "ms-42f86968",
+          "memberId": "m-9a65df90",
           "plan": "MONTHLY",
           "status": "ACTIVE",
-          "startDate": "2026-10-18T00:00:00.000Z",
+          "startDate": "2026-10-25T00:00:00.000Z",
           "endDate": null,
           "trialEndsOn": null,
           "trialBookingsLeft": null,
           "frozenUntil": null,
           "lapsedSince": null,
           "failedPayments": 0
+        },
+        {
+          "membershipId": "ms-c47a0e95",
+          "memberId": "m-2e8d61fa",
+          "plan": "STUDENT",
+          "status": "ACTIVE",
+          "startDate": "2026-09-03T00:00:00.000Z",
+          "endDate": null,
+          "trialEndsOn": null,
+          "trialBookingsLeft": null,
+          "frozenUntil": null,
+          "lapsedSince": null,
+          "failedPayments": 0
+        },
+        {
+          "membershipId": "ms-e61b7d38",
+          "memberId": "m-1c93b5e7",
+          "plan": "MONTHLY",
+          "status": "LAPSED",
+          "startDate": "2026-09-12T00:00:00.000Z",
+          "endDate": null,
+          "trialEndsOn": null,
+          "trialBookingsLeft": null,
+          "frozenUntil": null,
+          "lapsedSince": "2026-11-01T00:00:00.000Z",
+          "failedPayments": 2
         }
       ]
 order: 1000

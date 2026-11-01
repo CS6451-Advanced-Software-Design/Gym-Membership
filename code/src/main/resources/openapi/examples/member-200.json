@@ -1,8 +1,8 @@
 {
   "memberId": "m-8d14e6b2",
-  "name": "Ann Example",
-  "email": "ann@example.com",
+  "name": "Aoife Byrne",
+  "email": "aoife.byrne@gmail.com",
   "studentId": null,
-  "employer": null,
-  "familyId": null
+  "employer": "Stripe",
+  "familyId": "byrne"
 }

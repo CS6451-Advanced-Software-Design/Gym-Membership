@@ -19,7 +19,7 @@ import jakarta.validation.constraints.NotNull;
  */
 public record SignUpRequest(
         @NotBlank @Schema(example = "Ann Byrne") String name,
-        @NotBlank @Email @Schema(example = "ann@example.com") String email,
+        @NotBlank @Email @Schema(example = "ann.byrne@gmail.com") String email,
         @NotNull @Schema(example = "MONTHLY") PlanType plan,
         @Schema(example = "24123456") String studentId,
         @Schema(example = "Stripe") String employer,
