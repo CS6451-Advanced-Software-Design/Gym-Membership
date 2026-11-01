@@ -103,5 +103,7 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 96 | 1 Nov | Bharat | "GymClass doesn't store its bookings. Explain how BookingService can count the active BOOKED bookings for a class from BookingRepository.findAll(). When the count reaches the capacity, the member should join the waitlist with joinWaitlist and the class should be saved. What should book return in that case, and what are the options?" | Explanation of counting bookings and the return options, then the BR-B1 waitlist in `BookingService`, `BookingResult` and its tests |
 | 97 | 1 Nov | Chirag | A screenshot of the GenAI table breaking into plain text after row 87: "rendering it broken" | The cause, a blank line before row 88 that ended the table, removed |
 | 98 | 1 Nov | Chirag | A screenshot of `PlanFactoryTest` split across two pages: "i dont like code snippets being cut off, lets fix that too" | Code blocks in the PDF made unbreakable, so each one moves whole to the next page |
+| 99 | 1 Nov | Chirag | "also shorten 13 GenAI Prompts table, its gone too big", then "lets also try group entries so overall row count is reduced" | The PDF table grouped by date and member, without the Used for column, at 7pt: five pages down to two |
+| 100 | 1 Nov | Chirag | A screenshot of an empty §4 first page: "this seems way too empty, add the placeholder text about who is writing this" | A placeholder for Dhruv's introduction, and the use case diagram capped at 17 cm so it stays with its heading |
 
 Table: GenAI prompts, all to Claude (Claude Code)

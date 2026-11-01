@@ -8,9 +8,11 @@ applies each one, and two GUI prototypes.
 The use case drafts in report/requirements/use-cases came from GenAI (prompt #2): rewrite them in your own words.
 -->
 
+*A short introduction to the requirements: what this section covers and where the use cases came from, to be written by Dhruv.*
+
 ## Use Cases
 
-![Use case diagram](../requirements/use-case-diagram.png)
+![Use case diagram](../requirements/use-case-diagram.png){height=17cm}
 
 The diagram shows who uses the system and what they use it for. There are five human actors and two non-human ones:
 

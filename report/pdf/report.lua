@@ -80,6 +80,51 @@ local function body(blocks)
   return kept
 end
 
+-- Keeps only the first count columns of a table
+local function keep(table, count)
+  while #table.colspecs > count do
+    table.colspecs:remove()
+  end
+  local function trim(rows)
+    for _, row in ipairs(rows) do
+      while #row.cells > count do
+        row.cells:remove()
+      end
+    end
+  end
+  trim(table.head.rows)
+  for _, body in ipairs(table.bodies) do
+    trim(body.body)
+  end
+end
+
+-- Merges consecutive rows of a prompt log with the same date and member into one row, numbered first–last, with
+-- each prompt on its own line
+local function group(table)
+  local text = pandoc.utils.stringify
+  for _, body in ipairs(table.bodies) do
+    local rows = pandoc.List()
+    local first
+    for _, row in ipairs(body.body) do
+      local last = rows[#rows]
+      local cells = row.cells
+      if last and text(last.cells[2].contents) == text(cells[2].contents)
+          and text(last.cells[3].contents) == text(cells[3].contents) then
+        last.cells[1].contents = { pandoc.Plain({ pandoc.Str(first .. '–' .. text(cells[1].contents)) }) }
+        for index = 4, #cells do
+          local inlines = last.cells[index].contents[1].content
+          inlines:insert(pandoc.LineBreak())
+          inlines:extend(cells[index].contents[1].content)
+        end
+      else
+        first = text(cells[1].contents)
+        rows:insert(row)
+      end
+    end
+    body.body = rows
+  end
+end
+
 local function include(div, base)
   local relative = div.attributes.include
   local path = resolve(base, relative)
@@ -97,6 +142,12 @@ local function include(div, base)
     end,
     Table = function(table)
       table.attr.attributes.widths = div.attributes.widths
+      if div.attributes.columns then
+        keep(table, tonumber(div.attributes.columns))
+      end
+      if div.attributes.group then
+        group(table)
+      end
       return table
     end,
   })
