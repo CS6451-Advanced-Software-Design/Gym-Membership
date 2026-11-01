@@ -2,11 +2,13 @@ package gym.service;
 
 import gym.domain.Booking;
 import gym.domain.BookingResult;
+import gym.domain.BookingStatus;
 import gym.domain.ChargeType;
 import gym.domain.GymClass;
 import gym.domain.Membership;
 import gym.domain.MembershipStatus;
 import gym.domain.Money;
+import gym.domain.NoShows;
 import gym.domain.NotFoundException;
 import gym.domain.PlanType;
 import gym.domain.RuleViolationException;
@@ -82,6 +84,11 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase, R
         }
         if (!membership.rules().allowsClassAt(gymClass.startTime())) {
             throw new RuleViolationException("Membership " + membership.membershipId() + " doesn't allow a class at this time");
+        }
+        if (isSuspended(memberId, now)) {
+            throw new RuleViolationException("Member " + memberId + " can't book: "
+                    + NoShows.LIMIT + " no-shows in " + NoShows.WINDOW_DAYS + " days suspend booking for "
+                    + NoShows.SUSPENSION_DAYS + " days");
         }
         if (holdsAPlace(memberId, classId)) {
             throw new RuleViolationException("Member " + memberId + " already has a place in class " + classId);
@@ -189,7 +196,19 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase, R
     private boolean canStillBook(Membership membership, GymClass gymClass, LocalDateTime now) {
         return membership.canBook()
                 && membership.rules().allowsClassAt(gymClass.startTime())
+                && !isSuspended(membership.memberId(), now)
                 && futureBookings(membership.memberId(), now) < Booking.MAX_FUTURE_BOOKINGS;
+    }
+
+    /**
+     * BR-B4: worked out from the member's no-shows each time, so there is no suspension to store or clear.
+     */
+    private boolean isSuspended(String memberId, LocalDateTime now) {
+        return new NoShows(bookings.findAll().stream()
+                .filter(booking -> booking.status() == BookingStatus.NO_SHOW && booking.memberId().equals(memberId))
+                .map(booking -> classOf(booking).startTime())
+                .toList())
+                .suspendBookingAt(now);
     }
 
     /**

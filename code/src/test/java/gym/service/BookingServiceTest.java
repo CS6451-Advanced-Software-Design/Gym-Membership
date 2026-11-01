@@ -815,6 +815,94 @@ class BookingServiceTest {
         return booking;
     }
 
+    @Test
+    void threeNoShowsInThirtyDaysSuspendBooking() {
+        // BR-B4
+        spinClass(10);
+        activeMembership("m1");
+        threeRecentNoShows("m1");
+
+        assertThrows(RuleViolationException.class, () -> service.book("m1", "c1"));
+        assertEquals(3, bookings.findAll().size());
+    }
+
+    @Test
+    void twoNoShowsDoNotSuspendBooking() {
+        spinClass(10);
+        activeMembership("m1");
+        noShow("m1", "past1", TODAY.minusDays(9).atTime(9, 0));
+        noShow("m1", "past2", TODAY.minusDays(6).atTime(9, 0));
+
+        assertFalse(service.book("m1", "c1").isWaitlisted());
+    }
+
+    @Test
+    void theSuspensionEndsAfterSevenDays() {
+        // The third no-show was 3 days ago, so 4 more days end the suspension
+        spinClass(10);
+        activeMembership("m1");
+        threeRecentNoShows("m1");
+        clock.advanceDays(4);
+
+        assertFalse(service.book("m1", "c1").isWaitlisted());
+    }
+
+    @Test
+    void anotherMembersNoShowsDoNotCount() {
+        spinClass(10);
+        activeMembership("m1");
+        threeRecentNoShows("m2");
+
+        assertFalse(service.book("m1", "c1").isWaitlisted());
+    }
+
+    @Test
+    void aSuspendedMemberIsSkippedOnTheWaitlist() {
+        // m2 picked up the no-shows while waiting, so the place goes to m3
+        spinClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        activeMembership("m3");
+        Booking booking = service.book("m1", "c1").booking();
+        service.book("m2", "c1");
+        service.book("m3", "c1");
+        threeRecentNoShows("m2");
+
+        service.cancel(booking.bookingId());
+
+        assertEquals("c1", placeHeldBy("m3").classId());
+    }
+
+    @Test
+    void markingTheThirdNoShowSuspendsTheMember() {
+        // The whole path through the service, rather than stored no-shows
+        activeMembership("m1");
+        for (int number = 1; number <= 3; number++) {
+            classes.save(GymClass.schedule("c" + number, "Spin", TODAY.plusDays(number).atTime(9, 0), 10, false));
+        }
+        Booking first = service.book("m1", "c1").booking();
+        Booking second = service.book("m1", "c2").booking();
+        Booking third = service.book("m1", "c3").booking();
+        clock.advanceDays(3);
+        service.markNoShow(first.bookingId());
+        service.markNoShow(second.bookingId());
+        service.markNoShow(third.bookingId());
+        classes.save(GymClass.schedule("next", "Spin", TODAY.plusDays(20).atTime(9, 0), 10, false));
+
+        assertThrows(RuleViolationException.class, () -> service.book("m1", "next"));
+    }
+
+    private void threeRecentNoShows(String memberId) {
+        noShow(memberId, memberId + "-past1", TODAY.minusDays(9).atTime(9, 0));
+        noShow(memberId, memberId + "-past2", TODAY.minusDays(6).atTime(9, 0));
+        noShow(memberId, memberId + "-past3", TODAY.minusDays(3).atTime(9, 0));
+    }
+
+    private void noShow(String memberId, String classId, LocalDateTime start) {
+        classes.save(GymClass.schedule(classId, "Spin", start, 10, false));
+        bookings.save(new Booking("b-" + classId, memberId, classId, BookingStatus.NO_SHOW, start.minusDays(1)));
+    }
+
     private void spinClass(int capacity) {
         classes.save(GymClass.schedule("c1", "Spin", SPIN_STARTS, capacity, false));
     }
