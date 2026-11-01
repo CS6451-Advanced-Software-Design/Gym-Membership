@@ -94,5 +94,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 87 | 1 Nov | Bharat | "I wrote JsonFileGymClassRepository. Which parts change for bookings with bookings.json and bookingId? Review my code when I paste it." | The changes needed for `JsonFileBookingRepository`, and a review of the file |
 
 | 88 | 1 Nov | Bharat | "Explain what MemberPersistenceIT tests and why it creates a second repository object to read back. I want to test that a GymClass waitlist keeps its order and a Booking keeps its status after reload. What assertions should I make?" | Explanation of the persistence test, and the assertions for `BookingPersistenceIT` |
+| 89 | 1 Nov | Chirag | "i got some more merged in, see it" | The Booking persistence and refactoring deploys approved on Railway, and the §8 charts and test table and the §11 metrics brought up to date with the §9 refactoring |
 
 Table: GenAI prompts, all to Claude (Claude Code)

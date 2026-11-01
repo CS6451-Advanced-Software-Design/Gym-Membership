@@ -16,7 +16,7 @@ Our architecture diagram also left out things we only found we needed during imp
 
 ## Metrics
 
-JaCoCo reports 96.3% coverage, but this overstates how well the code is tested, because it counts the lines a test ran, not the results it checked. PMD and CK both point at the same weak spot: `BillingService` does too much, implementing five use cases in one class, which Hexagonal does not prevent. Most of PMD's other findings are style rather than design, for example `AvoidFieldNameMatchingMethodName`, which every Java record triggers.
+JaCoCo reports 96.4% coverage, but this overstates how well the code is tested, because it counts the lines a test ran, not the results it checked. PMD and CK both point at the same weak spot: `BillingService` does too much, implementing five use cases in one class, which Hexagonal does not prevent. The §9 refactoring removed PMD's `GodClass` warning, but it is still the most complex class. Most of PMD's other findings are style rather than design, for example `AvoidFieldNameMatchingMethodName`, which every Java record triggers.
 
 To improve this, we would split `BillingService` into one class per use case, along the lines its `port.in` interfaces already draw.
 
@@ -24,11 +24,11 @@ To improve this, we would split `BillingService` into one class per use case, al
 
 | Tool | Result | Where it points |
 | --- | --- | --- |
-| JaCoCo | 96.3% line coverage (897 of 931) | Unit 76.5%, end-to-end 72.0%, integration 38.5% |
-| PMD | 49 violations | BillingService: GodClass, TooManyMethods |
-| CK | Highest CBO 29, highest WMC 54 | MembershipController (CBO), BillingService (WMC 54, RFC 75) |
+| JaCoCo | 96.4% line coverage (913 of 947) | Unit 76.5%, end-to-end 72.4%, integration 43.3% |
+| PMD | 43 violations | BillingService, MembershipService: TooManyMethods |
+| CK | Highest CBO 29, highest WMC 44 | MembershipController (CBO), BillingService (WMC 44, RFC 64) |
 
-Table: Code metrics on main (CI, 31 Oct)
+Table: Code metrics on main (CI, 1 Nov)
 
 ## Diagrams and UML
 
