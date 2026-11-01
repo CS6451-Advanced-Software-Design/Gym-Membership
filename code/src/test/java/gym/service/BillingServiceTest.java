@@ -71,10 +71,11 @@ class BillingServiceTest {
     private final List<Money> payments = new ArrayList<>();
     private final List<Notification> notifications = new ArrayList<>();
     private final Set<String> declinedMembers = new HashSet<>();
+    private final Clock clock = Clock.fixed(Instant.parse("2026-11-01T09:00:00Z"), ZoneOffset.UTC);
 
     private final BillingService billing = new BillingService(
             memberships,
-            members,
+            new BillingAccountFactory(memberships, members, clock),
             charges,
             new InMemoryInvoiceRepository(),
             new BestDiscount(List.of(new CorporateDiscount(), new FamilyDiscount(), new LoyaltyDiscount())),
@@ -86,7 +87,7 @@ class BillingServiceTest {
                 return true;
             },
             notifications::add,
-            Clock.fixed(Instant.parse("2026-11-01T09:00:00Z"), ZoneOffset.UTC));
+            clock);
 
     @Test
     void theFirstMonthIsProRatedByTheDaysLeft() {

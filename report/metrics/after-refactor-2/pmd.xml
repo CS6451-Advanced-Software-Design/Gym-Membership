@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 https://pmd.github.io/schema/report_2_0_0.xsd" version="7.17.0" timestamp="2026-10-31T23:54:02.735">
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\OpenApiConfiguration.java">
+<violation beginline="155" endline="155" begincolumn="30" endcolumn="46" rule="CognitiveComplexity" ruleset="Design" package="gym" class="OpenApiConfiguration" method="joinJavadocLines" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_design.html#cognitivecomplexity" priority="3">
+The method 'joinJavadocLines()' has a cognitive complexity of 17, current threshold is 15
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\adapter\logging\Outcome.java">
+<violation beginline="11" endline="11" begincolumn="26" endcolumn="31" rule="AvoidFieldNameMatchingMethodName" ruleset="Error Prone" package="gym.adapter.logging" class="Outcome" variable="value" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidfieldnamematchingmethodname" priority="3">
+Field value has the same name as a method
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\adapter\notification\NotificationLog.java">
+<violation beginline="19" endline="19" begincolumn="9" endcolumn="123" rule="GuardLogStatement" ruleset="Best Practices" package="gym.adapter.notification" class="NotificationLog" method="deliver" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+Logger calls should be surrounded by log level guards.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\adapter\payment\FakePaymentGateway.java">
+<violation beginline="29" endline="29" begincolumn="33" endcolumn="41" rule="AvoidFieldNameMatchingMethodName" ruleset="Error Prone" package="gym.adapter.payment" class="FakePaymentGateway" variable="payments" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidfieldnamematchingmethodname" priority="3">
+Field payments has the same name as a method
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\controller\BillingController.java">
+<violation beginline="48" endline="48" begincolumn="39" endcolumn="47" rule="AvoidFieldNameMatchingMethodName" ruleset="Error Prone" package="gym.controller" class="BillingController" variable="invoices" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidfieldnamematchingmethodname" priority="3">
+Field invoices has the same name as a method
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\controller\MembershipController.java">
+<violation beginline="1" endline="237" begincolumn="1" endcolumn="3" rule="ExcessiveImports" ruleset="Design" package="gym.controller" class="MembershipController" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_design.html#excessiveimports" priority="3">
+A high number of imports can indicate a high degree of coupling within an object.
+</violation>
+<violation beginline="58" endline="58" begincolumn="33" endcolumn="39" rule="AvoidFieldNameMatchingMethodName" ruleset="Error Prone" package="gym.controller" class="MembershipController" variable="signUp" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidfieldnamematchingmethodname" priority="3">
+Field signUp has the same name as a method
+</violation>
+<violation beginline="113" endline="113" begincolumn="33" endcolumn="38" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="gym.controller" class="MembershipController" method="signUp" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal "422" appears 5 times in this file; the first occurrence is on line 113
+</violation>
+<violation beginline="132" endline="132" begincolumn="33" endcolumn="38" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="gym.controller" class="MembershipController" method="membership" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal "404" appears 5 times in this file; the first occurrence is on line 132
+</violation>
+<violation beginline="132" endline="132" begincolumn="54" endcolumn="81" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="gym.controller" class="MembershipController" method="membership" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal "No membership has this id" appears 5 times in this file; the first occurrence is on line 132
+</violation>
+<violation beginline="134" endline="134" begincolumn="63" endcolumn="76" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="gym.controller" class="MembershipController" method="membership" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal "ms-3f9c2a71" appears 5 times in this file; the first occurrence is on line 134
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\domain\DiscountPolicy.java">
+<violation beginline="7" endline="7" begincolumn="8" endcolumn="17" rule="ImplicitFunctionalInterface" ruleset="Best Practices" package="gym.domain" class="DiscountPolicy" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#implicitfunctionalinterface" priority="2">
+Annotate this interface with @FunctionalInterface or with @SuppressWarnings("PMD.ImplicitFunctionalInterface") to clarify your intent.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\domain\GymClass.java">
+<violation beginline="29" endline="29" begincolumn="24" endcolumn="25" rule="AvoidLiteralsInIfCondition" ruleset="Error Prone" package="gym.domain" class="GymClass" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidliteralsinifcondition" priority="3">
+Avoid using literals such as 1 in if statements
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\domain\MembershipState.java">
+<violation beginline="12" endline="86" begincolumn="39" endcolumn="2" rule="TooManyMethods" ruleset="Design" package="gym.domain" class="MembershipState" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_design.html#toomanymethods" priority="3">
+This class has too many methods, consider refactoring it.
+</violation>
+<violation beginline="83" endline="83" begincolumn="63" endcolumn="116" rule="UseLocaleWithCaseConversions" ruleset="Error Prone" package="gym.domain" class="MembershipState" method="refused" variable="state" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#uselocalewithcaseconversions" priority="3">
+When doing a String.toLowerCase()/toUpperCase() call, use a Locale
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\domain\Money.java">
+<violation beginline="110" endline="110" begincolumn="16" endcolumn="25" rule="OverrideBothEqualsAndHashCodeOnComparable" ruleset="Error Prone" package="gym.domain" class="Money" method="compareTo" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#overridebothequalsandhashcodeoncomparable" priority="3">
+When implementing Comparable, both equals() and hashCode() should be overridden
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\domain\NotFoundException.java">
+<violation beginline="6" endline="6" begincolumn="8" endcolumn="13" rule="MissingSerialVersionUID" ruleset="Error Prone" package="gym.domain" class="NotFoundException" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#missingserialversionuid" priority="3">
+Classes implementing Serializable should set a serialVersionUID
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\domain\Plan.java">
+<violation beginline="12" endline="12" begincolumn="28" endcolumn="32" rule="AvoidFieldNameMatchingMethodName" ruleset="Error Prone" package="gym.domain" class="Plan" variable="type" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidfieldnamematchingmethodname" priority="3">
+Field type has the same name as a method
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\domain\PlanType.java">
+<violation beginline="12" endline="12" begincolumn="25" endcolumn="30" rule="AvoidFieldNameMatchingMethodName" ruleset="Error Prone" package="gym.domain" class="PlanType" variable="price" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidfieldnamematchingmethodname" priority="3">
+Field price has the same name as a method
+</violation>
+<violation beginline="12" endline="12" begincolumn="25" endcolumn="30" rule="NonSerializableClass" ruleset="Error Prone" package="gym.domain" class="PlanType" variable="price" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#nonserializableclass" priority="3">
+The field 'price' of serializable class 'gym.domain.PlanType' is of non-serializable type 'gym.domain.Money'.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\domain\RuleViolationException.java">
+<violation beginline="7" endline="7" begincolumn="8" endcolumn="13" rule="MissingSerialVersionUID" ruleset="Error Prone" package="gym.domain" class="RuleViolationException" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#missingserialversionuid" priority="3">
+Classes implementing Serializable should set a serialVersionUID
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\interceptor\UseCaseContext.java">
+<violation beginline="19" endline="19" begincolumn="26" endcolumn="33" rule="AvoidFieldNameMatchingMethodName" ruleset="Error Prone" package="gym.interceptor" class="UseCaseContext" variable="useCase" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidfieldnamematchingmethodname" priority="3">
+Field useCase has the same name as a method
+</violation>
+<violation beginline="20" endline="20" begincolumn="26" endcolumn="35" rule="AvoidFieldNameMatchingMethodName" ruleset="Error Prone" package="gym.interceptor" class="UseCaseContext" variable="operation" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidfieldnamematchingmethodname" priority="3">
+Field operation has the same name as a method
+</violation>
+<violation beginline="21" endline="21" begincolumn="32" endcolumn="41" rule="AvoidFieldNameMatchingMethodName" ruleset="Error Prone" package="gym.interceptor" class="UseCaseContext" variable="arguments" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidfieldnamematchingmethodname" priority="3">
+Field arguments has the same name as a method
+</violation>
+<violation beginline="23" endline="23" begincolumn="20" endcolumn="26" rule="AvoidFieldNameMatchingMethodName" ruleset="Error Prone" package="gym.interceptor" class="UseCaseContext" variable="result" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidfieldnamematchingmethodname" priority="3">
+Field result has the same name as a method
+</violation>
+<violation beginline="24" endline="24" begincolumn="23" endcolumn="30" rule="AvoidFieldNameMatchingMethodName" ruleset="Error Prone" package="gym.interceptor" class="UseCaseContext" variable="failure" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidfieldnamematchingmethodname" priority="3">
+Field failure has the same name as a method
+</violation>
+<violation beginline="25" endline="25" begincolumn="22" endcolumn="29" rule="AvoidFieldNameMatchingMethodName" ruleset="Error Prone" package="gym.interceptor" class="UseCaseContext" variable="elapsed" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#avoidfieldnamematchingmethodname" priority="3">
+Field elapsed has the same name as a method
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\interceptor\UseCaseDispatcher.java">
+<violation beginline="32" endline="32" begincolumn="48" endcolumn="89" rule="CompareObjectsWithEquals" ruleset="Error Prone" package="gym.interceptor" class="UseCaseDispatcher" method="remove" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#compareobjectswithequals" priority="3">
+Use equals() to compare object references.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\interceptor\UseCaseInterception.java">
+<violation beginline="39" endline="39" begincolumn="33" endcolumn="79" rule="LiteralsFirstInComparisons" ruleset="Best Practices" package="gym.interceptor" class="UseCaseInterception" method="postProcessAfterInitialization" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#literalsfirstincomparisons" priority="3">
+Position literals first in String comparisons
+</violation>
+<violation beginline="44" endline="44" begincolumn="39" endcolumn="71" rule="UseProperClassLoader" ruleset="Error Prone" package="gym.interceptor" class="UseCaseInterception" method="postProcessAfterInitialization" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#useproperclassloader" priority="3">
+In J2EE, getClassLoader() might not work as expected.  Use Thread.currentThread().getContextClassLoader() instead.
+</violation>
+<violation beginline="48" endline="48" begincolumn="57" endcolumn="75" rule="UseVarargs" ruleset="Best Practices" package="gym.interceptor" class="UseCaseInterception" method="invoke" variable="arguments" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#usevarargs" priority="4">
+Consider using varargs for methods or constructors which take an array the last parameter.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\port\in\CancelMembershipUseCase.java">
+<violation beginline="9" endline="9" begincolumn="8" endcolumn="17" rule="ImplicitFunctionalInterface" ruleset="Best Practices" package="gym.port.in" class="CancelMembershipUseCase" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#implicitfunctionalinterface" priority="2">
+Annotate this interface with @FunctionalInterface or with @SuppressWarnings("PMD.ImplicitFunctionalInterface") to clarify your intent.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\port\in\PayArrearsUseCase.java">
+<violation beginline="10" endline="10" begincolumn="8" endcolumn="17" rule="ImplicitFunctionalInterface" ruleset="Best Practices" package="gym.port.in" class="PayArrearsUseCase" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#implicitfunctionalinterface" priority="2">
+Annotate this interface with @FunctionalInterface or with @SuppressWarnings("PMD.ImplicitFunctionalInterface") to clarify your intent.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\port\in\RestoreMembershipUseCase.java">
+<violation beginline="8" endline="8" begincolumn="8" endcolumn="17" rule="ImplicitFunctionalInterface" ruleset="Best Practices" package="gym.port.in" class="RestoreMembershipUseCase" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#implicitfunctionalinterface" priority="2">
+Annotate this interface with @FunctionalInterface or with @SuppressWarnings("PMD.ImplicitFunctionalInterface") to clarify your intent.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\port\in\RunDailyChecksUseCase.java">
+<violation beginline="9" endline="9" begincolumn="8" endcolumn="17" rule="ImplicitFunctionalInterface" ruleset="Best Practices" package="gym.port.in" class="RunDailyChecksUseCase" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#implicitfunctionalinterface" priority="2">
+Annotate this interface with @FunctionalInterface or with @SuppressWarnings("PMD.ImplicitFunctionalInterface") to clarify your intent.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\port\in\RunMonthlyBillingUseCase.java">
+<violation beginline="10" endline="10" begincolumn="8" endcolumn="17" rule="ImplicitFunctionalInterface" ruleset="Best Practices" package="gym.port.in" class="RunMonthlyBillingUseCase" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#implicitfunctionalinterface" priority="2">
+Annotate this interface with @FunctionalInterface or with @SuppressWarnings("PMD.ImplicitFunctionalInterface") to clarify your intent.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\port\in\SignUpUseCase.java">
+<violation beginline="10" endline="10" begincolumn="8" endcolumn="17" rule="ImplicitFunctionalInterface" ruleset="Best Practices" package="gym.port.in" class="SignUpUseCase" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#implicitfunctionalinterface" priority="2">
+Annotate this interface with @FunctionalInterface or with @SuppressWarnings("PMD.ImplicitFunctionalInterface") to clarify your intent.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\port\in\ViewInvoicesUseCase.java">
+<violation beginline="9" endline="9" begincolumn="8" endcolumn="17" rule="ImplicitFunctionalInterface" ruleset="Best Practices" package="gym.port.in" class="ViewInvoicesUseCase" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#implicitfunctionalinterface" priority="2">
+Annotate this interface with @FunctionalInterface or with @SuppressWarnings("PMD.ImplicitFunctionalInterface") to clarify your intent.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\port\in\ViewMemberUseCase.java">
+<violation beginline="8" endline="8" begincolumn="8" endcolumn="17" rule="ImplicitFunctionalInterface" ruleset="Best Practices" package="gym.port.in" class="ViewMemberUseCase" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#implicitfunctionalinterface" priority="2">
+Annotate this interface with @FunctionalInterface or with @SuppressWarnings("PMD.ImplicitFunctionalInterface") to clarify your intent.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\port\out\NotificationSender.java">
+<violation beginline="9" endline="9" begincolumn="8" endcolumn="17" rule="ImplicitFunctionalInterface" ruleset="Best Practices" package="gym.port.out" class="NotificationSender" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#implicitfunctionalinterface" priority="2">
+Annotate this interface with @FunctionalInterface or with @SuppressWarnings("PMD.ImplicitFunctionalInterface") to clarify your intent.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\port\out\PaymentGateway.java">
+<violation beginline="9" endline="9" begincolumn="8" endcolumn="17" rule="ImplicitFunctionalInterface" ruleset="Best Practices" package="gym.port.out" class="PaymentGateway" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#implicitfunctionalinterface" priority="2">
+Annotate this interface with @FunctionalInterface or with @SuppressWarnings("PMD.ImplicitFunctionalInterface") to clarify your intent.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\service\BillingService.java">
+<violation beginline="38" endline="275" begincolumn="151" endcolumn="2" rule="TooManyMethods" ruleset="Design" package="gym.service" class="BillingService" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_design.html#toomanymethods" priority="3">
+This class has too many methods, consider refactoring it.
+</violation>
+</file>
+<file name="C:\Users\Lenovo\Desktop\UL\CS6451 - ADVANCED SOFTWARE DESIGN 20267 SEM1\project\Gym-Membership\code\src\main\java\gym\service\MembershipService.java">
+<violation beginline="40" endline="177" begincolumn="59" endcolumn="2" rule="TooManyMethods" ruleset="Design" package="gym.service" class="MembershipService" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_design.html#toomanymethods" priority="3">
+This class has too many methods, consider refactoring it.
+</violation>
+</file>
+</pmd>

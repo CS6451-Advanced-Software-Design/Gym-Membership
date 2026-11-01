@@ -49,7 +49,7 @@ class MembershipServiceTest {
 
     private final BillingService billing = new BillingService(
             memberships,
-            members,
+            new BillingAccountFactory(memberships, members, clock),
             charges,
             new InMemoryInvoiceRepository(),
             new BestDiscount(List.of(new CorporateDiscount(), new FamilyDiscount(), new LoyaltyDiscount())),
@@ -58,7 +58,10 @@ class MembershipServiceTest {
             clock);
 
     private final MembershipService service = new MembershipService(
-            memberships, members, billing, billing, billing, billing, notifications::add, clock);
+            memberships, members, billing, billing, billing, notifications::add, clock);
+
+    private final MembershipDailyChecksService checks = new MembershipDailyChecksService(
+            memberships, billing, billing, notifications::add, clock);
 
     @Test
     void signingUpStartsATrialAndChargesTheRestOfTheMonth() {
@@ -122,7 +125,7 @@ class MembershipServiceTest {
         assertEquals(1, trial.failedPayments());
 
         clock.advanceDays(7);
-        List<Membership> changed = service.runDailyChecks();
+        List<Membership> changed = checks.runDailyChecks();
 
         assertEquals(List.of(MembershipStatus.LAPSED), changed.stream().map(Membership::status).toList());
     }
@@ -132,10 +135,10 @@ class MembershipServiceTest {
         Membership trial = service.signUp(applicant("ann@example.com"), PlanType.MONTHLY, null).membership();
 
         clock.advanceDays(7);
-        service.runDailyChecks();
+        checks.runDailyChecks();
 
         assertEquals(MembershipStatus.ACTIVE, service.membership(trial.membershipId()).status());
-        assertEquals(List.of(), service.runDailyChecks());
+        assertEquals(List.of(), checks.runDailyChecks());
     }
 
     @Test
@@ -143,15 +146,15 @@ class MembershipServiceTest {
         // BR-M4: the first charge is paid, then December's and January's are declined
         Membership membership = service.signUp(applicant("dan@example.com"), PlanType.MONTHLY, null).membership();
         clock.advanceDays(7);
-        service.runDailyChecks();
+        checks.runDailyChecks();
         declinedEmails.add("dan@example.com");
 
         billing.run(YearMonth.of(2026, 12));
-        service.runDailyChecks();
+        checks.runDailyChecks();
         assertEquals(MembershipStatus.ACTIVE, service.membership(membership.membershipId()).status());
 
         billing.run(YearMonth.of(2027, 1));
-        service.runDailyChecks();
+        checks.runDailyChecks();
         assertEquals(MembershipStatus.LAPSED, service.membership(membership.membershipId()).status());
     }
 
@@ -159,7 +162,7 @@ class MembershipServiceTest {
     void payingTheArrearsRestoresALapsedMembership() {
         Membership trial = signUpDeclined("eve@example.com");
         clock.advanceDays(7);
-        service.runDailyChecks();
+        checks.runDailyChecks();
 
         declinedEmails.clear();
         Membership restored = service.payArrears(trial.membershipId());
@@ -172,7 +175,7 @@ class MembershipServiceTest {
     void aDeclinedArrearsPaymentLeavesTheMembershipLapsed() {
         Membership trial = signUpDeclined("eve@example.com");
         clock.advanceDays(7);
-        service.runDailyChecks();
+        checks.runDailyChecks();
 
         assertThrows(RuleViolationException.class, () -> service.payArrears(trial.membershipId()));
         assertEquals(MembershipStatus.LAPSED, service.membership(trial.membershipId()).status());
@@ -183,11 +186,11 @@ class MembershipServiceTest {
         // BR-M6
         Membership trial = signUpDeclined("eve@example.com");
         clock.advanceDays(7);
-        service.runDailyChecks();
+        checks.runDailyChecks();
         int invoicesBefore = billing.invoicesFor(trial.membershipId()).size();
 
         clock.advanceDays(60);
-        service.runDailyChecks();
+        checks.runDailyChecks();
 
         assertEquals(MembershipStatus.CANCELLED, service.membership(trial.membershipId()).status());
         assertEquals(invoicesBefore + 1, billing.invoicesFor(trial.membershipId()).size());
@@ -202,7 +205,7 @@ class MembershipServiceTest {
         assertEquals(JOINED.plusMonths(1), frozen.currentFreeze().endDate());
 
         clock.set(JOINED.plusMonths(1));
-        service.runDailyChecks();
+        checks.runDailyChecks();
         assertEquals(MembershipStatus.ACTIVE, service.membership(annual.membershipId()).status());
     }
 

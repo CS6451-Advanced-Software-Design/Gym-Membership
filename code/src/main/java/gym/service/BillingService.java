@@ -6,13 +6,10 @@ import gym.domain.ChargeType;
 import gym.domain.DiscountPolicy;
 import gym.domain.Invoice;
 import gym.domain.InvoiceStatus;
-import gym.domain.Member;
 import gym.domain.Membership;
 import gym.domain.MembershipStatus;
 import gym.domain.Money;
-import gym.domain.NotFoundException;
 import gym.domain.Notification;
-import gym.domain.PlanType;
 import gym.domain.RuleViolationException;
 import gym.port.in.CalculateChargesUseCase;
 import gym.port.in.PayArrearsUseCase;
@@ -21,14 +18,12 @@ import gym.port.in.RunMonthlyBillingUseCase;
 import gym.port.in.ViewInvoicesUseCase;
 import gym.port.out.ChargeRepository;
 import gym.port.out.InvoiceRepository;
-import gym.port.out.MemberRepository;
 import gym.port.out.MembershipRepository;
 import gym.port.out.NotificationSender;
 import gym.port.out.PaymentGateway;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -37,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * The Billing feature: turns a membership's charges into an invoice, takes the payment and tells the member.
+ * What Billing needs from a membership and its member is gathered by {@link BillingAccountFactory}.
  */
 @Service
 public class BillingService implements CalculateChargesUseCase, PayArrearsUseCase, RecordChargeUseCase, RunMonthlyBillingUseCase, ViewInvoicesUseCase {
@@ -46,7 +42,7 @@ public class BillingService implements CalculateChargesUseCase, PayArrearsUseCas
     private static final Money EARLY_EXIT_FEE = Money.euros(50);
 
     private final MembershipRepository memberships;
-    private final MemberRepository members;
+    private final BillingAccountFactory accounts;
     private final ChargeRepository charges;
     private final InvoiceRepository invoices;
     private final DiscountPolicy discounts;
@@ -56,7 +52,7 @@ public class BillingService implements CalculateChargesUseCase, PayArrearsUseCas
 
     public BillingService(
             MembershipRepository memberships,
-            MemberRepository members,
+            BillingAccountFactory accounts,
             ChargeRepository charges,
             InvoiceRepository invoices,
             DiscountPolicy discounts,
@@ -64,7 +60,7 @@ public class BillingService implements CalculateChargesUseCase, PayArrearsUseCas
             NotificationSender notifications,
             Clock clock) {
         this.memberships = memberships;
-        this.members = members;
+        this.accounts = accounts;
         this.charges = charges;
         this.invoices = invoices;
         this.discounts = discounts;
@@ -78,7 +74,7 @@ public class BillingService implements CalculateChargesUseCase, PayArrearsUseCas
      */
     @Override
     public Invoice billFirstMonth(String membershipId, LocalDate joined) {
-        BillingAccount account = account(membershipId);
+        BillingAccount account = accounts.account(membershipId);
         YearMonth month = YearMonth.from(joined);
         Money fee = account.price();
         if (!account.annual()) {
@@ -94,7 +90,7 @@ public class BillingService implements CalculateChargesUseCase, PayArrearsUseCas
      */
     @Override
     public Invoice billFinal(String membershipId) {
-        BillingAccount account = account(membershipId);
+        BillingAccount account = accounts.account(membershipId);
         LocalDate today = LocalDate.now(clock);
         List<Charge> extra = new ArrayList<>();
         if (account.annual() && account.monthsAsMember() < 6) {
@@ -105,7 +101,7 @@ public class BillingService implements CalculateChargesUseCase, PayArrearsUseCas
 
     @Override
     public Charge record(String membershipId, ChargeType type, Money amount) {
-        account(membershipId);
+        accounts.account(membershipId);
         if (type.isCredit()) {
             throw new RuleViolationException("Credits are only given for referrals");
         }
@@ -120,7 +116,7 @@ public class BillingService implements CalculateChargesUseCase, PayArrearsUseCas
      */
     @Override
     public Money creditReferral(String membershipId) {
-        account(membershipId);
+        accounts.account(membershipId);
         LocalDate today = LocalDate.now(clock);
 
         Money givenThisYear = Money.ZERO;
@@ -148,7 +144,7 @@ public class BillingService implements CalculateChargesUseCase, PayArrearsUseCas
             if (membership.status() == MembershipStatus.CANCELLED) {
                 continue;
             }
-            BillingAccount account = account(membership.membershipId());
+            BillingAccount account = accounts.account(membership.membershipId());
             if (account.frozen() || isBilled(account.membershipId(), period)) {
                 continue;
             }
@@ -169,7 +165,7 @@ public class BillingService implements CalculateChargesUseCase, PayArrearsUseCas
      */
     @Override
     public List<Invoice> payArrears(String membershipId) {
-        BillingAccount account = account(membershipId);
+        BillingAccount account = accounts.account(membershipId);
         List<Invoice> unpaid = new ArrayList<>();
         Money arrears = Money.ZERO;
         for (Invoice invoice : invoicesFor(membershipId)) {
@@ -197,7 +193,7 @@ public class BillingService implements CalculateChargesUseCase, PayArrearsUseCas
 
     @Override
     public List<Invoice> invoicesFor(String membershipId) {
-        account(membershipId);
+        accounts.account(membershipId);
         return invoices.findAll().stream()
                 .filter(invoice -> invoice.membershipId().equals(membershipId))
                 .sorted(Comparator.comparing(Invoice::period).reversed())
@@ -255,45 +251,6 @@ public class BillingService implements CalculateChargesUseCase, PayArrearsUseCas
         }
         return new Notification(account.memberId(), "Payment declined",
                 "We couldn't charge " + invoice.total() + " for " + invoice.period() + ". Please update your card.");
-    }
-
-    /**
-     * Gathers what Billing needs from the membership and its member, as of today.
-     */
-    private BillingAccount account(String membershipId) {
-        Membership membership = memberships.findById(membershipId)
-                .orElseThrow(() -> new NotFoundException("Membership", membershipId));
-        Member member = member(membership.memberId());
-        return new BillingAccount(
-                membershipId,
-                member.memberId(),
-                membership.plan().price(),
-                membership.plan() == PlanType.ANNUAL,
-                member.isCorporate(),
-                hasFamilyWhoJoinedEarlier(member, membership),
-                ChronoUnit.MONTHS.between(membership.startDate(), LocalDate.now(clock)),
-                membership.status() == MembershipStatus.FROZEN);
-    }
-
-    /**
-     * BR-P2: the Family discount is for the second and later members of a family.
-     */
-    private boolean hasFamilyWhoJoinedEarlier(Member member, Membership membership) {
-        if (member.familyId() == null) {
-            return false;
-        }
-        for (Membership other : memberships.findAll()) {
-            boolean sameFamily = member.familyId().equals(member(other.memberId()).familyId());
-            boolean someoneElse = !other.memberId().equals(member.memberId());
-            if (sameFamily && someoneElse && other.startDate().isBefore(membership.startDate())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Member member(String memberId) {
-        return members.findById(memberId).orElseThrow(() -> new NotFoundException("Member", memberId));
     }
 
     private List<Charge> chargesFor(String membershipId) {

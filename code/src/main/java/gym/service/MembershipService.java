@@ -17,16 +17,13 @@ import gym.port.in.FreezeMembershipUseCase;
 import gym.port.in.PayArrearsUseCase;
 import gym.port.in.RecordChargeUseCase;
 import gym.port.in.RestoreMembershipUseCase;
-import gym.port.in.RunDailyChecksUseCase;
 import gym.port.in.SignUpUseCase;
-import gym.port.in.ViewInvoicesUseCase;
 import gym.port.in.ViewMembershipUseCase;
 import gym.port.out.MemberRepository;
 import gym.port.out.MembershipRepository;
 import gym.port.out.NotificationSender;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,18 +32,18 @@ import org.springframework.stereotype.Service;
 /**
  * The Membership feature: signs members up and moves their memberships through the state chart. The rules
  * of each state are in the domain (State pattern), and the plans come from {@link PlanFactory}. Money is
- * left to Billing.
+ * left to Billing. The daily sweep across every membership (UC13) is {@link MembershipDailyChecksService},
+ * a separate batch job rather than an operation on the one membership a request names.
  */
 @Service
 public class MembershipService implements SignUpUseCase, ViewMembershipUseCase, FreezeMembershipUseCase,
-        CancelMembershipUseCase, RestoreMembershipUseCase, RunDailyChecksUseCase {
+        CancelMembershipUseCase, RestoreMembershipUseCase {
 
     private final MembershipRepository memberships;
     private final MemberRepository members;
     private final CalculateChargesUseCase billing;
     private final RecordChargeUseCase charges;
     private final PayArrearsUseCase arrears;
-    private final ViewInvoicesUseCase invoices;
     private final NotificationSender notifications;
     private final Clock clock;
 
@@ -56,7 +53,6 @@ public class MembershipService implements SignUpUseCase, ViewMembershipUseCase, 
             CalculateChargesUseCase billing,
             RecordChargeUseCase charges,
             PayArrearsUseCase arrears,
-            ViewInvoicesUseCase invoices,
             NotificationSender notifications,
             Clock clock) {
         this.memberships = memberships;
@@ -64,7 +60,6 @@ public class MembershipService implements SignUpUseCase, ViewMembershipUseCase, 
         this.billing = billing;
         this.charges = charges;
         this.arrears = arrears;
-        this.invoices = invoices;
         this.notifications = notifications;
         this.clock = clock;
     }
@@ -74,7 +69,7 @@ public class MembershipService implements SignUpUseCase, ViewMembershipUseCase, 
         LocalDate today = LocalDate.now(clock);
         Plan plan = PlanFactory.create(type);
 
-        Optional<Member> returning = memberByEmail(applicant.email());
+        Optional<Member> returning = members.findByEmail(applicant.email());
         returning.ifPresent(this::checkHasNoMembership);
         String memberId = returning.map(Member::memberId).orElseGet(() -> newId("m-"));
         Member member = new Member(memberId, applicant.name(), applicant.email(),
@@ -136,54 +131,6 @@ public class MembershipService implements SignUpUseCase, ViewMembershipUseCase, 
             throw new RuleViolationException("The card was declined, so membership " + membershipId + " still owes its arrears");
         }
         return memberships.save(restored);
-    }
-
-    @Override
-    public List<Membership> runDailyChecks() {
-        LocalDate today = LocalDate.now(clock);
-        List<Membership> changed = new ArrayList<>();
-        for (Membership before : memberships.findAll()) {
-            Membership after = recordUnpaidInvoices(before, today).checkOn(today);
-            if (after.equals(before)) {
-                continue;
-            }
-            if (after.status() == MembershipStatus.CANCELLED) {
-                billing.billFinal(after.membershipId());
-            }
-            memberships.save(after);
-            if (after.status() != before.status()) {
-                notifications.send(new Notification(after.memberId(), "Membership " + after.status().name().toLowerCase(),
-                        "Your membership is now " + after.status().name().toLowerCase() + "."));
-            }
-            changed.add(after);
-        }
-        return changed;
-    }
-
-    /**
-     * BR-M4: brings the count of declined payments in a row up to date with the invoices Billing has issued.
-     * Counting from the invoices makes the daily checks safe to repeat.
-     */
-    private Membership recordUnpaidInvoices(Membership membership, LocalDate today) {
-        int unpaid = 0;
-        for (Invoice invoice : invoices.invoicesFor(membership.membershipId())) {
-            if (invoice.status() == InvoiceStatus.PAID) {
-                break;
-            }
-            unpaid++;
-        }
-        if (unpaid == 0 && membership.failedPayments() > 0) {
-            return membership.recordPayment(true, today);
-        }
-        Membership updated = membership;
-        for (int failed = membership.failedPayments(); failed < unpaid; failed++) {
-            updated = updated.recordPayment(false, today);
-        }
-        return updated;
-    }
-
-    private Optional<Member> memberByEmail(String email) {
-        return members.findAll().stream().filter(member -> member.email().equalsIgnoreCase(email)).findFirst();
     }
 
     /**
