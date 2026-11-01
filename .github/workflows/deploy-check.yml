@@ -1,0 +1,34 @@
+name: Deploy check
+
+# Railway redeploys outside this repo's CI, on every merge to main, so there's nothing here to confirm it
+# actually happened until afterwards. Polls the live app's own /actuator/info (git.commit.id.full, written
+# into the jar at build time by git-commit-id-maven-plugin) until it matches the commit that was just merged
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  LIVE_URL: https://gym-membership-production-a725.up.railway.app
+
+jobs:
+  check:
+    name: Live app on latest commit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Poll until the live app reports this commit
+        run: |
+          for attempt in $(seq 1 20); do
+            live=$(curl -sf "$LIVE_URL/actuator/info" | jq -r '.git.commit.id.full // empty' || true)
+            if [ "$live" = "$GITHUB_SHA" ]; then
+              echo "Live app is on $live, matches this commit."
+              exit 0
+            fi
+            echo "Attempt $attempt/20: live app reports '${live:-no response}', waiting for $GITHUB_SHA..."
+            sleep 20
+          done
+          echo "::error::Live app never reported commit $GITHUB_SHA after 20 attempts (~7 minutes)"
+          exit 1
