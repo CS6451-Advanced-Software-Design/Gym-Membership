@@ -34,7 +34,13 @@ Every test is one of three kinds, told apart by the end of its class name:
 ./mvnw verify -Dskip.unit -Dskip.integration
 ```
 
-CI runs each kind as its own check (**Unit tests**, **Integration tests**, **End-to-end tests**) and merges their coverage.
+CI runs each kind as its own check (**Unit tests**, **Integration tests**, **End-to-end tests**) and merges their coverage. Then:
+
+| Check | What fails it |
+| --- | --- |
+| **Metrics** | Line coverage below 90%, or PMD's `GodClass` or `CouplingBetweenObjects` coming back (§9 removed them). It also runs CK and the [SonarQube Cloud](https://sonarcloud.io/project/overview?id=CS6451-Advanced-Software-Design_Gym-Membership) scan, which reuses the merged coverage |
+| **SonarCloud Code Analysis** | SonarQube's quality gate on the new code |
+| **Docker build** | A `code/Dockerfile` that no longer builds, caught on the PR instead of on Railway after the merge |
 
 ## Postman
 
@@ -63,12 +69,13 @@ postman spec sync collection postman/specs/openapi.yaml --force
 
 ## Deploying
 
-The app runs on [Railway](https://gym-membership-production-a725.up.railway.app/swagger-ui.html) and redeploys on every merge to `main`:
+The app runs on [Railway](https://gym-membership-production-a725.up.railway.app/swagger-ui.html) and redeploys when a merge to `main` changes `code/src/main`, `pom.xml` or the `Dockerfile`, once every check on the commit has passed:
 
 | Path | What it is |
 | --- | --- |
 | `code/Dockerfile` | Builds the jar with Maven, then runs it on a Java 21 JRE. Tests and reports are skipped, since CI already ran them |
 | `.railway/railway.ts` | The Railway project as code: the service built from `code/` on `main`, its health check on `/actuator/health`, and the `gym-data` volume mounted at `/data` for the JSON files |
+| `.github/workflows/deploy-check.yml` | **Deploy check**: when Railway reports a deploy to GitHub as successful, polls the live app's `/actuator/info` until it reports the deployed commit. It runs after the deploy, not on the push, because Railway waits for every check on a commit before it deploys |
 | `server.port=${PORT:8080}` | In `application.properties`, so the app listens on the port Railway gives it |
 | `LOGGING_STRUCTURED_FORMAT_CONSOLE=logstash` | Set on the service in `railway.ts`, so the app logs JSON on Railway. Railway colours each line by its level, and every use-case call carries `useCase`, `operation`, `outcome` and `durationMs`, so a search like `@outcome:failed` lists the failed calls. Run locally, the app keeps the readable format |
 
