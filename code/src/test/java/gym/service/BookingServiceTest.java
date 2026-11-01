@@ -903,6 +903,55 @@ class BookingServiceTest {
         bookings.save(new Booking("b-" + classId, memberId, classId, BookingStatus.NO_SHOW, start.minusDays(1)));
     }
 
+    @Test
+    void addingAClassStoresItWithNobodyWaiting() {
+        GymClass added = service.addClass("Spin", SPIN_STARTS, 12, true);
+
+        assertEquals("Spin", added.name());
+        assertEquals(SPIN_STARTS, added.startTime());
+        assertEquals(12, added.capacity());
+        assertTrue(added.premium());
+        assertEquals(0, added.waitlist().size());
+        assertEquals(Optional.of(added), classes.findById(added.classId()));
+    }
+
+    @Test
+    void aMemberCanBookAClassThatWasAdded() {
+        GymClass added = service.addClass("Spin", SPIN_STARTS, 12, false);
+        activeMembership("m1");
+
+        assertFalse(service.book("m1", added.classId()).isWaitlisted());
+    }
+
+    @Test
+    void aClassCannotBeAddedInThePast() {
+        assertThrows(RuleViolationException.class, () -> service.addClass("Spin", TODAY.minusDays(1).atTime(18, 0), 12, false));
+        assertTrue(classes.findAll().isEmpty());
+    }
+
+    @Test
+    void aClassNeedsAtLeastOnePlace() {
+        assertThrows(RuleViolationException.class, () -> service.addClass("Spin", SPIN_STARTS, 0, false));
+        assertTrue(classes.findAll().isEmpty());
+    }
+
+    @Test
+    void theScheduleListsUpcomingClassesSoonestFirst() {
+        GymClass later = service.addClass("Yoga", SPIN_STARTS.plusDays(2), 10, false);
+        GymClass sooner = service.addClass("Spin", SPIN_STARTS, 10, false);
+
+        assertEquals(List.of(sooner, later), service.schedule());
+    }
+
+    @Test
+    void theScheduleLeavesOutClassesThatHaveStarted() {
+        service.addClass("Spin", SPIN_STARTS, 10, false);
+        GymClass later = service.addClass("Yoga", SPIN_STARTS.plusDays(2), 10, false);
+        clock.advanceDays(5);
+
+        assertEquals(List.of(later), service.schedule());
+    }
+
     private void spinClass(int capacity) {
         classes.save(GymClass.schedule("c1", "Spin", SPIN_STARTS, capacity, false));
     }
