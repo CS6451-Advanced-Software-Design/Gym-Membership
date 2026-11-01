@@ -291,12 +291,12 @@ Coverage of the tests is measured by JaCoCo (Java Code Coverage), and reported b
 
 | Kind | Tests | Line coverage |
 | --- | --- | --- |
-| Unit | 128 | 76.5% |
-| Integration | 21 | 38.5% |
-| End-to-end | 14 | 72.0% |
-| **All** | **163** | **96.3%** (897 of 931 lines) |
+| Unit | 130 | 76.5% |
+| Integration | 23 | 43.3% |
+| End-to-end | 14 | 72.4% |
+| **All** | **167** | **96.4%** (913 of 947 lines) |
 
-Table: Automated tests on main (CI run of 28 Oct)
+Table: Automated tests on main (CI run of 1 Nov)
 
 ## Version Control
 
