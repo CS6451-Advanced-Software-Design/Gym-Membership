@@ -180,6 +180,18 @@ jobs:
               }
             }' target/site/jacoco/jacoco.csv
 
+      # §9's refactoring removed every GodClass and CouplingBetweenObjects finding; don't let either back in.
+      # Narrower than failing on all PMD violations, which would also block unrelated style nits
+      - name: PMD gate
+        run: |
+          regressions=$(grep -oE 'rule="(GodClass|CouplingBetweenObjects)"[^>]*class="[^"]*"' target/pmd.xml || true)
+          if [ -n "$regressions" ]; then
+            echo "::error::GodClass or CouplingBetweenObjects reappeared:"
+            echo "$regressions"
+            exit 1
+          fi
+          echo "No GodClass or CouplingBetweenObjects violations."
+
       # Kept for every run, so the "before" numbers for §9 exist without anyone remembering to save them
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
