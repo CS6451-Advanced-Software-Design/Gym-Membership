@@ -203,3 +203,15 @@ jobs:
             code/target/pmd.xml
             code/target/reports/pmd.html
             code/target/ck/
+
+  # Catches a broken Dockerfile here, on every PR, instead of only when Railway tries to deploy it after a merge
+  docker:
+    name: Docker build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build the image
+        run: docker build -f code/Dockerfile code
