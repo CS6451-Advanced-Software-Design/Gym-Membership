@@ -25,6 +25,11 @@
 		<skip.unit>false</skip.unit>
 		<skip.integration>false</skip.integration>
 		<skip.e2e>false</skip.e2e>
+		<!-- §9's whole-codebase scan. Coverage path points at the merged report (all three test lanes), not one -->
+		<sonar.organization>cs6451-advanced-software-design</sonar.organization>
+		<sonar.projectKey>CS6451-Advanced-Software-Design_Gym-Membership</sonar.projectKey>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 
 	<dependencies>
