@@ -52,8 +52,12 @@ public class BookingService implements BookClassUseCase {
         this.clock = clock;
     }
 
+    /**
+     * Synchronized because counting the places and then saving is two steps. Without it, two members could both
+     * see the last place free. Each single repository call is locked, but not the two together.
+     */
     @Override
-    public BookingResult book(String memberId, String classId) {
+    public synchronized BookingResult book(String memberId, String classId) {
         GymClass gymClass = classes.findById(classId).orElseThrow(() -> new NotFoundException("Class", classId));
         LocalDateTime now = LocalDateTime.now(clock);
         if (gymClass.hasStarted(now)) {
