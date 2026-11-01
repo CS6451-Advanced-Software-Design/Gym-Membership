@@ -11,7 +11,7 @@ public interface BookClassUseCase {
      * Books the member into the class, or adds them to the waitlist if the class is full (BR-B1).
      *
      * <p>Pre: the class exists and hasn't started, the member's current membership can book, and the member
-     * doesn't already hold a place in the class. Post: a BOOKED booking is stored for the member, or the member
+     * doesn't already hold a place in the class. Post: a BOOKED booking is stored for the member and counted against a Trial, or the member
      * is last on the class's waitlist.
      *
      * @return the booking, or the member's position on the waitlist

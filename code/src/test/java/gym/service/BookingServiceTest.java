@@ -172,6 +172,70 @@ class BookingServiceTest {
         assertFalse(result.isWaitlisted());
     }
 
+    @Test
+    void aTrialMemberCanBookOnlyTwoClasses() {
+        // BR-M2: the third booking is refused, and nothing is stored for it
+        aClass("c1", 10);
+        aClass("c2", 10);
+        aClass("c3", 10);
+        trialMembership("m1");
+
+        service.book("m1", "c1");
+        service.book("m1", "c2");
+
+        assertThrows(RuleViolationException.class, () -> service.book("m1", "c3"));
+        assertEquals(2, bookings.findAll().size());
+        assertEquals(2, memberships.findById("ms-m1").orElseThrow().trialBookingsUsed());
+    }
+
+    @Test
+    void aCancelledBookingStillCountsAgainstTheTrial() {
+        // BR-B3: cancelling doesn't give a Trial member the booking back
+        aClass("c1", 10);
+        aClass("c2", 10);
+        aClass("c3", 10);
+        trialMembership("m1");
+        bookings.save(service.book("m1", "c1").booking().cancel());
+        service.book("m1", "c2");
+
+        assertThrows(RuleViolationException.class, () -> service.book("m1", "c3"));
+    }
+
+    @Test
+    void joiningTheWaitlistDoesNotUseATrialBooking() {
+        // BR-M2 counts bookings, and a member on the waitlist doesn't hold one yet
+        aClass("c1", 1);
+        activeMembership("m1");
+        trialMembership("m2");
+        service.book("m1", "c1");
+
+        service.book("m2", "c1");
+
+        assertEquals(0, memberships.findById("ms-m2").orElseThrow().trialBookingsUsed());
+    }
+
+    @Test
+    void anActiveMemberHasNoTrialLimit() {
+        aClass("c1", 10);
+        aClass("c2", 10);
+        aClass("c3", 10);
+        activeMembership("m1");
+
+        service.book("m1", "c1");
+        service.book("m1", "c2");
+        service.book("m1", "c3");
+
+        assertEquals(3, bookings.findAll().size());
+    }
+
+    private void aClass(String classId, int capacity) {
+        classes.save(GymClass.schedule(classId, "Spin", SPIN_STARTS, capacity, false));
+    }
+
+    private Membership trialMembership(String memberId) {
+        return memberships.save(Membership.signUp("ms-" + memberId, memberId, new MonthlyPlan(), TODAY));
+    }
+
     private void spinClass(int capacity) {
         classes.save(GymClass.schedule("c1", "Spin", SPIN_STARTS, capacity, false));
     }
