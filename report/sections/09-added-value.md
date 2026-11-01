@@ -12,10 +12,10 @@ Evidence: .github/workflows, the metrics comment on each PR, report/metrics (to 
 
 CI (`.github/workflows/ci.yml`) runs three matrix lanes - unit, integration and end-to-end - each a plain `./mvnw verify` with no `continue-on-error`, so one failing test fails the whole run and blocks the merge (`main` is a protected branch). A separate `Metrics` job merges the three lanes' JaCoCo coverage, runs PMD and CK, and posts the numbers as a comment edited in place on every push to the pull request, so a reviewer sees them without downloading an artifact. Every action is pinned to a commit SHA, not a tag. A `Report` workflow (`.github/workflows/report.yml`) rebuilds the report PDF on every change under `report/` and fails if a section goes over the spec's page limit. On `main`, Railway builds `code/Dockerfile` and redeploys automatically, with `/actuator/health` as its health check.
 
-Two CI bugs found and fixed while reviewing the pipeline as Technical Lead:
+Reviewing all three workflows end to end as Technical Lead found and fixed:
 
 - `curl -sLo` for the JaCoCo and CK jars had no `-f` flag, so a broken Maven Central URL would silently write an HTML error page to the `.jar` path and fail several steps later with a cryptic `ZipException`, instead of a clear error at the real point of failure.
-- Neither CI job set `timeout-minutes`, so a hung test could burn CI minutes for up to GitHub's 6-hour default before being killed.
+- None of `ci.yml`'s two jobs, `release.yml` or `report.yml` set `timeout-minutes`, so a hung test, or a release or report build stuck waiting on something, could burn CI minutes for up to GitHub's 6-hour default before being killed. All four jobs across the three workflows now bound their runtime.
 
 ## Metrics Leading to Refactoring
 
