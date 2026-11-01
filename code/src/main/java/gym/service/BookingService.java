@@ -88,12 +88,19 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase {
             GymClass waiting = classes.save(gymClass.joinWaitlist(memberId));
             return BookingResult.waitlisted(waiting.waitlist().positionOf(memberId));
         }
+        return BookingResult.booked(takePlace(membership, gymClass, now));
+    }
+
+    /**
+     * Gives the member a place, whether they booked it or were promoted to it.
+     */
+    private Booking takePlace(Membership membership, GymClass gymClass, LocalDateTime now) {
         // Charged first: this is the step that can still fail, and there are no transactions to undo the saves below
         if (gymClass.premium() && membership.plan() != PlanType.ANNUAL) {
             charges.record(membership.membershipId(), ChargeType.PREMIUM_SURCHARGE, PREMIUM_SURCHARGE);
         }
         memberships.save(membership.recordBooking());
-        return BookingResult.booked(bookings.save(Booking.book(newId("b-"), memberId, classId, now)));
+        return bookings.save(Booking.book(newId("b-"), membership.memberId(), gymClass.classId(), now));
     }
 
     /**
@@ -113,7 +120,38 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase {
         if (gymClass.isLateToCancel(now)) {
             chargeLateCancellationFee(booking.memberId());
         }
-        return bookings.save(cancelled);
+        Booking saved = bookings.save(cancelled);
+        promoteFromWaitlist(gymClass, now);
+        return saved;
+    }
+
+    /**
+     * BR-B2: the place goes to the first member still able to take it. Anyone who can no longer book is taken
+     * off the waitlist, so they don't hold up the members behind them.
+     */
+    private void promoteFromWaitlist(GymClass gymClass, LocalDateTime now) {
+        GymClass remaining = gymClass;
+        while (remaining.waitlist().size() > 0) {
+            String memberId = remaining.waitlist().first().orElseThrow();
+            remaining = remaining.promoteFromWaitlist();
+            Optional<Membership> next = findCurrentMembership(memberId)
+                    .filter(membership -> canStillBook(membership, gymClass, now));
+            if (next.isPresent()) {
+                classes.save(remaining);
+                takePlace(next.get(), gymClass, now);
+                return;
+            }
+        }
+        classes.save(remaining);
+    }
+
+    /**
+     * The checks that may have changed since the member joined the waitlist.
+     */
+    private boolean canStillBook(Membership membership, GymClass gymClass, LocalDateTime now) {
+        return membership.canBook()
+                && membership.rules().allowsClassAt(gymClass.startTime())
+                && futureBookings(membership.memberId(), now) < Booking.MAX_FUTURE_BOOKINGS;
     }
 
     /**
