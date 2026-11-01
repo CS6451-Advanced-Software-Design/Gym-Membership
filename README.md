@@ -41,7 +41,11 @@ See [report/roles.md](report/roles.md) for the full role split.
 | [report/tech-stack.md](report/tech-stack.md) | Java 21 + Spring Boot, Maven, tests, CI/CD, metrics, UML workbench, hosting stack (report §5, §8, §9, §10) |
 | [report/sample-project-lessons.md](report/sample-project-lessons.md) | What past submissions did well and where they lost marks |
 | [report/sections](report/sections) | **The report itself**: one Markdown file per section, in the spec's order. Write your sections here, in your own words. Each file starts with a comment saying what it needs and who owns it |
-| [report/pdf](report/pdf) | Builds the PDF: front cover, the blank marking scheme, contents and page numbers. Run `report/pdf/build.sh` (needs pandoc and Typst), or download it from the **Report** check on any PR. Student IDs for the cover go in `report/pdf/report.yaml` |
+| [report/pdf](report/pdf) | Builds the PDF: front cover, the blank marking scheme, contents and page numbers. Run `report/pdf/build.sh` (needs pandoc and Typst), or download it from the **Report** check on any PR. Names and student IDs for the cover are in `report/pdf/report.yaml` |
+| [report/blueprints](report/blueprints/README.md) | Package, component and deployment diagrams recovered from the code in Visual Paradigm (report §10) |
+| [report/metrics](report/metrics) | PMD and CK snapshots before and after each refactoring (report §9) |
+| [report/version-control](report/version-control) | The commit and pull request charts, drawn from the git history by `charts.py` (report §8) |
+| [report/lessons.md](report/lessons.md) | Lessons learned, with evidence, for the critique and reflections (report §11, §12) |
 | [report/report-plan.md](report/report-plan.md) | Owner, evidence and quality bar for every report section (§1–14) |
 | [report/roles.md](report/roles.md) | Roles and package ownership (report §3) |
 | [report/diary.md](report/diary.md) | Weekly diary, Weeks 4–12 (report §7). **Update every week** |
@@ -59,7 +63,7 @@ Each pattern is listed with its roles (as named in the lectures, GoF or POSA2) a
 |  | View | the JSON responses in `dto`, e.g. [`InvoiceResponse`](code/src/main/java/gym/dto/InvoiceResponse.java) |
 |  | Controller | [`BillingController`](code/src/main/java/gym/controller/BillingController.java), with [`ErrorHandler`](code/src/main/java/gym/controller/ErrorHandler.java) for errors |
 | **Hexagonal (Ports and Adapters)**<br>Architectural (self-researched) | Inbound port | `port.in`, e.g. [`RunMonthlyBillingUseCase`](code/src/main/java/gym/port/in/RunMonthlyBillingUseCase.java) |
-|  | Driving adapter | [`BillingController`](code/src/main/java/gym/controller/BillingController.java) and [`MembershipController`](code/src/main/java/gym/controller/MembershipController.java) for Postman, [`BillingJob`](code/src/main/java/gym/controller/BillingJob.java) and [`MembershipChecksJob`](code/src/main/java/gym/controller/MembershipChecksJob.java) for the clock |
+|  | Driving adapter | [`BillingController`](code/src/main/java/gym/controller/BillingController.java), [`MembershipController`](code/src/main/java/gym/controller/MembershipController.java) and [`MemberController`](code/src/main/java/gym/controller/MemberController.java) for Postman, [`BillingJob`](code/src/main/java/gym/controller/BillingJob.java) and [`MembershipChecksJob`](code/src/main/java/gym/controller/MembershipChecksJob.java) for the clock |
 |  | Outbound port | `port.out`, e.g. [`ChargeRepository`](code/src/main/java/gym/port/out/ChargeRepository.java), [`PaymentGateway`](code/src/main/java/gym/port/out/PaymentGateway.java) |
 |  | Driven adapter | `adapter.*`, e.g. [`JsonFileChargeRepository`](code/src/main/java/gym/adapter/persistence/JsonFileChargeRepository.java), [`FakePaymentGateway`](code/src/main/java/gym/adapter/payment/FakePaymentGateway.java) |
 |  | Checked by | [`ArchitectureTest`](code/src/test/java/gym/ArchitectureTest.java), which fails the build if a dependency points outwards |
@@ -86,6 +90,10 @@ Each pattern is listed with its roles (as named in the lectures, GoF or POSA2) a
 |  | Concrete products | [`MonthlyPlan`](code/src/main/java/gym/domain/MonthlyPlan.java), [`AnnualPlan`](code/src/main/java/gym/domain/AnnualPlan.java), [`StudentPlan`](code/src/main/java/gym/domain/StudentPlan.java), [`OffPeakPlan`](code/src/main/java/gym/domain/OffPeakPlan.java) |
 |  | Client | [`MembershipService`](code/src/main/java/gym/service/MembershipService.java) at sign-up, and [`Membership`](code/src/main/java/gym/domain/Membership.java) for check-in |
 |  | Checked by | [`PlanFactoryTest`](code/src/test/java/gym/domain/PlanFactoryTest.java) |
+| **Observer**<br>Design (GoF) | Subject | [`NotificationSender`](code/src/main/java/gym/port/out/NotificationSender.java), implemented by [`EventNotificationSender`](code/src/main/java/gym/adapter/notification/EventNotificationSender.java) on Spring's event bus |
+|  | Observer | [`NotificationLog`](code/src/main/java/gym/adapter/notification/NotificationLog.java), an `@EventListener` |
+|  | Client | [`MemberService`](code/src/main/java/gym/service/MemberService.java) on check-in, and [`MembershipService`](code/src/main/java/gym/service/MembershipService.java) and [`BillingService`](code/src/main/java/gym/service/BillingService.java) for membership and invoice notices |
+|  | Checked by | [`MemberServiceTest`](code/src/test/java/gym/service/MemberServiceTest.java), which checks a check-in notifies the member |
 | **Repository**<br>Design | Repository | [`Repository<T, ID>`](code/src/main/java/gym/port/out/Repository.java), e.g. [`InvoiceRepository`](code/src/main/java/gym/port/out/InvoiceRepository.java) |
 |  | Implementation | [`JsonFileRepository`](code/src/main/java/gym/adapter/persistence/JsonFileRepository.java), e.g. [`JsonFileInvoiceRepository`](code/src/main/java/gym/adapter/persistence/JsonFileInvoiceRepository.java) |
 | **Dependency Injection**<br>Design | Injector | Spring, from the `@Bean` methods in [`GymApplication`](code/src/main/java/gym/GymApplication.java) and the `*Configuration` classes |
@@ -97,7 +105,7 @@ Each pattern is listed with its roles (as named in the lectures, GoF or POSA2) a
 | Pattern | Kind | Applied to | Owner |
 | --- | --- | --- | --- |
 | Command | Design (GoF) | Book and cancel a class, with undo | Bharat |
-| Observer | Design (GoF) | Waitlist promotion in Booking, and member notifications | Bharat, DineshReddy |
+| Observer | Design (GoF) | Waitlist promotion in Booking | Bharat |
 
 ## Diagrams
 
@@ -144,6 +152,12 @@ The states a `Membership` moves through, which the State pattern implements.
 The entities stored in the JSON files, with cardinality.
 
 <p align="center"><img src="report/analysis/er-diagram.png" alt="ER diagram" width="680"></p>
+
+### Recovered packages (report §10)
+
+The package diagram reverse-engineered from the compiled code, to compare with the design above. Details in [report/blueprints](report/blueprints/README.md).
+
+![Recovered package diagram](report/blueprints/package-diagram.png)
 
 ## Working agreement
 

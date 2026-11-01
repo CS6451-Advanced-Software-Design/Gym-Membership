@@ -98,6 +98,7 @@ Package by layer with Hexagonal ports and adapters. The reasoning is in [report/
 
 | Package | Holds | May use |
 | --- | --- | --- |
+| `gym` | `GymApplication` and the `*Configuration` classes: the composition root that wires the Strategy, the Interceptor and the beans | Any package |
 | `gym.controller` | REST controllers, `ErrorHandler` | `port.in`, `dto`, `domain` |
 | `gym.dto` | Request and response records | `domain` |
 | `gym.port.in` | Use-case interfaces | `domain` |
