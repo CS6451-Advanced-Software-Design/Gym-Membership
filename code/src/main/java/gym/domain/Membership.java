@@ -87,6 +87,13 @@ public record Membership(
     }
 
     /**
+     * BR-B3: true unless the member is on a Trial.
+     */
+    public boolean paysLateCancellationFee() {
+        return state().paysLateCancellationFee(this);
+    }
+
+    /**
      * Pre: none. Post: {@code true} only if the state lets the member in and so does the plan at {@code at}.
      */
     public boolean canCheckIn(LocalDateTime at) {

@@ -500,6 +500,86 @@ class BookingServiceTest {
         assertEquals(BookingStatus.BOOKED, bookings.findById(booking.bookingId()).orElseThrow().status());
     }
 
+    @Test
+    void cancellingUnderTwoHoursBeforeTheClassCostsFiveEuros() {
+        // BR-B3: the clock says 09:00 and the class starts at 10:00
+        classAt(TODAY.atTime(10, 0));
+        activeMembership("m1");
+        Booking booking = service.book("m1", "soon").booking();
+
+        service.cancel(booking.bookingId());
+
+        assertEquals(1, charges.size());
+        Charge fee = charges.getFirst();
+        assertEquals("ms-m1", fee.membershipId());
+        assertEquals(ChargeType.LATE_CANCELLATION, fee.type());
+        assertEquals(Money.euros(5), fee.amount());
+    }
+
+    @Test
+    void cancellingExactlyTwoHoursBeforeTheClassIsFree() {
+        // BR-B3 says less than 2 hours, so 09:00 for an 11:00 class isn't late
+        classAt(TODAY.atTime(11, 0));
+        activeMembership("m1");
+        Booking booking = service.book("m1", "soon").booking();
+
+        service.cancel(booking.bookingId());
+
+        assertTrue(charges.isEmpty());
+    }
+
+    @Test
+    void cancellingInGoodTimeIsFree() {
+        spinClass(10);
+        activeMembership("m1");
+        Booking booking = service.book("m1", "c1").booking();
+
+        service.cancel(booking.bookingId());
+
+        assertTrue(charges.isEmpty());
+    }
+
+    @Test
+    void aTrialMemberPaysNoLateCancellationFee() {
+        // BR-B3: no fee for a Trial, but the booking still counts against its 2
+        classAt(TODAY.atTime(10, 0));
+        trialMembership("m1");
+        Booking booking = service.book("m1", "soon").booking();
+
+        service.cancel(booking.bookingId());
+
+        assertTrue(charges.isEmpty());
+        assertEquals(1, memberships.findById("ms-m1").orElseThrow().trialBookingsUsed());
+    }
+
+    @Test
+    void aRefusedCancellationCostsNothing() {
+        classAt(TODAY.atTime(10, 0));
+        activeMembership("m1");
+        Booking booking = service.book("m1", "soon").booking();
+        service.cancel(booking.bookingId());
+
+        assertThrows(RuleViolationException.class, () -> service.cancel(booking.bookingId()));
+        assertEquals(1, charges.size());
+    }
+
+    @Test
+    void aMemberWhoLeftTheGymCanStillCancelWithoutAFee() {
+        classAt(TODAY.atTime(10, 0));
+        Membership membership = activeMembership("m1");
+        Booking booking = service.book("m1", "soon").booking();
+        memberships.save(membership.cancel());
+
+        service.cancel(booking.bookingId());
+
+        assertTrue(charges.isEmpty());
+        assertEquals(BookingStatus.CANCELLED, bookings.findById(booking.bookingId()).orElseThrow().status());
+    }
+
+    private void classAt(LocalDateTime start) {
+        classes.save(GymClass.schedule("soon", "Spin", start, 10, false));
+    }
+
     private void spinClass(int capacity) {
         classes.save(GymClass.schedule("c1", "Spin", SPIN_STARTS, capacity, false));
     }

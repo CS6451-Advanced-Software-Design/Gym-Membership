@@ -23,6 +23,11 @@ public class TrialState extends MembershipState {
     }
 
     @Override
+    public boolean paysLateCancellationFee(Membership membership) {
+        return false;
+    }
+
+    @Override
     public Membership recordBooking(Membership membership) {
         if (!canBook(membership)) {
             throw new RuleViolationException("Membership " + membership.membershipId() + " has used the "

@@ -8,7 +8,8 @@ import gym.domain.Booking;
 public interface CancelBookingUseCase {
 
     /**
-     * Cancels the booking, which frees its place in the class.
+     * Cancels the booking, which frees its place in the class. Less than 2 hours before the class this costs
+     * a late-cancellation fee, unless the member is on a Trial (BR-B3).
      *
      * <p>Pre: the booking exists, is BOOKED, and its class hasn't started. Post: the booking is CANCELLED
      * and no longer holds a place.

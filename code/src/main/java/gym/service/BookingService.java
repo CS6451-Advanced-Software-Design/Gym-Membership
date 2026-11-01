@@ -18,6 +18,7 @@ import gym.port.out.GymClassRepository;
 import gym.port.out.MembershipRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,11 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase {
      * BR-B6: what a premium class costs on top of the plan, unless the member is on Annual.
      */
     private static final Money PREMIUM_SURCHARGE = Money.euros(8);
+
+    /**
+     * BR-B3: what cancelling less than 2 hours before a class costs.
+     */
+    private static final Money LATE_CANCELLATION_FEE = Money.euros(5);
 
     private final GymClassRepository classes;
     private final BookingRepository bookings;
@@ -98,20 +104,40 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase {
         Booking booking = bookings.findById(bookingId).orElseThrow(() -> new NotFoundException("Booking", bookingId));
         GymClass gymClass = classes.findById(booking.classId())
                 .orElseThrow(() -> new NotFoundException("Class", booking.classId()));
-        if (gymClass.hasStarted(LocalDateTime.now(clock))) {
+        LocalDateTime now = LocalDateTime.now(clock);
+        if (gymClass.hasStarted(now)) {
             throw new RuleViolationException("Class " + gymClass.classId() + " has already started");
         }
-        return bookings.save(booking.cancel());
+        // Cancelled first, so a booking that can't be cancelled is refused before any fee is charged
+        Booking cancelled = booking.cancel();
+        if (gymClass.isLateToCancel(now)) {
+            chargeLateCancellationFee(booking.memberId());
+        }
+        return bookings.save(cancelled);
+    }
+
+    /**
+     * BR-B3. A member who has since left the gym has no membership to charge, so they pay nothing.
+     */
+    private void chargeLateCancellationFee(String memberId) {
+        findCurrentMembership(memberId)
+                .filter(Membership::paysLateCancellationFee)
+                .ifPresent(membership -> charges.record(
+                        membership.membershipId(), ChargeType.LATE_CANCELLATION, LATE_CANCELLATION_FEE));
     }
 
     /**
      * The member's membership that isn't cancelled, the same way {@link MemberService} finds it.
      */
     private Membership currentMembership(String memberId) {
+        return findCurrentMembership(memberId)
+                .orElseThrow(() -> new NotFoundException("Current membership for member", memberId));
+    }
+
+    private Optional<Membership> findCurrentMembership(String memberId) {
         return memberships.findAll().stream()
                 .filter(membership -> membership.memberId().equals(memberId) && membership.status() != MembershipStatus.CANCELLED)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Current membership for member", memberId));
+                .findFirst();
     }
 
     private boolean holdsAPlace(String memberId, String classId) {
