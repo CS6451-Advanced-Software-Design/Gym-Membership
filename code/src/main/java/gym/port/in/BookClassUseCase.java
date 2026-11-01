@@ -11,8 +11,8 @@ public interface BookClassUseCase {
      * Books the member into the class, or adds them to the waitlist if the class is full (BR-B1).
      *
      * <p>Pre: the class exists and hasn't started, the member's current membership can book, its plan allows
-     * the class time, and the member holds no place in the class and fewer than 5 future bookings. Post: a BOOKED booking is stored for the member and counted against a Trial, or the member
-     * is last on the class's waitlist.
+     * the class time, and the member holds no place in the class and fewer than 5 future bookings. Post: a BOOKED booking is stored for the member and counted against a Trial, with the
+     * surcharge for a premium class unless they are on Annual, or the member is last on the class's waitlist.
      *
      * @return the booking, or the member's position on the waitlist
      * @throws gym.domain.NotFoundException if there is no such class, or the member holds no current membership

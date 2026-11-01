@@ -2,12 +2,16 @@ package gym.service;
 
 import gym.domain.Booking;
 import gym.domain.BookingResult;
+import gym.domain.ChargeType;
 import gym.domain.GymClass;
 import gym.domain.Membership;
 import gym.domain.MembershipStatus;
+import gym.domain.Money;
 import gym.domain.NotFoundException;
+import gym.domain.PlanType;
 import gym.domain.RuleViolationException;
 import gym.port.in.BookClassUseCase;
+import gym.port.in.RecordChargeUseCase;
 import gym.port.out.BookingRepository;
 import gym.port.out.GymClassRepository;
 import gym.port.out.MembershipRepository;
@@ -24,19 +28,27 @@ import org.springframework.stereotype.Service;
 @Service
 public class BookingService implements BookClassUseCase {
 
+    /**
+     * BR-B6: what a premium class costs on top of the plan, unless the member is on Annual.
+     */
+    private static final Money PREMIUM_SURCHARGE = Money.euros(8);
+
     private final GymClassRepository classes;
     private final BookingRepository bookings;
     private final MembershipRepository memberships;
+    private final RecordChargeUseCase charges;
     private final Clock clock;
 
     public BookingService(
             GymClassRepository classes,
             BookingRepository bookings,
             MembershipRepository memberships,
+            RecordChargeUseCase charges,
             Clock clock) {
         this.classes = classes;
         this.bookings = bookings;
         this.memberships = memberships;
+        this.charges = charges;
         this.clock = clock;
     }
 
@@ -64,6 +76,10 @@ public class BookingService implements BookClassUseCase {
         if (gymClass.isFull(placesTaken(classId))) {
             GymClass waiting = classes.save(gymClass.joinWaitlist(memberId));
             return BookingResult.waitlisted(waiting.waitlist().positionOf(memberId));
+        }
+        // Charged first: this is the step that can still fail, and there are no transactions to undo the saves below
+        if (gymClass.premium() && membership.plan() != PlanType.ANNUAL) {
+            charges.record(membership.membershipId(), ChargeType.PREMIUM_SURCHARGE, PREMIUM_SURCHARGE);
         }
         memberships.save(membership.recordBooking());
         return BookingResult.booked(bookings.save(Booking.book(newId("b-"), memberId, classId, now)));
