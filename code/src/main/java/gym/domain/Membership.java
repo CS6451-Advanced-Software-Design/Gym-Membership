@@ -64,7 +64,7 @@ public record Membership(
     }
 
     public MembershipState state() {
-        return MembershipState.of(status);
+        return MembershipStateFactory.of(status);
     }
 
     public Plan rules() {
