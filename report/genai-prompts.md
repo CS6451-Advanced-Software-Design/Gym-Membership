@@ -106,5 +106,5 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 99 | 1 Nov | Chirag | "also shorten 13 GenAI Prompts table, its gone too big", then "lets also try group entries so overall row count is reduced" | The PDF table grouped by date and member, without the Used for column, at 7pt: five pages down to two |
 | 100 | 1 Nov | Chirag | A screenshot of an empty §4 first page: "this seems way too empty, add the placeholder text about who is writing this" | A placeholder for Dhruv's introduction, and the use case diagram capped at 17 cm so it stays with its heading |
 | 101 | 1 Nov | Chirag | A screenshot of the §8.2 heading and intro left alone at the bottom of a page: "lets move subheading to next page too", then "actually nevermind … lets keep it as it was, with code snippets being split in pages" | Code blocks allowed to split across pages again |
-
+| 102 | 1 Nov | Bharat | "Our Membership already has canBook() and recordBooking(), and a Trial plan allows 2 bookings. Explain how these two methods are meant to enforce the limit, where the service should call them, and whether the updated Membership must be saved back" | Explanation of how the two methods enforce the limit, then the BR-M2 Trial limit in `BookingService` and its tests |
 Table: GenAI prompts, all to Claude (Claude Code)
