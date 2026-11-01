@@ -11,6 +11,7 @@ import gym.domain.NotFoundException;
 import gym.domain.PlanType;
 import gym.domain.RuleViolationException;
 import gym.port.in.BookClassUseCase;
+import gym.port.in.CancelBookingUseCase;
 import gym.port.in.RecordChargeUseCase;
 import gym.port.out.BookingRepository;
 import gym.port.out.GymClassRepository;
@@ -26,7 +27,7 @@ import org.springframework.stereotype.Service;
  * {@link Membership}. This service loads them, asks them and saves the result.
  */
 @Service
-public class BookingService implements BookClassUseCase {
+public class BookingService implements BookClassUseCase, CancelBookingUseCase {
 
     /**
      * BR-B6: what a premium class costs on top of the plan, unless the member is on Annual.
@@ -87,6 +88,20 @@ public class BookingService implements BookClassUseCase {
         }
         memberships.save(membership.recordBooking());
         return BookingResult.booked(bookings.save(Booking.book(newId("b-"), memberId, classId, now)));
+    }
+
+    /**
+     * Synchronized for the same reason as {@link #book}: both change who holds the places in a class.
+     */
+    @Override
+    public synchronized Booking cancel(String bookingId) {
+        Booking booking = bookings.findById(bookingId).orElseThrow(() -> new NotFoundException("Booking", bookingId));
+        GymClass gymClass = classes.findById(booking.classId())
+                .orElseThrow(() -> new NotFoundException("Class", booking.classId()));
+        if (gymClass.hasStarted(LocalDateTime.now(clock))) {
+            throw new RuleViolationException("Class " + gymClass.classId() + " has already started");
+        }
+        return bookings.save(booking.cancel());
     }
 
     /**

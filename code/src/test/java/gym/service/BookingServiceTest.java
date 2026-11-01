@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -447,6 +448,56 @@ class BookingServiceTest {
         } catch (InterruptedException interrupted) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    @Test
+    void cancellingABookingStoresItAsCancelled() {
+        spinClass(10);
+        activeMembership("m1");
+        Booking booking = service.book("m1", "c1").booking();
+
+        Booking cancelled = service.cancel(booking.bookingId());
+
+        assertEquals(BookingStatus.CANCELLED, cancelled.status());
+        assertEquals(Optional.of(cancelled), bookings.findById(booking.bookingId()));
+    }
+
+    @Test
+    void cancellingFreesThePlaceForAnotherMember() {
+        spinClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        Booking booking = service.book("m1", "c1").booking();
+
+        service.cancel(booking.bookingId());
+
+        assertFalse(service.book("m2", "c1").isWaitlisted());
+    }
+
+    @Test
+    void cancellingAnUnknownBookingIsRefused() {
+        assertThrows(NotFoundException.class, () -> service.cancel("nobody"));
+    }
+
+    @Test
+    void aBookingCannotBeCancelledTwice() {
+        spinClass(10);
+        activeMembership("m1");
+        Booking booking = service.book("m1", "c1").booking();
+        service.cancel(booking.bookingId());
+
+        assertThrows(RuleViolationException.class, () -> service.cancel(booking.bookingId()));
+    }
+
+    @Test
+    void aBookingCannotBeCancelledOnceItsClassHasStarted() {
+        spinClass(10);
+        activeMembership("m1");
+        Booking booking = service.book("m1", "c1").booking();
+        clock.advanceDays(5);
+
+        assertThrows(RuleViolationException.class, () -> service.cancel(booking.bookingId()));
+        assertEquals(BookingStatus.BOOKED, bookings.findById(booking.bookingId()).orElseThrow().status());
     }
 
     private void spinClass(int capacity) {
