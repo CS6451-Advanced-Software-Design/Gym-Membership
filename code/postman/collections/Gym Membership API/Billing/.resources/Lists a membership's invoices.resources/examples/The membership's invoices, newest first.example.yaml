@@ -35,6 +35,21 @@ response:
           "discount": 6.75,
           "total": 38.25,
           "status": "PAID"
+        },
+        {
+          "id": "2b91c7e4-6f0a-4d35-9e18-c3a5f27b8d60",
+          "membershipId": "ms-3f9c2a71",
+          "period": "2026-10",
+          "charges": [
+            {
+              "type": "PLAN_FEE",
+              "amount": 20.32,
+              "date": "2026-10-18T00:00:00.000Z"
+            }
+          ],
+          "discount": 3.05,
+          "total": 17.27,
+          "status": "PAID"
         }
       ]
 order: 1000

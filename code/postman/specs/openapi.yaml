@@ -122,8 +122,8 @@ paths:
                   - type: PLAN_FEE
                     amount: 10.16
                     date: 2026-10-25
-                  discount: 0.0
-                  total: 10.16
+                  discount: 1.52
+                  total: 8.64
                   status: PAID
   /memberships/{membershipId}/unfreeze:
     post:
@@ -414,17 +414,39 @@ paths:
                 items:
                   $ref: "#/components/schemas/MembershipResponse"
               example:
-              - membershipId: ms-3f9c2a71
-                memberId: m-8d14e6b2
+              - membershipId: ms-42f86968
+                memberId: m-9a65df90
                 plan: MONTHLY
                 status: ACTIVE
-                startDate: 2026-10-18
+                startDate: 2026-10-25
                 endDate: null
                 trialEndsOn: null
                 trialBookingsLeft: null
                 frozenUntil: null
                 lapsedSince: null
                 failedPayments: 0
+              - membershipId: ms-c47a0e95
+                memberId: m-2e8d61fa
+                plan: STUDENT
+                status: ACTIVE
+                startDate: 2026-09-03
+                endDate: null
+                trialEndsOn: null
+                trialBookingsLeft: null
+                frozenUntil: null
+                lapsedSince: null
+                failedPayments: 0
+              - membershipId: ms-e61b7d38
+                memberId: m-1c93b5e7
+                plan: MONTHLY
+                status: LAPSED
+                startDate: 2026-09-12
+                endDate: null
+                trialEndsOn: null
+                trialBookingsLeft: null
+                frozenUntil: null
+                lapsedSince: 2026-11-01
+                failedPayments: 2
   /members/{memberId}/check-ins:
     get:
       tags:
@@ -462,7 +484,15 @@ paths:
                 items:
                   $ref: "#/components/schemas/CheckInResponse"
               example:
-              - checkInId: ci-3f9c2a71
+              - checkInId: ci-5d0b8e14
+                memberId: m-8d14e6b2
+                membershipId: ms-3f9c2a71
+                at: 2026-10-19T18:42:00
+              - checkInId: ci-a71c39f2
+                memberId: m-8d14e6b2
+                membershipId: ms-3f9c2a71
+                at: 2026-10-23T07:05:00
+              - checkInId: ci-b42e7d19
                 memberId: m-8d14e6b2
                 membershipId: ms-3f9c2a71
                 at: 2026-10-28T09:15:00
@@ -511,7 +541,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/CheckInResponse"
               example:
-                checkInId: ci-3f9c2a71
+                checkInId: ci-b42e7d19
                 memberId: m-8d14e6b2
                 membershipId: ms-3f9c2a71
                 at: 2026-10-28T09:15:00
@@ -723,6 +753,16 @@ paths:
                 discount: 6.75
                 total: 38.25
                 status: PAID
+              - id: 2b91c7e4-6f0a-4d35-9e18-c3a5f27b8d60
+                membershipId: ms-3f9c2a71
+                period: 2026-10
+                charges:
+                - type: PLAN_FEE
+                  amount: 20.32
+                  date: 2026-10-18
+                discount: 3.05
+                total: 17.27
+                status: PAID
   /members/{memberId}:
     get:
       tags:
@@ -760,11 +800,11 @@ paths:
                 $ref: "#/components/schemas/MemberResponse"
               example:
                 memberId: m-8d14e6b2
-                name: Ann Example
-                email: ann@example.com
+                name: Aoife Byrne
+                email: aoife.byrne@gmail.com
                 studentId: null
-                employer: null
-                familyId: null
+                employer: Stripe
+                familyId: byrne
 components:
   schemas:
     SignUpRequest:
@@ -781,7 +821,7 @@ components:
           format: email
           description: where notifications go. Someone who left and joins again uses
             the same email
-          example: ann@example.com
+          example: ann.byrne@gmail.com
           minLength: 1
         plan:
           type: string
