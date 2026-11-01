@@ -16,6 +16,7 @@ permissions:
 env:
   CK_VERSION: 0.7.0
   JACOCO_VERSION: 0.8.15
+  SONAR_SCANNER_VERSION: 5.8.0.7211
   # §9's refactoring must not be allowed to regress. Coverage is checked against the merged report (all three
   # test lanes), not any single lane, since no lane alone reaches this on its own
   COVERAGE_MIN: 90
@@ -86,11 +87,15 @@ jobs:
       run:
         working-directory: code
     steps:
+      # Full history, not the default shallow clone, so SonarQube Cloud can blame lines to commits
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: '21'
+          cache: maven
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: analysis
@@ -191,6 +196,13 @@ jobs:
             exit 1
           fi
           echo "No GodClass or CouplingBetweenObjects violations."
+
+      # Whole-codebase scan for §9: complexity, duplication, maintainability, plus the coverage figure above.
+      # Reuses the already-merged jacoco.xml (sonar.coverage.jacoco.xmlReportPaths in pom.xml) rather than re-running tests
+      - name: SonarQube Cloud
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./mvnw -B org.sonarsource.scanner.maven:sonar-maven-plugin:$SONAR_SCANNER_VERSION:sonar
 
       # Kept for every run, so the "before" numbers for §9 exist without anyone remembering to save them
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
