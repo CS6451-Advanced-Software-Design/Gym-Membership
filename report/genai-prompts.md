@@ -97,5 +97,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 89 | 1 Nov | Chirag | "i got some more merged in, see it" | The Booking persistence and refactoring deploys approved on Railway, and the §8 charts and test table and the §11 metrics brought up to date with the §9 refactoring |
 | 90 | 1 Nov | Chirag | "can we update readme to be upto date" | Observer moved to the patterns in place, `MemberController` and the new report folders (blueprints, metrics, version control, lessons) and the recovered package diagram added to the READMEs |
 | 91 | 1 Nov | Chirag | A screenshot of the recovered package diagram on a black background in the README, and "lets add white background" | The three §10 blueprint images flattened onto white, and the step added to the blueprints README |
+| 92 | 1 Nov | Chirag | "should we make next minor release", then "okay make 0.3.0" | The case for v0.3.0 before the final push, the version bump and the release notes |
 
 Table: GenAI prompts, all to Claude (Claude Code)
