@@ -37,6 +37,13 @@ public abstract class MembershipState {
         return false;
     }
 
+    /**
+     * BR-B3: every state pays the fee, except a Trial.
+     */
+    public boolean paysLateCancellationFee(Membership membership) {
+        return true;
+    }
+
     public Membership recordBooking(Membership membership) {
         throw refused(membership, "book a class");
     }
