@@ -10,7 +10,7 @@ A monolithic (package-by-layer MVC + Hexagonal, with Interceptor) business tier 
 
 **Try it, no setup needed:** the app is live at https://gym-membership-production-a725.up.railway.app, which opens its Swagger UI. The public [Postman workspace](https://www.postman.com/spaceflight-geoscientist-47956182/gym-membership/collection/g5aqom5/gym-membership-api) has every endpoint, documented from the code, and sends to the live app by default. Pick the **mock** environment for Postman's saved examples, or **local** for the app on your machine. See [code/README.md](code/README.md#postman).
 
-![Checking a member in, in the public Postman workspace, with its saved example response](report/screenshots/postman.png)
+![A member's check-ins, in the public Postman workspace, with its saved example response](report/screenshots/postman.png)
 
 ## Team
 
@@ -59,12 +59,12 @@ Each pattern is listed with its roles (as named in the lectures, GoF or POSA2) a
 
 | Pattern | Role | Class |
 | --- | --- | --- |
-| **Model View Controller**<br>Architectural (lectures) | Model | `domain` and `service`, e.g. [`BillingService`](code/src/main/java/gym/service/BillingService.java) |
+| **Model View Controller**<br>Architectural (lectures) | Model | `domain` and `service`, e.g. [`BillingService`](code/src/main/java/gym/service/BillingService.java), [`BookingService`](code/src/main/java/gym/service/BookingService.java) |
 |  | View | the JSON responses in `dto`, e.g. [`InvoiceResponse`](code/src/main/java/gym/dto/InvoiceResponse.java) |
 |  | Controller | [`BillingController`](code/src/main/java/gym/controller/BillingController.java), with [`ErrorHandler`](code/src/main/java/gym/controller/ErrorHandler.java) for errors |
-| **Hexagonal (Ports and Adapters)**<br>Architectural (self-researched) | Inbound port | `port.in`, e.g. [`RunMonthlyBillingUseCase`](code/src/main/java/gym/port/in/RunMonthlyBillingUseCase.java) |
+| **Hexagonal (Ports and Adapters)**<br>Architectural (self-researched) | Inbound port | `port.in`, e.g. [`RunMonthlyBillingUseCase`](code/src/main/java/gym/port/in/RunMonthlyBillingUseCase.java), [`BookClassUseCase`](code/src/main/java/gym/port/in/BookClassUseCase.java), [`CancelBookingUseCase`](code/src/main/java/gym/port/in/CancelBookingUseCase.java) |
 |  | Driving adapter | [`BillingController`](code/src/main/java/gym/controller/BillingController.java), [`MembershipController`](code/src/main/java/gym/controller/MembershipController.java) and [`MemberController`](code/src/main/java/gym/controller/MemberController.java) for Postman, [`BillingJob`](code/src/main/java/gym/controller/BillingJob.java) and [`MembershipChecksJob`](code/src/main/java/gym/controller/MembershipChecksJob.java) for the clock |
-|  | Outbound port | `port.out`, e.g. [`ChargeRepository`](code/src/main/java/gym/port/out/ChargeRepository.java), [`PaymentGateway`](code/src/main/java/gym/port/out/PaymentGateway.java) |
+|  | Outbound port | `port.out`, e.g. [`ChargeRepository`](code/src/main/java/gym/port/out/ChargeRepository.java), [`BookingRepository`](code/src/main/java/gym/port/out/BookingRepository.java), [`PaymentGateway`](code/src/main/java/gym/port/out/PaymentGateway.java) |
 |  | Driven adapter | `adapter.*`, e.g. [`JsonFileChargeRepository`](code/src/main/java/gym/adapter/persistence/JsonFileChargeRepository.java), [`FakePaymentGateway`](code/src/main/java/gym/adapter/payment/FakePaymentGateway.java) |
 |  | Checked by | [`ArchitectureTest`](code/src/test/java/gym/ArchitectureTest.java), which fails the build if a dependency points outwards |
 | **Interceptor**<br>Architectural (lectures, POSA2) | Interceptor | [`UseCaseInterceptor`](code/src/main/java/gym/interceptor/UseCaseInterceptor.java) |
@@ -81,20 +81,22 @@ Each pattern is listed with its roles (as named in the lectures, GoF or POSA2) a
 |  | Concrete strategies | [`CorporateDiscount`](code/src/main/java/gym/domain/CorporateDiscount.java), [`FamilyDiscount`](code/src/main/java/gym/domain/FamilyDiscount.java), [`LoyaltyDiscount`](code/src/main/java/gym/domain/LoyaltyDiscount.java), and [`BestDiscount`](code/src/main/java/gym/domain/BestDiscount.java), which applies only the largest (BR-P2) |
 |  | Context | [`BillingService`](code/src/main/java/gym/service/BillingService.java) |
 |  | Checked by | [`DiscountPolicyTest`](code/src/test/java/gym/domain/DiscountPolicyTest.java) |
-| **State**<br>Design (GoF) | Context | [`Membership`](code/src/main/java/gym/domain/Membership.java), which hands every operation to the state for its status |
+| **State**<br>Design (GoF) | Context | [`Membership`](code/src/main/java/gym/domain/Membership.java), which hands every operation to the state for its status, looked up by [`MembershipStateFactory`](code/src/main/java/gym/domain/MembershipStateFactory.java) |
 |  | State | [`MembershipState`](code/src/main/java/gym/domain/MembershipState.java), which refuses every operation by default |
 |  | Concrete states | [`TrialState`](code/src/main/java/gym/domain/TrialState.java), [`ActiveState`](code/src/main/java/gym/domain/ActiveState.java), [`FrozenState`](code/src/main/java/gym/domain/FrozenState.java), [`LapsedState`](code/src/main/java/gym/domain/LapsedState.java), [`CancelledState`](code/src/main/java/gym/domain/CancelledState.java), each allowing only what the state chart allows |
+|  | Client | [`MembershipService`](code/src/main/java/gym/service/MembershipService.java), and [`BookingService`](code/src/main/java/gym/service/BookingService.java), which asks `canBook()` (a Trial allows 2 bookings) and `paysLateCancellationFee()` (not on a Trial) |
 |  | Checked by | [`MembershipStateTest`](code/src/test/java/gym/domain/MembershipStateTest.java), one test per arrow of the state chart |
 | **Factory**<br>Design (GoF) | Factory | [`PlanFactory`](code/src/main/java/gym/domain/PlanFactory.java), which turns a stored `PlanType` into its plan |
 |  | Product | [`Plan`](code/src/main/java/gym/domain/Plan.java) |
 |  | Concrete products | [`MonthlyPlan`](code/src/main/java/gym/domain/MonthlyPlan.java), [`AnnualPlan`](code/src/main/java/gym/domain/AnnualPlan.java), [`StudentPlan`](code/src/main/java/gym/domain/StudentPlan.java), [`OffPeakPlan`](code/src/main/java/gym/domain/OffPeakPlan.java) |
 |  | Client | [`MembershipService`](code/src/main/java/gym/service/MembershipService.java) at sign-up, and [`Membership`](code/src/main/java/gym/domain/Membership.java) for check-in |
 |  | Checked by | [`PlanFactoryTest`](code/src/test/java/gym/domain/PlanFactoryTest.java) |
+|  | Also | [`MembershipStateFactory`](code/src/main/java/gym/domain/MembershipStateFactory.java) turns a stored `MembershipStatus` into its `MembershipState`, and [`BillingAccountFactory`](code/src/main/java/gym/service/BillingAccountFactory.java) builds a member's `BillingAccount` for `BillingService` |
 | **Observer**<br>Design (GoF) | Subject | [`NotificationSender`](code/src/main/java/gym/port/out/NotificationSender.java), implemented by [`EventNotificationSender`](code/src/main/java/gym/adapter/notification/EventNotificationSender.java) on Spring's event bus |
 |  | Observer | [`NotificationLog`](code/src/main/java/gym/adapter/notification/NotificationLog.java), an `@EventListener` |
 |  | Client | [`MemberService`](code/src/main/java/gym/service/MemberService.java) on check-in, and [`MembershipService`](code/src/main/java/gym/service/MembershipService.java) and [`BillingService`](code/src/main/java/gym/service/BillingService.java) for membership and invoice notices |
 |  | Checked by | [`MemberServiceTest`](code/src/test/java/gym/service/MemberServiceTest.java), which checks a check-in notifies the member |
-| **Repository**<br>Design | Repository | [`Repository<T, ID>`](code/src/main/java/gym/port/out/Repository.java), e.g. [`InvoiceRepository`](code/src/main/java/gym/port/out/InvoiceRepository.java) |
+| **Repository**<br>Design | Repository | [`Repository<T, ID>`](code/src/main/java/gym/port/out/Repository.java), e.g. [`InvoiceRepository`](code/src/main/java/gym/port/out/InvoiceRepository.java), [`GymClassRepository`](code/src/main/java/gym/port/out/GymClassRepository.java) |
 |  | Implementation | [`JsonFileRepository`](code/src/main/java/gym/adapter/persistence/JsonFileRepository.java), e.g. [`JsonFileInvoiceRepository`](code/src/main/java/gym/adapter/persistence/JsonFileInvoiceRepository.java) |
 | **Dependency Injection**<br>Design | Injector | Spring, from the `@Bean` methods in [`GymApplication`](code/src/main/java/gym/GymApplication.java) and the `*Configuration` classes |
 |  | Client | every class that takes its dependencies in its constructor, e.g. [`BillingService`](code/src/main/java/gym/service/BillingService.java) |
