@@ -1,6 +1,7 @@
 package gym.domain;
 
 import java.time.LocalDate;
+import java.util.Locale;
 
 /**
  * State pattern: what a {@link Membership} may do depends on where it is in its lifecycle. Each state
@@ -64,7 +65,7 @@ public abstract class MembershipState {
     }
 
     protected static RuleViolationException refused(Membership membership, String action) {
-        String state = membership.status().name().charAt(0) + membership.status().name().substring(1).toLowerCase();
+        String state = membership.status().name().charAt(0) + membership.status().name().substring(1).toLowerCase(Locale.ROOT);
         return new RuleViolationException("Membership " + membership.membershipId() + " is " + state + ", so it can't " + action);
     }
 }
