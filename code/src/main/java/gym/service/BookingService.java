@@ -1,6 +1,7 @@
 package gym.service;
 
 import gym.domain.Booking;
+import gym.domain.BookingResult;
 import gym.domain.GymClass;
 import gym.domain.Membership;
 import gym.domain.MembershipStatus;
@@ -40,7 +41,7 @@ public class BookingService implements BookClassUseCase {
     }
 
     @Override
-    public Booking book(String memberId, String classId) {
+    public BookingResult book(String memberId, String classId) {
         GymClass gymClass = classes.findById(classId).orElseThrow(() -> new NotFoundException("Class", classId));
         LocalDateTime now = LocalDateTime.now(clock);
         if (gymClass.hasStarted(now)) {
@@ -53,7 +54,11 @@ public class BookingService implements BookClassUseCase {
         if (holdsAPlace(memberId, classId)) {
             throw new RuleViolationException("Member " + memberId + " already has a place in class " + classId);
         }
-        return bookings.save(Booking.book(newId("b-"), memberId, classId, now));
+        if (gymClass.isFull(placesTaken(classId))) {
+            GymClass waiting = classes.save(gymClass.joinWaitlist(memberId));
+            return BookingResult.waitlisted(waiting.waitlist().positionOf(memberId));
+        }
+        return BookingResult.booked(bookings.save(Booking.book(newId("b-"), memberId, classId, now)));
     }
 
     /**
@@ -69,6 +74,12 @@ public class BookingService implements BookClassUseCase {
     private boolean holdsAPlace(String memberId, String classId) {
         return bookings.findAll().stream()
                 .anyMatch(booking -> booking.isBooked() && booking.memberId().equals(memberId) && booking.classId().equals(classId));
+    }
+
+    private int placesTaken(String classId) {
+        return (int) bookings.findAll().stream()
+                .filter(booking -> booking.isBooked() && booking.classId().equals(classId))
+                .count();
     }
 
     private static String newId(String prefix) {

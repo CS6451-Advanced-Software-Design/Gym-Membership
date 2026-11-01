@@ -1,10 +1,12 @@
 package gym.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gym.domain.Booking;
+import gym.domain.BookingResult;
 import gym.domain.BookingStatus;
 import gym.domain.GymClass;
 import gym.domain.Membership;
@@ -18,6 +20,7 @@ import gym.support.InMemoryRepository;
 import gym.support.TestClock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class BookingServiceTest {
@@ -46,11 +49,13 @@ class BookingServiceTest {
 
     @Test
     void bookingAClassStoresAPlaceForTheMember() {
-        spinClass();
+        spinClass(10);
         activeMembership("m1");
 
-        Booking booking = service.book("m1", "c1");
+        BookingResult result = service.book("m1", "c1");
 
+        assertFalse(result.isWaitlisted());
+        Booking booking = result.booking();
         assertEquals("m1", booking.memberId());
         assertEquals("c1", booking.classId());
         assertEquals(BookingStatus.BOOKED, booking.status());
@@ -68,7 +73,7 @@ class BookingServiceTest {
 
     @Test
     void aClassThatHasStartedCannotBeBooked() {
-        spinClass();
+        spinClass(10);
         activeMembership("m1");
         clock.advanceDays(5);
 
@@ -78,14 +83,14 @@ class BookingServiceTest {
 
     @Test
     void aMemberWithoutACurrentMembershipCannotBook() {
-        spinClass();
+        spinClass(10);
 
         assertThrows(NotFoundException.class, () -> service.book("m1", "c1"));
     }
 
     @Test
     void aFrozenMembershipCannotBook() {
-        spinClass();
+        spinClass(10);
         memberships.save(activeMembership("m1").freeze(1, TODAY));
 
         assertThrows(RuleViolationException.class, () -> service.book("m1", "c1"));
@@ -94,7 +99,7 @@ class BookingServiceTest {
 
     @Test
     void aMemberCannotBookTheSameClassTwice() {
-        spinClass();
+        spinClass(10);
         activeMembership("m1");
         service.book("m1", "c1");
 
@@ -104,17 +109,71 @@ class BookingServiceTest {
 
     @Test
     void aMemberCanRebookAfterCancelling() {
-        spinClass();
+        spinClass(10);
         activeMembership("m1");
-        bookings.save(service.book("m1", "c1").cancel());
+        bookings.save(service.book("m1", "c1").booking().cancel());
 
-        Booking again = service.book("m1", "c1");
+        Booking again = service.book("m1", "c1").booking();
 
         assertEquals(BookingStatus.BOOKED, again.status());
     }
 
-    private void spinClass() {
-        classes.save(GymClass.schedule("c1", "Spin", SPIN_STARTS, 10, false));
+    @Test
+    void aFullClassPutsTheMemberOnTheWaitlist() {
+        // BR-B1: one place, so the second member has to wait
+        spinClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        service.book("m1", "c1");
+
+        BookingResult result = service.book("m2", "c1");
+
+        assertTrue(result.isWaitlisted());
+        assertEquals(1, result.waitlistPosition());
+        assertEquals(1, bookings.findAll().size());
+        assertEquals(List.of("m2"), classes.findById("c1").orElseThrow().waitlist().memberIds());
+    }
+
+    @Test
+    void theWaitlistIsFirstComeFirstServed() {
+        spinClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        activeMembership("m3");
+        service.book("m1", "c1");
+
+        service.book("m3", "c1");
+        BookingResult second = service.book("m2", "c1");
+
+        assertEquals(2, second.waitlistPosition());
+        assertEquals(List.of("m3", "m2"), classes.findById("c1").orElseThrow().waitlist().memberIds());
+    }
+
+    @Test
+    void aMemberCannotJoinTheWaitlistTwice() {
+        spinClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        service.book("m1", "c1");
+        service.book("m2", "c1");
+
+        assertThrows(RuleViolationException.class, () -> service.book("m2", "c1"));
+    }
+
+    @Test
+    void aCancelledBookingFreesItsPlace() {
+        spinClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        bookings.save(service.book("m1", "c1").booking().cancel());
+
+        BookingResult result = service.book("m2", "c1");
+
+        assertFalse(result.isWaitlisted());
+    }
+
+    private void spinClass(int capacity) {
+        classes.save(GymClass.schedule("c1", "Spin", SPIN_STARTS, capacity, false));
     }
 
     private Membership activeMembership(String memberId) {
