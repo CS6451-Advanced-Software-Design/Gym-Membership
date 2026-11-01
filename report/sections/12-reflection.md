@@ -29,7 +29,15 @@ At Appwrite I already follow a lot of these design and best practices, so I coul
 
 ## DineshReddy Mogili
 
-*To be written by DineshReddy.*
+As Technical Lead and DevOps, most of what I learned was about the gap between a pipeline that runs and a pipeline that is actually trustworthy. CI failing a merge on a test failure is the easy half; the harder half is the pipeline failing *honestly*. Two small bugs taught me this directly: `curl -sLo` for the CK and JaCoCo jars had no `-f` flag, so a broken download URL would silently write an HTML error page to the `.jar` path and only surface, several steps later, as a cryptic `ZipException` with no obvious connection to the real cause. Neither CI job had a `timeout-minutes` either, so a single hung test could have burned our CI minutes for up to GitHub's six-hour default before anyone noticed. Neither bug ever fired on us, but that is exactly the point: the pipeline had been quietly trusting the happy path, and fixing both was about making a failure point at its real cause instead of three steps downstream.
+
+Building the Member feature's check-in notifications taught me something about the Observer pattern that I would not have guessed from the slides: once it exists once, it is nearly free the second, third and fourth time. I expected to build a new notification channel for check-ins, but `NotificationSender`, the Spring event bus adapter and the notification log already existed from Membership and Billing. Calling `notifications.send(...)` from `MemberService` was the entire cost. A pattern earning its keep is not one diagram per feature; it is the fourth feature needing zero new plumbing.
+
+Running PMD and CK as Technical Lead gave me the clearest lesson of the project, because the first fix I tried was the wrong one. My instinct with a flagged `GodClass` was to look for *something* to cut out of `BillingService` until the number moved. What actually worked was slower: reading where the class's own `port.in` interfaces already drew a boundary, and extracting along that line instead of an arbitrary one. The `GodClass` violation disappeared entirely once I did, and a repository dependency it had carried turned out to be used by nothing else once the boundary was followed correctly, so it dropped out rather than just moving somewhere else. The metric agreeing with the architecture, instead of fighting it, is what convinced me the number was measuring something real.
+
+What I would do differently is sequencing: I treated SonarQube Cloud as a last-week task because the spec says to run it "once the features are implemented," but that meant it was still not wired up when I had already identified and fixed the worst PMD/CK classes. The honest fix is running SonarQube against the commit before each refactor rather than only against `main` today, so the before/after table is a true comparison and not just "whenever we got around to installing it" - but I would rather have set up the account in week 6 and never needed that workaround at all.
+
+Overall, the project changed how I think about "added value": it is not a checklist of tools bolted onto working code at the end, it is whether the pipeline, the metrics and the refactoring actually feed each other while the code is still being written.
 
 ## Dhruv Punj
 
