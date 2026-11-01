@@ -12,6 +12,7 @@ import gym.domain.GymClass;
 import gym.domain.Membership;
 import gym.domain.MonthlyPlan;
 import gym.domain.NotFoundException;
+import gym.domain.OffPeakPlan;
 import gym.domain.RuleViolationException;
 import gym.port.out.BookingRepository;
 import gym.port.out.GymClassRepository;
@@ -234,6 +235,82 @@ class BookingServiceTest {
 
     private Membership trialMembership(String memberId) {
         return memberships.save(Membership.signUp("ms-" + memberId, memberId, new MonthlyPlan(), TODAY));
+    }
+
+    @Test
+    void anOffPeakMemberCanBookAClassInOffPeakHours() {
+        // BR-B5: Friday at 11:00 is inside Off-Peak's 10:00-16:00
+        classes.save(GymClass.schedule("c1", "Yoga", SPIN_STARTS.withHour(11), 10, false));
+        offPeakMembership("m1");
+
+        assertFalse(service.book("m1", "c1").isWaitlisted());
+    }
+
+    @Test
+    void anOffPeakMemberCannotBookAClassOutsideOffPeakHours() {
+        // BR-B5: Friday at 18:00 is outside Off-Peak's hours
+        aClass("c1", 10);
+        offPeakMembership("m1");
+
+        assertThrows(RuleViolationException.class, () -> service.book("m1", "c1"));
+        assertTrue(bookings.findAll().isEmpty());
+    }
+
+    @Test
+    void aMemberCanHoldAtMostFiveFutureBookings() {
+        // BR-B5: the sixth is refused, and nothing is stored for it
+        fiveBookings("m1");
+        aClass("c6", 10);
+
+        assertThrows(RuleViolationException.class, () -> service.book("m1", "c6"));
+        assertEquals(5, bookings.findAll().size());
+    }
+
+    @Test
+    void aMemberAtTheLimitCannotJoinAWaitlistEither() {
+        fiveBookings("m1");
+        aClass("full", 1);
+        activeMembership("m2");
+        service.book("m2", "full");
+
+        assertThrows(RuleViolationException.class, () -> service.book("m1", "full"));
+        assertTrue(classes.findById("full").orElseThrow().waitlist().memberIds().isEmpty());
+    }
+
+    @Test
+    void aCancelledBookingDoesNotCountTowardsTheLimit() {
+        fiveBookings("m1");
+        Booking first = bookings.findAll().getFirst();
+        bookings.save(first.cancel());
+        aClass("c6", 10);
+
+        assertFalse(service.book("m1", "c6").isWaitlisted());
+    }
+
+    @Test
+    void aClassThatHasStartedDoesNotCountTowardsTheLimit() {
+        classes.save(GymClass.schedule("today", "Spin", TODAY.atTime(18, 0), 10, false));
+        activeMembership("m1");
+        service.book("m1", "today");
+        clock.advanceDays(1);
+        for (int number = 1; number <= 5; number++) {
+            aClass("c" + number, 10);
+            service.book("m1", "c" + number);
+        }
+
+        assertEquals(6, bookings.findAll().size());
+    }
+
+    private void fiveBookings(String memberId) {
+        activeMembership(memberId);
+        for (int number = 1; number <= Booking.MAX_FUTURE_BOOKINGS; number++) {
+            aClass("c" + number, 10);
+            service.book(memberId, "c" + number);
+        }
+    }
+
+    private void offPeakMembership(String memberId) {
+        memberships.save(Membership.signUp("ms-" + memberId, memberId, new OffPeakPlan(), TODAY).endTrial(TODAY.plusDays(7)));
     }
 
     private void spinClass(int capacity) {

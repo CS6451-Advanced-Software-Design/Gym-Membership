@@ -15,6 +15,11 @@ import java.util.Objects;
  */
 public record Booking(String bookingId, String memberId, String classId, BookingStatus status, LocalDateTime bookedAt) {
 
+    /**
+     * BR-B5: the most future bookings a member can hold at once.
+     */
+    public static final int MAX_FUTURE_BOOKINGS = 5;
+
     public Booking {
         Objects.requireNonNull(bookingId, "bookingId");
         Objects.requireNonNull(memberId, "memberId");

@@ -51,8 +51,15 @@ public class BookingService implements BookClassUseCase {
         if (!membership.canBook()) {
             throw new RuleViolationException("Membership " + membership.membershipId() + " can't book a class right now");
         }
+        if (!membership.rules().allowsClassAt(gymClass.startTime())) {
+            throw new RuleViolationException("Membership " + membership.membershipId() + " doesn't allow a class at this time");
+        }
         if (holdsAPlace(memberId, classId)) {
             throw new RuleViolationException("Member " + memberId + " already has a place in class " + classId);
+        }
+        if (futureBookings(memberId, now) >= Booking.MAX_FUTURE_BOOKINGS) {
+            throw new RuleViolationException("Member " + memberId + " already holds "
+                    + Booking.MAX_FUTURE_BOOKINGS + " future bookings");
         }
         if (gymClass.isFull(placesTaken(classId))) {
             GymClass waiting = classes.save(gymClass.joinWaitlist(memberId));
@@ -75,6 +82,16 @@ public class BookingService implements BookClassUseCase {
     private boolean holdsAPlace(String memberId, String classId) {
         return bookings.findAll().stream()
                 .anyMatch(booking -> booking.isBooked() && booking.memberId().equals(memberId) && booking.classId().equals(classId));
+    }
+
+    /**
+     * BR-B5: the places the member holds in classes that haven't started yet.
+     */
+    private long futureBookings(String memberId, LocalDateTime now) {
+        return bookings.findAll().stream()
+                .filter(booking -> booking.isBooked() && booking.memberId().equals(memberId))
+                .filter(booking -> classes.findById(booking.classId()).filter(gymClass -> !gymClass.hasStarted(now)).isPresent())
+                .count();
     }
 
     private int placesTaken(String classId) {
