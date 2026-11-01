@@ -1,8 +1,8 @@
 name: Deploy check
 
 # Railway redeploys outside this repo's CI, on every merge to main, so there's nothing here to confirm it
-# actually happened until afterwards. Polls the live app's own /actuator/info (git.commit.id.full, written
-# into the jar at build time by git-commit-id-maven-plugin) until it matches the commit that was just merged
+# actually happened until afterwards. Polls the live app's own /actuator/info (git.commit.id.full, read from
+# Railway's own RAILWAY_GIT_COMMIT_SHA at runtime) until it matches the commit that was just merged
 on:
   push:
     branches: [main]
