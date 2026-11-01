@@ -18,7 +18,7 @@
 #set text(font: "Libertinus Serif", size: 11pt, lang: "en", region: "ie")
 #set par(justify: true, leading: 0.62em, spacing: 1.1em)
 #show raw: set text(font: "DejaVu Sans Mono", size: 8.5pt)
-#show raw.where(block: true): block.with(fill: luma(246), inset: 8pt, radius: 2pt, width: 100%, breakable: false)
+#show raw.where(block: true): block.with(fill: luma(246), inset: 8pt, radius: 2pt, width: 100%)
 #show link: it => if type(it.dest) == str { underline(it) } else { it }
 #show figure.caption: set text(size: 9.5pt)
 #set table(stroke: 0.5pt + luma(170), inset: 5pt)
