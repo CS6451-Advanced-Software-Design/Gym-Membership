@@ -58,6 +58,7 @@ public class BookingService implements BookClassUseCase {
             GymClass waiting = classes.save(gymClass.joinWaitlist(memberId));
             return BookingResult.waitlisted(waiting.waitlist().positionOf(memberId));
         }
+        memberships.save(membership.recordBooking());
         return BookingResult.booked(bookings.save(Booking.book(newId("b-"), memberId, classId, now)));
     }
 
