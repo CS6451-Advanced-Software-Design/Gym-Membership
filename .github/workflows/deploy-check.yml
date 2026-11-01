@@ -1,21 +1,24 @@
 name: Deploy check
 
-# Railway redeploys outside this repo's CI, on every merge to main, so there's nothing here to confirm it
-# actually happened until afterwards. Polls the live app's own /actuator/info (git.commit.id.full, read from
-# Railway's own RAILWAY_GIT_COMMIT_SHA at runtime) until it matches the commit that was just merged
+# Confirms Railway's redeploy actually went live. Railway waits for every check on a commit to pass before it
+# deploys (checkSuites in .railway/railway.ts), so this can't run on the push itself: it would wait for a deploy
+# that is waiting for it, and the deploy would be skipped. Instead it runs when Railway reports a successful
+# deployment back to GitHub, then polls the live app's /actuator/info (git.commit.id.full, read from Railway's
+# RAILWAY_GIT_COMMIT_SHA at runtime) until it matches the deployed commit
 on:
-  push:
-    branches: [main]
+  deployment_status:
 
 permissions:
   contents: read
 
 env:
+  COMMIT: ${{ github.event.deployment.sha }}
   LIVE_URL: https://gym-membership-production-a725.up.railway.app
 
 jobs:
   check:
     name: Live app on latest commit
+    if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -23,12 +26,12 @@ jobs:
         run: |
           for attempt in $(seq 1 20); do
             live=$(curl -sf "$LIVE_URL/actuator/info" | jq -r '.git.commit.id.full // empty' || true)
-            if [ "$live" = "$GITHUB_SHA" ]; then
+            if [ "$live" = "$COMMIT" ]; then
               echo "Live app is on $live, matches this commit."
               exit 0
             fi
-            echo "Attempt $attempt/20: live app reports '${live:-no response}', waiting for $GITHUB_SHA..."
+            echo "Attempt $attempt/20: live app reports '${live:-no response}', waiting for $COMMIT..."
             sleep 20
           done
-          echo "::error::Live app never reported commit $GITHUB_SHA after 20 attempts (~7 minutes)"
+          echo "::error::Live app never reported commit $COMMIT after 20 attempts (~7 minutes)"
           exit 1

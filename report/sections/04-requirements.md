@@ -162,7 +162,7 @@ Most of the business rules depend on dates: a trial ends after 7 days, a members
 | Artefact | The services and domain classes behind the use cases |
 | Environment | Development and CI, with no network, database or payment provider |
 | Response | Unit tests move a test clock forward day by day, use in-memory repositories and a fake payment gateway, and check the outcome of the rule |
-| Response measure | Every business rule built so far has a unit test; the 108 unit tests run with no files, network or real clock; a failing test blocks the merge |
+| Response measure | Every business rule built so far has a unit test; the 204 unit tests run with no files, network or real clock; a failing test blocks the merge |
 
 | Tactic (Bass et al. 2019, testability) | Where it is applied |
 | --- | --- |

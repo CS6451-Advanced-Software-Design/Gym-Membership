@@ -16,17 +16,16 @@ Our architecture diagram also left out things we only found we needed during imp
 
 ## Metrics
 
-JaCoCo reports 96.4% coverage, but this overstates how well the code is tested, because it counts the lines a test ran, not the results it checked. PMD and CK both point at the same weak spot: `BillingService` does too much, implementing five use cases in one class, which Hexagonal does not prevent. The §9 refactoring removed PMD's `GodClass` warning, but it is still the most complex class. Most of PMD's other findings are style rather than design, for example `AvoidFieldNameMatchingMethodName`, which every Java record triggers.
+JaCoCo reports 97.0% coverage, but this overstates how well the code is tested, because it counts the lines a test ran, not the results it checked. PMD and CK both point at the same weak spot: `BillingService` does too much, implementing five use cases in one class, which Hexagonal does not prevent. The §9 refactoring removed PMD's `GodClass` warning, but it is still the most complex class. Most of PMD's other findings are style rather than design, for example `AvoidFieldNameMatchingMethodName`, which every Java record triggers.
 
 To improve this, we would split `BillingService` into one class per use case, along the lines its `port.in` interfaces already draw.
 
-<!-- SonarQube Cloud: DineshReddy's final numbers (quality gate, bugs, code smells, duplication) can be added here. -->
-
 | Tool | Result | Where it points |
 | --- | --- | --- |
-| JaCoCo | 96.4% line coverage (913 of 947) | Unit 76.5%, end-to-end 72.4%, integration 43.3% |
-| PMD | 43 violations | BillingService, MembershipService: TooManyMethods |
+| JaCoCo | 97.0% line coverage (1029 of 1061) | Unit 79.2%, end-to-end 64.9%, integration 39.1% |
+| PMD | 47 violations | TooManyMethods: BillingService, BookingService, MembershipService, MembershipState |
 | CK | Highest CBO 29, highest WMC 44 | MembershipController (CBO), BillingService (WMC 44, RFC 64) |
+| SonarQube Cloud | Gate passed: 2 bugs, 0 code smells, 0% duplication | OffPeakPlan (`DayOfWeek` compared with `!=`) |
 
 Table: Code metrics on main (CI, 1 Nov)
 
