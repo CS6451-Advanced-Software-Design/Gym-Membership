@@ -28,6 +28,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.junit.jupiter.api.Test;
 
 class BookingServiceTest {
@@ -408,6 +412,41 @@ class BookingServiceTest {
 
     private void premiumClass(int capacity) {
         classes.save(GymClass.schedule("premium", "Reformer Pilates", SPIN_STARTS, capacity, true));
+    }
+
+    @Test
+    void theLastPlaceGoesToOnlyOneMember() throws Exception {
+        // Reading is slowed down so the requests overlap: unprotected, they would all see a free place
+        InMemoryBookingRepository slowBookings = new InMemoryBookingRepository() {
+            @Override
+            public List<Booking> findAll() {
+                pause();
+                return super.findAll();
+            }
+        };
+        BookingService racing = new BookingService(classes, slowBookings, memberships, charges, clock);
+        spinClass(1);
+        List<String> members = List.of("m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8");
+        members.forEach(this::activeMembership);
+
+        try (ExecutorService threads = Executors.newFixedThreadPool(members.size())) {
+            List<Callable<BookingResult>> requests = new ArrayList<>();
+            members.forEach(member -> requests.add(() -> racing.book(member, "c1")));
+            for (Future<BookingResult> request : threads.invokeAll(requests)) {
+                request.get();
+            }
+        }
+
+        assertEquals(1, slowBookings.findAll().size());
+        assertEquals(7, classes.findById("c1").orElseThrow().waitlist().size());
+    }
+
+    private static void pause() {
+        try {
+            Thread.sleep(5);
+        } catch (InterruptedException interrupted) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private void spinClass(int capacity) {
