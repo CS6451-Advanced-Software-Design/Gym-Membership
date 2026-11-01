@@ -96,5 +96,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 88 | 1 Nov | Bharat | "Explain what MemberPersistenceIT tests and why it creates a second repository object to read back. I want to test that a GymClass waitlist keeps its order and a Booking keeps its status after reload. What assertions should I make?" | Explanation of the persistence test, and the assertions for `BookingPersistenceIT` |
 | 89 | 1 Nov | Chirag | "i got some more merged in, see it" | The Booking persistence and refactoring deploys approved on Railway, and the §8 charts and test table and the §11 metrics brought up to date with the §9 refactoring |
 | 90 | 1 Nov | Chirag | "can we update readme to be upto date" | Observer moved to the patterns in place, `MemberController` and the new report folders (blueprints, metrics, version control, lessons) and the recovered package diagram added to the READMEs |
+| 91 | 1 Nov | Chirag | A screenshot of the recovered package diagram on a black background in the README, and "lets add white background" | The three §10 blueprint images flattened onto white, and the step added to the blueprints README |
 
 Table: GenAI prompts, all to Claude (Claude Code)
