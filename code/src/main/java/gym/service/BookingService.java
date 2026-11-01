@@ -14,6 +14,7 @@ import gym.domain.PlanType;
 import gym.domain.RuleViolationException;
 import gym.port.in.BookClassUseCase;
 import gym.port.in.CancelBookingUseCase;
+import gym.port.in.ManageScheduleUseCase;
 import gym.port.in.RecordAttendanceUseCase;
 import gym.port.in.RecordChargeUseCase;
 import gym.port.out.BookingRepository;
@@ -21,6 +22,8 @@ import gym.port.out.GymClassRepository;
 import gym.port.out.MembershipRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
@@ -31,7 +34,8 @@ import org.springframework.stereotype.Service;
  * {@link Membership}. This service loads them, asks them and saves the result.
  */
 @Service
-public class BookingService implements BookClassUseCase, CancelBookingUseCase, RecordAttendanceUseCase {
+public class BookingService
+        implements BookClassUseCase, CancelBookingUseCase, RecordAttendanceUseCase, ManageScheduleUseCase {
 
     /**
      * BR-B6: what a premium class costs on top of the plan, unless the member is on Annual.
@@ -135,6 +139,29 @@ public class BookingService implements BookClassUseCase, CancelBookingUseCase, R
         Booking saved = bookings.save(cancelled);
         promoteFromWaitlist(gymClass, now);
         return saved;
+    }
+
+    /**
+     * Capacity is checked here as well as in {@link GymClass}, so a bad request is a refused rule rather than a crash.
+     */
+    @Override
+    public GymClass addClass(String name, LocalDateTime startTime, int capacity, boolean premium) {
+        if (!startTime.isAfter(LocalDateTime.now(clock))) {
+            throw new RuleViolationException("A class can't be added at " + startTime + ", which has passed");
+        }
+        if (capacity < 1) {
+            throw new RuleViolationException("A class needs at least 1 place, not " + capacity);
+        }
+        return classes.save(GymClass.schedule(newId("c-"), name, startTime, capacity, premium));
+    }
+
+    @Override
+    public List<GymClass> schedule() {
+        LocalDateTime now = LocalDateTime.now(clock);
+        return classes.findAll().stream()
+                .filter(gymClass -> !gymClass.hasStarted(now))
+                .sorted(Comparator.comparing(GymClass::startTime))
+                .toList();
     }
 
     @Override
