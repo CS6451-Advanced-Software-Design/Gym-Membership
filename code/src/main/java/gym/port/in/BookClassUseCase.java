@@ -10,9 +10,12 @@ public interface BookClassUseCase {
     /**
      * Books the member into the class.
      *
-     * <p>Pre: the class exists. Post: a BOOKED booking is stored for the member.
+     * <p>Pre: the class exists and hasn't started, the member's current membership can book, and the member
+     * doesn't already hold a place in the class. Post: a BOOKED booking is stored for the member.
      *
-     * @throws gym.domain.NotFoundException if there is no such class
+     * @throws gym.domain.NotFoundException if there is no such class, or the member holds no current membership
+     * @throws gym.domain.RuleViolationException if the class has started, the membership's state refuses the
+     *         booking, or the member already holds a place
      */
     Booking book(String memberId, String classId);
 }

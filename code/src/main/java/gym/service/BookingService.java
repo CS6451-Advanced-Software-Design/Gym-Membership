@@ -2,10 +2,14 @@ package gym.service;
 
 import gym.domain.Booking;
 import gym.domain.GymClass;
+import gym.domain.Membership;
+import gym.domain.MembershipStatus;
 import gym.domain.NotFoundException;
+import gym.domain.RuleViolationException;
 import gym.port.in.BookClassUseCase;
 import gym.port.out.BookingRepository;
 import gym.port.out.GymClassRepository;
+import gym.port.out.MembershipRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,25 +17,58 @@ import org.springframework.stereotype.Service;
 
 /**
  * The Booking feature: gives members places in classes. What a booking can do lives in {@link Booking},
- * and what a class allows lives in {@link GymClass}. This service loads them, asks them and saves the result.
+ * and what a class allows lives in {@link GymClass}. Whether a member may book at all is decided by their
+ * {@link Membership}. This service loads them, asks them and saves the result.
  */
 @Service
 public class BookingService implements BookClassUseCase {
 
     private final GymClassRepository classes;
     private final BookingRepository bookings;
+    private final MembershipRepository memberships;
     private final Clock clock;
 
-    public BookingService(GymClassRepository classes, BookingRepository bookings, Clock clock) {
+    public BookingService(
+            GymClassRepository classes,
+            BookingRepository bookings,
+            MembershipRepository memberships,
+            Clock clock) {
         this.classes = classes;
         this.bookings = bookings;
+        this.memberships = memberships;
         this.clock = clock;
     }
 
     @Override
     public Booking book(String memberId, String classId) {
         GymClass gymClass = classes.findById(classId).orElseThrow(() -> new NotFoundException("Class", classId));
-        return bookings.save(Booking.book(newId("b-"), memberId, gymClass.classId(), LocalDateTime.now(clock)));
+        LocalDateTime now = LocalDateTime.now(clock);
+        if (gymClass.hasStarted(now)) {
+            throw new RuleViolationException("Class " + classId + " has already started");
+        }
+        Membership membership = currentMembership(memberId);
+        if (!membership.canBook()) {
+            throw new RuleViolationException("Membership " + membership.membershipId() + " can't book a class right now");
+        }
+        if (holdsAPlace(memberId, classId)) {
+            throw new RuleViolationException("Member " + memberId + " already has a place in class " + classId);
+        }
+        return bookings.save(Booking.book(newId("b-"), memberId, classId, now));
+    }
+
+    /**
+     * The member's membership that isn't cancelled, the same way {@link MemberService} finds it.
+     */
+    private Membership currentMembership(String memberId) {
+        return memberships.findAll().stream()
+                .filter(membership -> membership.memberId().equals(memberId) && membership.status() != MembershipStatus.CANCELLED)
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Current membership for member", memberId));
+    }
+
+    private boolean holdsAPlace(String memberId, String classId) {
+        return bookings.findAll().stream()
+                .anyMatch(booking -> booking.isBooked() && booking.memberId().equals(memberId) && booking.classId().equals(classId));
     }
 
     private static String newId(String prefix) {
