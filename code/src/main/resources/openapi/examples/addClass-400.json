@@ -1,0 +1,6 @@
+{
+  "detail": "Invalid request content.",
+  "instance": "/classes",
+  "status": 400,
+  "title": "Bad Request"
+}

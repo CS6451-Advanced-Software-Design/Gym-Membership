@@ -1,0 +1,6 @@
+{
+  "detail": "Member m-1d685de8 has nothing to undo",
+  "instance": "/members/m-1d685de8/bookings/undo",
+  "status": 422,
+  "title": "Unprocessable Content"
+}

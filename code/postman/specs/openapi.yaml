@@ -586,6 +586,11 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+              example:
+                detail: Member m-1d685de8 has nothing to undo
+                instance: /members/m-1d685de8/bookings/undo
+                status: 422
+                title: Unprocessable Content
         "204":
           description: No Content
   /classes:
@@ -605,6 +610,14 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ClassResponse"
+              example:
+              - classId: c-54b4cdb7
+                name: Spin
+                startTime: 2026-11-06T18:00:00
+                capacity: 12
+                premium: false
+                placesLeft: 11
+                waitlistSize: 0
     post:
       tags:
       - Bookings
@@ -627,18 +640,36 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+              example:
+                detail: Invalid request content.
+                instance: /classes
+                status: 400
+                title: Bad Request
         "422":
           description: "The start time has passed, or the capacity is below 1"
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+              example:
+                detail: "A class needs at least 1 place, not 0"
+                instance: /classes
+                status: 422
+                title: Unprocessable Content
         "201":
           description: The new class
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ClassResponse"
+              example:
+                classId: c-54b4cdb7
+                name: Spin
+                startTime: 2026-11-06T18:00:00
+                capacity: 12
+                premium: false
+                placesLeft: 12
+                waitlistSize: 0
   /classes/{classId}/bookings:
     post:
       tags:
@@ -670,12 +701,22 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+              example:
+                detail: Invalid request content.
+                instance: /classes/c-54b4cdb7/bookings
+                status: 400
+                title: Bad Request
         "404":
           description: "No class has this id, or the member holds no current membership"
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+              example:
+                detail: Class c-42 not found
+                instance: /classes/c-42/bookings
+                status: 404
+                title: Not Found
         "422":
           description: "The class has started, the membership or plan doesn't allow\
             \ it, the member is suspended, already has a place, or holds 5 future\
@@ -684,12 +725,22 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+              example:
+                detail: Member m-ca315689 already has a place in class c-54b4cdb7
+                instance: /classes/c-54b4cdb7/bookings
+                status: 422
+                title: Unprocessable Content
         "201":
           description: The place in the class or on its waitlist
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookClassResponse"
+              example:
+                memberId: m-ca315689
+                classId: c-54b4cdb7
+                bookingId: b-981af13d
+                waitlistPosition: 0
   /bookings/{bookingId}/no-show:
     post:
       tags:
@@ -714,18 +765,35 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+              example:
+                detail: Booking b-42 not found
+                instance: /bookings/b-42/no-show
+                status: 404
+                title: Not Found
         "422":
           description: "The booking is no longer booked, or its class hasn't started"
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+              example:
+                detail: "Booking b-8e998e2b is NO_SHOW, so it can't be marked as a\
+                  \ no-show"
+                instance: /bookings/b-8e998e2b/no-show
+                status: 422
+                title: Unprocessable Content
         "200":
           description: The no-show booking
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookingResponse"
+              example:
+                bookingId: b-8e998e2b
+                memberId: m-1d685de8
+                classId: c-d66acda5
+                status: NO_SHOW
+                bookedAt: 2026-11-02T18:39:13
   /bookings/{bookingId}/cancel:
     post:
       tags:
@@ -750,18 +818,34 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+              example:
+                detail: Booking b-42 not found
+                instance: /bookings/b-42/cancel
+                status: 404
+                title: Not Found
         "422":
           description: "The booking is no longer booked, or its class has started"
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+              example:
+                detail: "Booking b-981af13d is CANCELLED, so it can't be cancelled"
+                instance: /bookings/b-981af13d/cancel
+                status: 422
+                title: Unprocessable Content
         "200":
           description: The cancelled booking
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookingResponse"
+              example:
+                bookingId: b-981af13d
+                memberId: m-ca315689
+                classId: c-54b4cdb7
+                status: CANCELLED
+                bookedAt: 2026-11-02T18:39:13
   /bookings/{bookingId}/attended:
     post:
       tags:
@@ -785,18 +869,35 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+              example:
+                detail: Booking b-42 not found
+                instance: /bookings/b-42/attended
+                status: 404
+                title: Not Found
         "422":
           description: "The booking is no longer booked, or its class hasn't started"
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+              example:
+                detail: "Booking b-b94b7221 is ATTENDED, so it can't be marked as\
+                  \ attended"
+                instance: /bookings/b-b94b7221/attended
+                status: 422
+                title: Unprocessable Content
         "200":
           description: The attended booking
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookingResponse"
+              example:
+                bookingId: b-b94b7221
+                memberId: m-ca315689
+                classId: c-d66acda5
+                status: ATTENDED
+                bookedAt: 2026-11-02T18:39:13
   /billing-runs:
     post:
       tags:

@@ -1,0 +1,6 @@
+{
+  "detail": "A class needs at least 1 place, not 0",
+  "instance": "/classes",
+  "status": 422,
+  "title": "Unprocessable Content"
+}
