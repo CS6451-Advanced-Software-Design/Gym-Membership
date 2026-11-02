@@ -16,11 +16,13 @@ import gym.domain.Membership;
 import gym.domain.Money;
 import gym.domain.MonthlyPlan;
 import gym.domain.NotFoundException;
+import gym.domain.Notification;
 import gym.domain.OffPeakPlan;
 import gym.domain.RuleViolationException;
 import gym.port.in.RecordChargeUseCase;
 import gym.port.out.BookingRepository;
 import gym.port.out.GymClassRepository;
+import gym.port.out.NotificationSender;
 import gym.service.BillingServiceTest.InMemoryMembershipRepository;
 import gym.support.InMemoryRepository;
 import gym.support.TestClock;
@@ -69,13 +71,25 @@ class BookingServiceTest {
         }
     }
 
+    /**
+     * Keeps each notification so a test can look at it.
+     */
+    static class RecordedNotifications extends ArrayList<Notification> implements NotificationSender {
+        @Override
+        public void send(Notification notification) {
+            add(notification);
+        }
+    }
+
     private final InMemoryGymClassRepository classes = new InMemoryGymClassRepository();
     private final InMemoryBookingRepository bookings = new InMemoryBookingRepository();
     private final InMemoryMembershipRepository memberships = new InMemoryMembershipRepository();
     private final RecordedCharges charges = new RecordedCharges();
+    private final RecordedNotifications notifications = new RecordedNotifications();
     private final TestClock clock = new TestClock(TODAY);
 
-    private final BookingService service = new BookingService(classes, bookings, memberships, charges, clock);
+    private final BookingService service = new BookingService(classes, bookings, memberships, charges, notifications, clock);
+    private final AttendanceService attendance = new AttendanceService(classes, bookings, memberships, charges, clock);
 
     @Test
     void bookingAClassStoresAPlaceForTheMember() {
@@ -425,7 +439,7 @@ class BookingServiceTest {
                 return super.findAll();
             }
         };
-        BookingService racing = new BookingService(classes, slowBookings, memberships, charges, clock);
+        BookingService racing = new BookingService(classes, slowBookings, memberships, charges, notifications, clock);
         spinClass(1);
         List<String> members = List.of("m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8");
         members.forEach(this::activeMembership);
@@ -718,7 +732,7 @@ class BookingServiceTest {
     void attendingAClassStoresItAsAttended() {
         Booking booking = bookingForAClassThatHasStarted();
 
-        Booking attended = service.markAttended(booking.bookingId());
+        Booking attended = attendance.markAttended(booking.bookingId());
 
         assertEquals(BookingStatus.ATTENDED, attended.status());
         assertEquals(Optional.of(attended), bookings.findById(booking.bookingId()));
@@ -730,7 +744,7 @@ class BookingServiceTest {
         // BR-B4
         Booking booking = bookingForAClassThatHasStarted();
 
-        Booking noShow = service.markNoShow(booking.bookingId());
+        Booking noShow = attendance.markNoShow(booking.bookingId());
 
         assertEquals(BookingStatus.NO_SHOW, noShow.status());
         assertEquals(Optional.of(noShow), bookings.findById(booking.bookingId()));
@@ -749,7 +763,7 @@ class BookingServiceTest {
         Booking booking = service.book("m1", "c1").booking();
         clock.advanceDays(5);
 
-        service.markNoShow(booking.bookingId());
+        attendance.markNoShow(booking.bookingId());
 
         assertEquals(1, charges.size());
     }
@@ -760,24 +774,24 @@ class BookingServiceTest {
         activeMembership("m1");
         Booking booking = service.book("m1", "c1").booking();
 
-        assertThrows(RuleViolationException.class, () -> service.markAttended(booking.bookingId()));
-        assertThrows(RuleViolationException.class, () -> service.markNoShow(booking.bookingId()));
+        assertThrows(RuleViolationException.class, () -> attendance.markAttended(booking.bookingId()));
+        assertThrows(RuleViolationException.class, () -> attendance.markNoShow(booking.bookingId()));
         assertEquals(BookingStatus.BOOKED, bookings.findById(booking.bookingId()).orElseThrow().status());
         assertTrue(charges.isEmpty());
     }
 
     @Test
     void attendanceForAnUnknownBookingIsRefused() {
-        assertThrows(NotFoundException.class, () -> service.markAttended("nobody"));
-        assertThrows(NotFoundException.class, () -> service.markNoShow("nobody"));
+        assertThrows(NotFoundException.class, () -> attendance.markAttended("nobody"));
+        assertThrows(NotFoundException.class, () -> attendance.markNoShow("nobody"));
     }
 
     @Test
     void aNoShowCannotBeChargedTwice() {
         Booking booking = bookingForAClassThatHasStarted();
-        service.markNoShow(booking.bookingId());
+        attendance.markNoShow(booking.bookingId());
 
-        assertThrows(RuleViolationException.class, () -> service.markNoShow(booking.bookingId()));
+        assertThrows(RuleViolationException.class, () -> attendance.markNoShow(booking.bookingId()));
         assertEquals(1, charges.size());
     }
 
@@ -789,7 +803,7 @@ class BookingServiceTest {
         service.cancel(booking.bookingId());
         clock.advanceDays(5);
 
-        assertThrows(RuleViolationException.class, () -> service.markNoShow(booking.bookingId()));
+        assertThrows(RuleViolationException.class, () -> attendance.markNoShow(booking.bookingId()));
         assertTrue(charges.isEmpty());
     }
 
@@ -801,7 +815,7 @@ class BookingServiceTest {
         memberships.save(membership.cancel());
         clock.advanceDays(5);
 
-        Booking noShow = service.markNoShow(booking.bookingId());
+        Booking noShow = attendance.markNoShow(booking.bookingId());
 
         assertEquals(BookingStatus.NO_SHOW, noShow.status());
         assertTrue(charges.isEmpty());
@@ -884,9 +898,9 @@ class BookingServiceTest {
         Booking second = service.book("m1", "c2").booking();
         Booking third = service.book("m1", "c3").booking();
         clock.advanceDays(3);
-        service.markNoShow(first.bookingId());
-        service.markNoShow(second.bookingId());
-        service.markNoShow(third.bookingId());
+        attendance.markNoShow(first.bookingId());
+        attendance.markNoShow(second.bookingId());
+        attendance.markNoShow(third.bookingId());
         classes.save(GymClass.schedule("next", "Spin", TODAY.plusDays(20).atTime(9, 0), 10, false));
 
         assertThrows(RuleViolationException.class, () -> service.book("m1", "next"));
@@ -904,52 +918,103 @@ class BookingServiceTest {
     }
 
     @Test
-    void addingAClassStoresItWithNobodyWaiting() {
-        GymClass added = service.addClass("Spin", SPIN_STARTS, 12, true);
-
-        assertEquals("Spin", added.name());
-        assertEquals(SPIN_STARTS, added.startTime());
-        assertEquals(12, added.capacity());
-        assertTrue(added.premium());
-        assertEquals(0, added.waitlist().size());
-        assertEquals(Optional.of(added), classes.findById(added.classId()));
-    }
-
-    @Test
     void aMemberCanBookAClassThatWasAdded() {
-        GymClass added = service.addClass("Spin", SPIN_STARTS, 12, false);
+        GymClass added = new ScheduleService(classes, clock).addClass("Spin", SPIN_STARTS, 12, false);
         activeMembership("m1");
 
         assertFalse(service.book("m1", added.classId()).isWaitlisted());
     }
 
     @Test
-    void aClassCannotBeAddedInThePast() {
-        assertThrows(RuleViolationException.class, () -> service.addClass("Spin", TODAY.minusDays(1).atTime(18, 0), 12, false));
-        assertTrue(classes.findAll().isEmpty());
+    void aPromotedMemberIsToldAboutTheirPlace() {
+        // BR-B2
+        spinClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        Booking booking = service.book("m1", "c1").booking();
+        service.book("m2", "c1");
+
+        service.cancel(booking.bookingId());
+
+        assertEquals(1, notifications.size());
+        Notification notice = notifications.getFirst();
+        assertEquals("m2", notice.memberId());
+        assertEquals("You have a place in Spin", notice.subject());
+        assertTrue(notice.message().contains("2026-11-06 at 18:00"));
     }
 
     @Test
-    void aClassNeedsAtLeastOnePlace() {
-        assertThrows(RuleViolationException.class, () -> service.addClass("Spin", SPIN_STARTS, 0, false));
-        assertTrue(classes.findAll().isEmpty());
+    void onlyTheFirstWaitingMemberIsPromotedAndTold() {
+        spinClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        activeMembership("m3");
+        Booking booking = service.book("m1", "c1").booking();
+        service.book("m2", "c1");
+        service.book("m3", "c1");
+
+        service.cancel(booking.bookingId());
+
+        assertEquals(List.of("m2"), notifications.stream().map(Notification::memberId).toList());
+        assertEquals("c1", placeHeldBy("m2").classId());
+        assertEquals(1, classes.findById("c1").orElseThrow().waitlist().positionOf("m3"));
     }
 
     @Test
-    void theScheduleListsUpcomingClassesSoonestFirst() {
-        GymClass later = service.addClass("Yoga", SPIN_STARTS.plusDays(2), 10, false);
-        GymClass sooner = service.addClass("Spin", SPIN_STARTS, 10, false);
+    void nobodyIsToldWhenNobodyIsPromoted() {
+        spinClass(10);
+        activeMembership("m1");
+        Booking booking = service.book("m1", "c1").booking();
 
-        assertEquals(List.of(sooner, later), service.schedule());
+        service.cancel(booking.bookingId());
+
+        assertTrue(notifications.isEmpty());
     }
 
     @Test
-    void theScheduleLeavesOutClassesThatHaveStarted() {
-        service.addClass("Spin", SPIN_STARTS, 10, false);
-        GymClass later = service.addClass("Yoga", SPIN_STARTS.plusDays(2), 10, false);
-        clock.advanceDays(5);
+    void aMemberSkippedOnTheWaitlistIsNotTold() {
+        spinClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        activeMembership("m3");
+        Booking booking = service.book("m1", "c1").booking();
+        service.book("m2", "c1");
+        service.book("m3", "c1");
+        threeRecentNoShows("m2");
 
-        assertEquals(List.of(later), service.schedule());
+        service.cancel(booking.bookingId());
+
+        assertEquals(List.of("m3"), notifications.stream().map(Notification::memberId).toList());
+    }
+
+    @Test
+    void aMemberWhoseChargeFailsIsNotToldTheyHaveAPlace() {
+        // The surcharge can refuse, and a place that wasn't given must not be announced
+        premiumClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        Booking booking = service.book("m1", "premium").booking();
+        service.book("m2", "premium");
+        RecordChargeUseCase refusing = new RecordedCharges() {
+            @Override
+            public Charge record(String membershipId, ChargeType type, Money amount) {
+                throw new RuleViolationException("Refused");
+            }
+        };
+        BookingService failing = new BookingService(classes, bookings, memberships, refusing, notifications, clock);
+
+        assertThrows(RuleViolationException.class, () -> failing.cancel(booking.bookingId()));
+        assertTrue(notifications.isEmpty());
+    }
+
+    @Test
+    void bookingAPlaceDirectlySendsNoNotification() {
+        spinClass(10);
+        activeMembership("m1");
+
+        service.book("m1", "c1");
+
+        assertTrue(notifications.isEmpty());
     }
 
     private void spinClass(int capacity) {

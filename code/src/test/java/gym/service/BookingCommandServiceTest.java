@@ -18,6 +18,7 @@ import gym.service.BillingServiceTest.InMemoryMembershipRepository;
 import gym.service.BookingServiceTest.InMemoryBookingRepository;
 import gym.service.BookingServiceTest.InMemoryGymClassRepository;
 import gym.service.BookingServiceTest.RecordedCharges;
+import gym.service.BookingServiceTest.RecordedNotifications;
 import gym.support.TestClock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,9 +36,10 @@ class BookingCommandServiceTest {
     private final InMemoryBookingRepository bookings = new InMemoryBookingRepository();
     private final InMemoryMembershipRepository memberships = new InMemoryMembershipRepository();
     private final RecordedCharges charges = new RecordedCharges();
+    private final RecordedNotifications notifications = new RecordedNotifications();
     private final TestClock clock = new TestClock(TODAY);
 
-    private final BookingService receiver = new BookingService(classes, bookings, memberships, charges, clock);
+    private final BookingService receiver = new BookingService(classes, bookings, memberships, charges, notifications, clock);
     private final BookingCommandService commands = new BookingCommandService(receiver, receiver, receiver);
 
     @Test
@@ -62,6 +64,7 @@ class BookingCommandServiceTest {
         commands.undoLast("m1");
 
         assertTrue(bookings.findAll().stream().anyMatch(booking -> booking.isBooked() && booking.memberId().equals("m2")));
+        assertEquals("m2", notifications.getFirst().memberId());
     }
 
     @Test

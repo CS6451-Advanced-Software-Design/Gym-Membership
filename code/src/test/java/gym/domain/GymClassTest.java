@@ -72,6 +72,15 @@ class GymClassTest {
     }
 
     @Test
+    void thePromotionNoticeNamesTheClassAndItsTime() {
+        Notification notice = spin().promotionNotice("m1");
+
+        assertEquals("m1", notice.memberId());
+        assertEquals("You have a place in Spin", notice.subject());
+        assertTrue(notice.message().contains("2026-11-06 at 18:00"));
+    }
+
+    @Test
     void aMemberCanLeaveTheWaitlist() {
         GymClass left = spin().joinWaitlist("m1").joinWaitlist("m2").leaveWaitlist("m1");
 
