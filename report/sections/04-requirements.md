@@ -117,26 +117,20 @@ The same holds for discounts (one more `DiscountPolicy`, Strategy) and states (o
 
 ### QA2: Testability
 
-Most of the business rules depend on dates: a trial ends after 7 days, a membership lapses after two failed payments, and is cancelled after 60 days in Lapsed. We want every one of these rules to be tested quickly and repeatably, without waiting for real days to pass, charging real cards or writing real files.
+Most rules depend on dates (a 7-day trial, 60 days in Lapsed), and we want each one tested quickly and repeatably without waiting days, charging cards or writing files.
 
 | Part | QA2: testing a time-based rule |
 | --- | --- |
-| Source | A developer, or the CI pipeline on every pull request |
-| Stimulus | A business rule is added or changed, for example the 60-day rule for Lapsed memberships (BR-M6) |
-| Artefact | The services and domain classes behind the use cases |
-| Environment | Development and CI, with no network, database or payment provider |
-| Response | Unit tests move a test clock forward day by day, use in-memory repositories and a fake payment gateway, and check the outcome of the rule |
-| Response measure | Every business rule built so far has a unit test; the 204 unit tests run with no files, network or real clock; a failing test blocks the merge |
+| Source / Stimulus | A developer or CI; a rule changes, e.g. the 60-day Lapsed rule (BR-M6) |
+| Artefact / Environment | Services and domain classes; no network, database or payment provider |
+| Response | Unit tests move a test clock forward and use in-memory repositories and a fake gateway |
+| Response measure | Every rule built so far has a unit test; 204 unit tests run with no files, network or real clock; a failure blocks the merge |
 
-| Tactic (Bass et al. 2019, testability) | Where it is applied |
+| Tactic (testability) | Where it is applied |
 | --- | --- |
-| Limit nondeterminism | The services take a `java.time.Clock` instead of reading the system time, and tests pass a `TestClock` they can move forward, so "60 days later" takes no time and gives the same result every run |
-| Abstract data sources | Services only see the repository ports in `port.out`, so tests swap the JSON files for `InMemoryRepository` |
-| Specialised interfaces | `PaymentGateway` and `NotificationSender` are ports, so tests use a fake gateway that declines chosen cards and check the notifications sent |
-| Limit structural complexity | `ArchitectureTest` (ArchUnit) keeps the dependencies pointing inwards, so a domain class can be tested on its own with only the JDK |
-| Sandbox | The integration and end-to-end tests run the whole app against a temporary data folder, apart from the real data |
-
-This is why the State pattern tests could follow every arrow of the state chart (`MembershipStateTest`) and the daily checks could be tested a day at a time (`MembershipServiceTest`, `MembershipE2E`).
+| Limit nondeterminism | Services take a `java.time.Clock`; tests pass a `TestClock`, so "60 days later" is instant and repeatable |
+| Abstract data sources | Services only see `port.out` repositories, so tests use `InMemoryRepository` |
+| Specialised interfaces | `PaymentGateway` and `NotificationSender` are ports, faked in tests to decline chosen cards and record messages |
 
 ## GUI Prototypes
 
