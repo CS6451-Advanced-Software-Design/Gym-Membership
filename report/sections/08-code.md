@@ -127,10 +127,7 @@ void theBestDiscountWinsAndDiscountsDontStack() {
 
 We used the State design pattern for the membership lifecycle: Trial, Active, Frozen, Lapsed and Cancelled, the states in the §6 state chart.
 
-1. What a membership may do depends on its state. A Trial can book only 2 classes, an Active one can be frozen, and a Frozen or Lapsed one can't book or check in.
-2. Each state is its own class, and overrides only the operations it allows. Everything else is refused once, in the base class, with a reason the member can read (a 422 over REST).
-3. The states keep no fields, so one instance of each is shared, chosen from the membership's status.
-4. Adding a state means one new subclass. There is no `if` or `switch` on the status in `Membership` or in any service.
+What a membership may do depends on its state: a Trial can book only 2 classes, an Active one can be frozen, and a Frozen or Lapsed one can't book or check in. Each state is a stateless subclass that overrides only what it allows; everything else is refused once, in the base class, with a readable reason (a 422 over REST). `Membership` just hands each call to `state()`, so there is no `switch` on the status outside `of`.
 
 ```java
 public abstract class MembershipState {
@@ -170,22 +167,6 @@ public class ActiveState extends MembershipState {
 ```
 
 *The State and one of its five states (`gym/domain`, the shared instances and other operations left out)*
-
-```java
-public MembershipState state() {
-    return MembershipState.of(status);
-}
-
-public boolean canBook() {
-    return state().canBook(this);
-}
-
-public Membership freeze(int months, LocalDate today) {
-    return state().freeze(this, months, today);
-}
-```
-
-*The context: `Membership` hands every operation to its current state (`gym/domain/Membership.java`)*
 
 ```java
 @Test
