@@ -21,7 +21,16 @@ public interface ManageScheduleUseCase {
     GymClass addClass(String name, LocalDateTime startTime, int capacity, boolean premium);
 
     /**
-     * @return every class that hasn't started yet, soonest first
+     * @return every class that hasn't started yet, soonest first, with the places left in each
      */
-    List<GymClass> schedule();
+    List<ScheduledClass> schedule();
+
+    /**
+     * A class with its places left, which {@link GymClass} can't know because the bookings are kept apart from it.
+     *
+     * @param gymClass the class
+     * @param placesLeft how many places can still be booked
+     */
+    record ScheduledClass(GymClass gymClass, int placesLeft) {
+    }
 }
