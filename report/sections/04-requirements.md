@@ -136,10 +136,12 @@ Most rules depend on dates (a 7-day trial, 60 days in Lapsed), and we want each 
 
 Wireframes for the two key use cases; today the same requests go through Postman or the Swagger UI.
 
-![Join screen for UC1 Sign Up: choose a plan, enter details, see the first payment](../requirements/gui-join.png){width=80%}
+::: {.grid columns=2}
+![Join screen for UC1 Sign Up](../requirements/gui-join.png){width=100%}
+
+![Book a Class screen for UC2](../requirements/gui-book-class.png){width=100%}
+:::
 
 The Join screen follows UC1 top to bottom. It asks only for what the rules need and works out the first payment before the person pays, here €45 × 7/31 = €10.16 for Bob joining on 25 October (BR-P4). Refusals from extension 3a appear under the form before anything is charged.
-
-![Book a Class screen for UC2: the week's classes with places left, booking and the waitlist](../requirements/gui-book-class.png){width=80%}
 
 The Book a Class screen follows UC2. The top bar shows what is checked before a booking (plan, state, bookings used, suspension), each class shows its places left with Book or Join waitlist, premium classes show the €8 surcharge, and a refusal shows the membership's reason, as in extension 2a.
