@@ -56,3 +56,12 @@ Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 f
 | Dhruv | Six hand-drawn Membership sketches (PR #44), my row in `roles.md` (PR #45), signed commits, diary weeks 5–8 (PR #59), industry experience (PR #61). §6 candidate objects, diagram notes and rough work intro (PRs #64–66). §4: use case intro, UC1, UC2, QA1 Extensibility, QA2 Testability, two GUI prototypes (PRs #68–72). §1 Narrative (PR #74). State and Factory in §8 (PRs #76–77). My reflection (PR #78). GenAI #68, #70–78 | Much of my report text was drafted with GenAI and still has to be rewritten in my own words; §4 grew to 7 pages | Shorten §1, §4, my §8 parts and my reflection; rewrite them in my own words before 4 Nov |
 
 **Notes:** Submission due 23:59 Wed 4 Nov (moved from Sun 1 Nov).
+
+## Week 9 (2 – 8 Nov)
+
+| Member | Contributions | Issues arising | Plan for next week |
+| --- | --- | --- | --- |
+| Chirag | | | |
+| Bharat | | | |
+| DineshReddy | | | |
+| Dhruv | Shortened my report sections: §1 to two paragraphs (PR #133), §4 from 7 pages to about 4 (PRs #132, #134), my reflection as text and bullets (PR #135), State and Factory in §8 (PR #136) | The report was 51 pages, most of the length in §4 | Rewrite my sections in my own words; submit by 23:59 Wed 4 Nov; prepare for the walkthrough |
