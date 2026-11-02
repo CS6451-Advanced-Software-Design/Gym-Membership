@@ -127,10 +127,7 @@ void theBestDiscountWinsAndDiscountsDontStack() {
 
 We used the State design pattern for the membership lifecycle: Trial, Active, Frozen, Lapsed and Cancelled, the states in the §6 state chart.
 
-1. What a membership may do depends on its state. A Trial can book only 2 classes, an Active one can be frozen, and a Frozen or Lapsed one can't book or check in.
-2. Each state is its own class, and overrides only the operations it allows. Everything else is refused once, in the base class, with a reason the member can read (a 422 over REST).
-3. The states keep no fields, so one instance of each is shared, chosen from the membership's status.
-4. Adding a state means one new subclass. There is no `if` or `switch` on the status in `Membership` or in any service.
+What a membership may do depends on its state: a Trial can book only 2 classes, an Active one can be frozen, and a Frozen or Lapsed one can't book or check in. Each state is a stateless subclass that overrides only what it allows; everything else is refused once, in the base class, with a readable reason (a 422 over REST). `Membership` just hands each call to `state()`, so there is no `switch` on the status outside `of`.
 
 ```java
 public abstract class MembershipState {
@@ -172,22 +169,6 @@ public class ActiveState extends MembershipState {
 *The State and one of its five states (`gym/domain`, the shared instances and other operations left out)*
 
 ```java
-public MembershipState state() {
-    return MembershipState.of(status);
-}
-
-public boolean canBook() {
-    return state().canBook(this);
-}
-
-public Membership freeze(int months, LocalDate today) {
-    return state().freeze(this, months, today);
-}
-```
-
-*The context: `Membership` hands every operation to its current state (`gym/domain/Membership.java`)*
-
-```java
 @Test
 void aTrialCannotBeFrozen() {
     RuleViolationException refused = assertThrows(RuleViolationException.class,
@@ -216,10 +197,7 @@ void freezingStopsBookingAndCheckInAndMovesTheEndDate() {
 
 We used a Factory for creating the four plans: Monthly, Annual, Student and Off-Peak.
 
-1. Each plan is its own class with its own rules: its price, whether it has a trial, its end date, when it allows check-in and classes, and who is eligible.
-2. `PlanFactory` is the only class that knows which class goes with which plan type. The sign-up request names a `PlanType`, and the service asks the factory for the plan.
-3. Callers only ever see the abstract `Plan`, so they never name a plan class.
-4. Adding a plan means one new `Plan` subclass, one `PlanType` value with its price and one entry in the factory's map. No change is needed to `MembershipService`, Billing or Booking.
+Each plan is its own class with its own rules (price, trial, end date, access hours, eligibility). `PlanFactory` is the only class that maps a `PlanType` to its class; `MembershipService.signUp` calls `PlanFactory.create(type)` and only ever sees the abstract `Plan`. Adding a plan is one subclass, one `PlanType` value and one map entry, with no change to `MembershipService`, Billing or Booking.
 
 ```java
 public final class PlanFactory {
@@ -244,26 +222,6 @@ public final class PlanFactory {
 ```
 
 *The factory (`gym/domain/PlanFactory.java`, comments left out)*
-
-```java
-public class OffPeakPlan extends Plan {
-    private static final LocalTime OPENS = LocalTime.of(10, 0);
-    private static final LocalTime CLOSES = LocalTime.of(16, 0);
-
-    @Override
-    public boolean allowsCheckIn(LocalDateTime at) {
-        DayOfWeek day = at.getDayOfWeek();
-        boolean weekday = day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY;
-        LocalTime time = at.toLocalTime();
-        return weekday && !time.isBefore(OPENS) && time.isBefore(CLOSES);
-    }
-}
-
-// in MembershipService.signUp
-Plan plan = PlanFactory.create(type);
-```
-
-*One of the products, with only the rule it changes, and where the factory is used (`gym/domain/OffPeakPlan.java`, `gym/service/MembershipService.java`)*
 
 ```java
 @Test
