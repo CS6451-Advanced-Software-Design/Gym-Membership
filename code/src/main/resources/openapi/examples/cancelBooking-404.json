@@ -1,0 +1,6 @@
+{
+  "detail": "Booking b-42 not found",
+  "instance": "/bookings/b-42/cancel",
+  "status": 404,
+  "title": "Not Found"
+}

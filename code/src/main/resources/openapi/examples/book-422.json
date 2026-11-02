@@ -1,0 +1,6 @@
+{
+  "detail": "Member m-ca315689 already has a place in class c-54b4cdb7",
+  "instance": "/classes/c-54b4cdb7/bookings",
+  "status": 422,
+  "title": "Unprocessable Content"
+}

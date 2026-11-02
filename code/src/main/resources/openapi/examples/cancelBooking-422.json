@@ -1,0 +1,6 @@
+{
+  "detail": "Booking b-981af13d is CANCELLED, so it can't be cancelled",
+  "instance": "/bookings/b-981af13d/cancel",
+  "status": 422,
+  "title": "Unprocessable Content"
+}

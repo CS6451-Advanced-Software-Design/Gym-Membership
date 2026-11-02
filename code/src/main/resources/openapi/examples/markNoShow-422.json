@@ -1,0 +1,6 @@
+{
+  "detail": "Booking b-8e998e2b is NO_SHOW, so it can't be marked as a no-show",
+  "instance": "/bookings/b-8e998e2b/no-show",
+  "status": 422,
+  "title": "Unprocessable Content"
+}

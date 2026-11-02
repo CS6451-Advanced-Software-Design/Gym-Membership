@@ -1,0 +1,6 @@
+{
+  "detail": "Invalid request content.",
+  "instance": "/classes/c-54b4cdb7/bookings",
+  "status": 400,
+  "title": "Bad Request"
+}

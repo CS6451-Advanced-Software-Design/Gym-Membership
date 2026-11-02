@@ -1,0 +1,6 @@
+{
+  "detail": "Booking b-b94b7221 is ATTENDED, so it can't be marked as attended",
+  "instance": "/bookings/b-b94b7221/attended",
+  "status": 422,
+  "title": "Unprocessable Content"
+}

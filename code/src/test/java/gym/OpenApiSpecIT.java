@@ -45,7 +45,9 @@ class OpenApiSpecIT {
     void foldersFollowTheControllersOrder() throws Exception {
         mvc.perform(get("/v3/api-docs"))
                 .andExpect(jsonPath("$.tags[0].name").value("Memberships"))
-                .andExpect(jsonPath("$.tags[1].name").value("Billing"));
+                .andExpect(jsonPath("$.tags[1].name").value("Billing"))
+                .andExpect(jsonPath("$.tags[2].name").value("Bookings"))
+                .andExpect(jsonPath("$.tags[3].name").value("Members"));
     }
 
     /**
