@@ -181,4 +181,21 @@ class MembershipStateTest {
         assertTrue(offPeak.canCheckIn(LocalDateTime.of(2026, 11, 3, 11, 0)));
         assertFalse(offPeak.canCheckIn(MONDAY_EVENING));
     }
+
+    @Test
+    void undoingABookingHandsItBackToTheTrial() {
+        Membership booked = trial().recordBooking();
+
+        assertEquals(0, booked.undoBooking().trialBookingsUsed());
+    }
+
+    @Test
+    void aTrialCountNeverGoesBelowZero() {
+        assertEquals(0, trial().undoBooking().trialBookingsUsed());
+    }
+
+    @Test
+    void undoingABookingChangesNothingOutsideATrial() {
+        assertEquals(active(), active().undoBooking());
+    }
 }

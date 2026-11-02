@@ -52,6 +52,18 @@ public record Booking(String bookingId, String memberId, String classId, Booking
     }
 
     /**
+     * Undoes {@link #cancel}. Pre: the booking is CANCELLED. Post: it is BOOKED and holds a place again.
+     *
+     * @throws RuleViolationException if it isn't CANCELLED
+     */
+    public Booking restore() {
+        if (status != BookingStatus.CANCELLED) {
+            throw new RuleViolationException("Booking " + bookingId + " is " + status + ", so it can't be restored");
+        }
+        return new Booking(bookingId, memberId, classId, BookingStatus.BOOKED, bookedAt);
+    }
+
+    /**
      * Pre: the booking is BOOKED. Post: it is ATTENDED.
      *
      * @throws RuleViolationException if it is not BOOKED

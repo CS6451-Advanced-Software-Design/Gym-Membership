@@ -33,6 +33,13 @@ public abstract class MembershipState {
         throw refused(membership, "book a class");
     }
 
+    /**
+     * Only a Trial counts its bookings, so the other states have nothing to hand back.
+     */
+    public Membership undoBooking(Membership membership) {
+        return membership;
+    }
+
     public Membership freeze(Membership membership, int months, LocalDate today) {
         throw refused(membership, "be frozen");
     }

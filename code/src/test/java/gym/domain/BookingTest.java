@@ -55,4 +55,18 @@ class BookingTest {
 
         assertEquals(BookingStatus.BOOKED, original.status());
     }
+
+    @Test
+    void aCancelledBookingCanBeRestored() {
+        Booking cancelled = Booking.book("b1", "m1", "c1", AT).cancel();
+
+        assertTrue(cancelled.restore().isBooked());
+    }
+
+    @Test
+    void onlyACancelledBookingCanBeRestored() {
+        Booking booked = Booking.book("b1", "m1", "c1", AT);
+
+        assertThrows(RuleViolationException.class, booked::restore);
+    }
 }

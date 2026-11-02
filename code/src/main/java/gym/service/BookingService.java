@@ -17,6 +17,7 @@ import gym.port.in.CancelBookingUseCase;
 import gym.port.in.ManageScheduleUseCase;
 import gym.port.in.RecordAttendanceUseCase;
 import gym.port.in.RecordChargeUseCase;
+import gym.port.in.UndoBookingUseCase;
 import gym.port.out.BookingRepository;
 import gym.port.out.GymClassRepository;
 import gym.port.out.MembershipRepository;
@@ -35,7 +36,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class BookingService
-        implements BookClassUseCase, CancelBookingUseCase, RecordAttendanceUseCase, ManageScheduleUseCase {
+        implements BookClassUseCase, CancelBookingUseCase, RecordAttendanceUseCase, ManageScheduleUseCase,
+        UndoBookingUseCase {
 
     /**
      * BR-B6: what a premium class costs on top of the plan, unless the member is on Annual.
@@ -139,6 +141,47 @@ public class BookingService
         Booking saved = bookings.save(cancelled);
         promoteFromWaitlist(gymClass, now);
         return saved;
+    }
+
+    @Override
+    public synchronized Booking undoBooking(String bookingId) {
+        boolean late = classOf(findBooking(bookingId)).isLateToCancel(LocalDateTime.now(clock));
+        Booking cancelled = cancel(bookingId);
+        if (!late) {
+            findCurrentMembership(cancelled.memberId())
+                    .ifPresent(membership -> memberships.save(membership.undoBooking()));
+        }
+        return cancelled;
+    }
+
+    @Override
+    public synchronized void leaveWaitlist(String memberId, String classId) {
+        GymClass gymClass = classes.findById(classId).orElseThrow(() -> new NotFoundException("Class", classId));
+        classes.save(gymClass.leaveWaitlist(memberId));
+    }
+
+    @Override
+    public synchronized Booking restoreBooking(String bookingId) {
+        Booking booking = findBooking(bookingId);
+        GymClass gymClass = classOf(booking);
+        LocalDateTime now = LocalDateTime.now(clock);
+        if (gymClass.hasStarted(now)) {
+            throw new RuleViolationException("Class " + gymClass.classId() + " has already started");
+        }
+        if (gymClass.isFull(placesTaken(gymClass.classId()))) {
+            throw new RuleViolationException("The place in class " + gymClass.classId() + " has been taken");
+        }
+        if (holdsAPlace(booking.memberId(), gymClass.classId())) {
+            throw new RuleViolationException("Member " + booking.memberId() + " already has a place in class " + gymClass.classId());
+        }
+        // Checked as if this booking were handed back, as it still counts towards a Trial's 2 bookings
+        boolean canBook = findCurrentMembership(booking.memberId())
+                .filter(membership -> canStillBook(membership.undoBooking(), gymClass, now))
+                .isPresent();
+        if (!canBook) {
+            throw new RuleViolationException("Member " + booking.memberId() + " can't book class " + gymClass.classId() + " right now");
+        }
+        return bookings.save(booking.restore());
     }
 
     /**

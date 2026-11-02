@@ -107,6 +107,13 @@ public record Membership(
         return state().recordBooking(this);
     }
 
+    /**
+     * Hands back a booking counted by {@link #recordBooking}.
+     */
+    public Membership undoBooking() {
+        return state().undoBooking(this);
+    }
+
     public Membership freeze(int months, LocalDate today) {
         return state().freeze(this, months, today);
     }
