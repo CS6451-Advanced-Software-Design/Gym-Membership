@@ -44,6 +44,20 @@ public record Waitlist(List<String> memberIds) {
     }
 
     /**
+     * Pre: the member is waiting. Post: they are gone and everyone behind them has moved up one.
+     *
+     * @throws RuleViolationException if the member isn't on the waitlist
+     */
+    public Waitlist remove(String memberId) {
+        if (!contains(memberId)) {
+            throw new RuleViolationException("Member " + memberId + " is not on the waitlist");
+        }
+        List<String> shorter = new ArrayList<>(memberIds);
+        shorter.remove(memberId);
+        return new Waitlist(shorter);
+    }
+
+    /**
      * @return their place in the line, counting from 1, or 0 if they are not waiting
      */
     public int positionOf(String memberId) {

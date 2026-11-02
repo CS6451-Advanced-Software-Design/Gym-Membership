@@ -37,6 +37,11 @@ public class TrialState extends MembershipState {
     }
 
     @Override
+    public Membership undoBooking(Membership membership) {
+        return membership.withTrialBookingsUsed(Math.max(0, membership.trialBookingsUsed() - 1));
+    }
+
+    @Override
     public Membership endTrial(Membership membership, LocalDate today) {
         if (membership.failedPayments() > 0) {
             return membership.moveTo(MembershipStatus.LAPSED).withLapsedSince(today);

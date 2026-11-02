@@ -70,4 +70,11 @@ class GymClassTest {
 
         assertEquals(0, original.waitlist().size());
     }
+
+    @Test
+    void aMemberCanLeaveTheWaitlist() {
+        GymClass left = spin().joinWaitlist("m1").joinWaitlist("m2").leaveWaitlist("m1");
+
+        assertEquals(1, left.waitlist().positionOf("m2"));
+    }
 }

@@ -63,4 +63,17 @@ class WaitlistTest {
 
         assertTrue(empty.memberIds().isEmpty());
     }
+
+    @Test
+    void removingAMemberMovesEveryoneBehindThemUp() {
+        Waitlist waitlist = Waitlist.empty().add("m1").add("m2").add("m3").remove("m2");
+
+        assertEquals(2, waitlist.size());
+        assertEquals(2, waitlist.positionOf("m3"));
+    }
+
+    @Test
+    void aMemberWhoIsNotWaitingCannotBeRemoved() {
+        assertThrows(RuleViolationException.class, () -> Waitlist.empty().remove("m1"));
+    }
 }

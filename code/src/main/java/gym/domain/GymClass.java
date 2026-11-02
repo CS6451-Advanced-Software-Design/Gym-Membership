@@ -73,6 +73,15 @@ public record GymClass(String classId, String name, LocalDateTime startTime, int
         return withWaitlist(waitlist.withoutFirst());
     }
 
+    /**
+     * Pre: the member is waiting. Post: they are off the waitlist.
+     *
+     * @throws RuleViolationException if the member isn't waiting
+     */
+    public GymClass leaveWaitlist(String memberId) {
+        return withWaitlist(waitlist.remove(memberId));
+    }
+
     private GymClass withWaitlist(Waitlist next) {
         return new GymClass(classId, name, startTime, capacity, premium, next);
     }
