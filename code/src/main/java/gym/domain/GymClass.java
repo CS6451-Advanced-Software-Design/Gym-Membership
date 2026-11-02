@@ -82,6 +82,15 @@ public record GymClass(String classId, String name, LocalDateTime startTime, int
         return withWaitlist(waitlist.remove(memberId));
     }
 
+    /**
+     * BR-B2: what a member promoted from the waitlist is told.
+     */
+    public Notification promotionNotice(String memberId) {
+        return new Notification(memberId, "You have a place in " + name,
+                "A place came free, so you are booked into " + name
+                        + " on " + startTime.toLocalDate() + " at " + startTime.toLocalTime() + ".");
+    }
+
     private GymClass withWaitlist(Waitlist next) {
         return new GymClass(classId, name, startTime, capacity, premium, next);
     }
