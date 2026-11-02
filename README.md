@@ -96,18 +96,17 @@ Each pattern is listed with its roles (as named in the lectures, GoF or POSA2) a
 |  | Observer | [`NotificationLog`](code/src/main/java/gym/adapter/notification/NotificationLog.java), an `@EventListener` |
 |  | Client | [`MemberService`](code/src/main/java/gym/service/MemberService.java) on check-in, and [`MembershipService`](code/src/main/java/gym/service/MembershipService.java) and [`BillingService`](code/src/main/java/gym/service/BillingService.java) for membership and invoice notices |
 |  | Checked by | [`MemberServiceTest`](code/src/test/java/gym/service/MemberServiceTest.java), which checks a check-in notifies the member |
+|  | Also | [`BookingService`](code/src/main/java/gym/service/BookingService.java) tells a member promoted from the waitlist (BR-B2), checked by [`BookingServiceTest`](code/src/test/java/gym/service/BookingServiceTest.java) |
+| **Command**<br>Design (GoF) | Command | [`BookingCommand`](code/src/main/java/gym/service/BookingCommand.java), with `execute()` and `undo()` |
+|  | Concrete commands | [`BookClassCommand`](code/src/main/java/gym/service/BookClassCommand.java), [`CancelBookingCommand`](code/src/main/java/gym/service/CancelBookingCommand.java) |
+|  | Invoker | [`BookingCommandService`](code/src/main/java/gym/service/BookingCommandService.java), which keeps each member's history for undo |
+|  | Receiver | [`BookingService`](code/src/main/java/gym/service/BookingService.java), through its use-case interfaces |
+|  | Checked by | [`BookingCommandServiceTest`](code/src/test/java/gym/service/BookingCommandServiceTest.java) |
 | **Repository**<br>Design | Repository | [`Repository<T, ID>`](code/src/main/java/gym/port/out/Repository.java), e.g. [`InvoiceRepository`](code/src/main/java/gym/port/out/InvoiceRepository.java), [`GymClassRepository`](code/src/main/java/gym/port/out/GymClassRepository.java) |
 |  | Implementation | [`JsonFileRepository`](code/src/main/java/gym/adapter/persistence/JsonFileRepository.java), e.g. [`JsonFileInvoiceRepository`](code/src/main/java/gym/adapter/persistence/JsonFileInvoiceRepository.java) |
 | **Dependency Injection**<br>Design | Injector | Spring, from the `@Bean` methods in [`GymApplication`](code/src/main/java/gym/GymApplication.java) and the `*Configuration` classes |
 |  | Client | every class that takes its dependencies in its constructor, e.g. [`BillingService`](code/src/main/java/gym/service/BillingService.java) |
 |  | Swappable service | the `Clock` bean in [`GymApplication`](code/src/main/java/gym/GymApplication.java), which [`BillingE2E`](code/src/test/java/gym/BillingE2E.java) replaces to fix the date |
-
-**Planned** (from [report/roles.md](report/roles.md), each with a test that exercises the pattern)
-
-| Pattern | Kind | Applied to | Owner |
-| --- | --- | --- | --- |
-| Command | Design (GoF) | Book and cancel a class, with undo | Bharat |
-| Observer | Design (GoF) | Waitlist promotion in Booking | Bharat |
 
 ## Diagrams
 
