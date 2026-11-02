@@ -10,6 +10,7 @@ import gym.domain.MembershipStatus;
 import gym.domain.Money;
 import gym.domain.NoShows;
 import gym.domain.NotFoundException;
+import gym.domain.Notification;
 import gym.domain.PlanType;
 import gym.domain.RuleViolationException;
 import gym.port.in.BookClassUseCase;
@@ -21,6 +22,7 @@ import gym.port.in.UndoBookingUseCase;
 import gym.port.out.BookingRepository;
 import gym.port.out.GymClassRepository;
 import gym.port.out.MembershipRepository;
+import gym.port.out.NotificationSender;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -58,6 +60,7 @@ public class BookingService
     private final BookingRepository bookings;
     private final MembershipRepository memberships;
     private final RecordChargeUseCase charges;
+    private final NotificationSender notifications;
     private final Clock clock;
 
     public BookingService(
@@ -65,11 +68,13 @@ public class BookingService
             BookingRepository bookings,
             MembershipRepository memberships,
             RecordChargeUseCase charges,
+            NotificationSender notifications,
             Clock clock) {
         this.classes = classes;
         this.bookings = bookings;
         this.memberships = memberships;
         this.charges = charges;
+        this.notifications = notifications;
         this.clock = clock;
     }
 
@@ -241,8 +246,8 @@ public class BookingService
     }
 
     /**
-     * BR-B2: the place goes to the first member still able to take it. Anyone who can no longer book is taken
-     * off the waitlist, so they don't hold up the members behind them.
+     * BR-B2: the place goes to the first member still able to take it, and they are told. Anyone who can no
+     * longer book is taken off the waitlist, so they don't hold up the members behind them.
      */
     private void promoteFromWaitlist(GymClass gymClass, LocalDateTime now) {
         GymClass remaining = gymClass;
@@ -254,10 +259,19 @@ public class BookingService
             if (next.isPresent()) {
                 classes.save(remaining);
                 takePlace(next.get(), gymClass, now);
+                // Sent last, so a member is only told once the place is really theirs
+                notifications.send(promotionNotice(memberId, gymClass));
                 return;
             }
         }
         classes.save(remaining);
+    }
+
+    private static Notification promotionNotice(String memberId, GymClass gymClass) {
+        LocalDateTime start = gymClass.startTime();
+        return new Notification(memberId, "You have a place in " + gymClass.name(),
+                "A place came free, so you are booked into " + gymClass.name()
+                        + " on " + start.toLocalDate() + " at " + start.toLocalTime() + ".");
     }
 
     /**

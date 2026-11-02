@@ -16,11 +16,13 @@ import gym.domain.Membership;
 import gym.domain.Money;
 import gym.domain.MonthlyPlan;
 import gym.domain.NotFoundException;
+import gym.domain.Notification;
 import gym.domain.OffPeakPlan;
 import gym.domain.RuleViolationException;
 import gym.port.in.RecordChargeUseCase;
 import gym.port.out.BookingRepository;
 import gym.port.out.GymClassRepository;
+import gym.port.out.NotificationSender;
 import gym.service.BillingServiceTest.InMemoryMembershipRepository;
 import gym.support.InMemoryRepository;
 import gym.support.TestClock;
@@ -69,13 +71,24 @@ class BookingServiceTest {
         }
     }
 
+    /**
+     * Keeps each notification so a test can look at it.
+     */
+    static class RecordedNotifications extends ArrayList<Notification> implements NotificationSender {
+        @Override
+        public void send(Notification notification) {
+            add(notification);
+        }
+    }
+
     private final InMemoryGymClassRepository classes = new InMemoryGymClassRepository();
     private final InMemoryBookingRepository bookings = new InMemoryBookingRepository();
     private final InMemoryMembershipRepository memberships = new InMemoryMembershipRepository();
     private final RecordedCharges charges = new RecordedCharges();
+    private final RecordedNotifications notifications = new RecordedNotifications();
     private final TestClock clock = new TestClock(TODAY);
 
-    private final BookingService service = new BookingService(classes, bookings, memberships, charges, clock);
+    private final BookingService service = new BookingService(classes, bookings, memberships, charges, notifications, clock);
 
     @Test
     void bookingAClassStoresAPlaceForTheMember() {
@@ -425,7 +438,7 @@ class BookingServiceTest {
                 return super.findAll();
             }
         };
-        BookingService racing = new BookingService(classes, slowBookings, memberships, charges, clock);
+        BookingService racing = new BookingService(classes, slowBookings, memberships, charges, notifications, clock);
         spinClass(1);
         List<String> members = List.of("m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8");
         members.forEach(this::activeMembership);
@@ -950,6 +963,81 @@ class BookingServiceTest {
         clock.advanceDays(5);
 
         assertEquals(List.of(later), service.schedule());
+    }
+
+    @Test
+    void aPromotedMemberIsToldAboutTheirPlace() {
+        // BR-B2
+        spinClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        Booking booking = service.book("m1", "c1").booking();
+        service.book("m2", "c1");
+
+        service.cancel(booking.bookingId());
+
+        assertEquals(1, notifications.size());
+        Notification notice = notifications.getFirst();
+        assertEquals("m2", notice.memberId());
+        assertEquals("You have a place in Spin", notice.subject());
+        assertTrue(notice.message().contains("2026-11-06 at 18:00"));
+    }
+
+    @Test
+    void nobodyIsToldWhenNobodyIsPromoted() {
+        spinClass(10);
+        activeMembership("m1");
+        Booking booking = service.book("m1", "c1").booking();
+
+        service.cancel(booking.bookingId());
+
+        assertTrue(notifications.isEmpty());
+    }
+
+    @Test
+    void aMemberSkippedOnTheWaitlistIsNotTold() {
+        spinClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        activeMembership("m3");
+        Booking booking = service.book("m1", "c1").booking();
+        service.book("m2", "c1");
+        service.book("m3", "c1");
+        threeRecentNoShows("m2");
+
+        service.cancel(booking.bookingId());
+
+        assertEquals(List.of("m3"), notifications.stream().map(Notification::memberId).toList());
+    }
+
+    @Test
+    void aMemberWhoseChargeFailsIsNotToldTheyHaveAPlace() {
+        // The surcharge can refuse, and a place that wasn't given must not be announced
+        premiumClass(1);
+        activeMembership("m1");
+        activeMembership("m2");
+        Booking booking = service.book("m1", "premium").booking();
+        service.book("m2", "premium");
+        RecordChargeUseCase refusing = new RecordedCharges() {
+            @Override
+            public Charge record(String membershipId, ChargeType type, Money amount) {
+                throw new RuleViolationException("Refused");
+            }
+        };
+        BookingService failing = new BookingService(classes, bookings, memberships, refusing, notifications, clock);
+
+        assertThrows(RuleViolationException.class, () -> failing.cancel(booking.bookingId()));
+        assertTrue(notifications.isEmpty());
+    }
+
+    @Test
+    void bookingAPlaceDirectlySendsNoNotification() {
+        spinClass(10);
+        activeMembership("m1");
+
+        service.book("m1", "c1");
+
+        assertTrue(notifications.isEmpty());
     }
 
     private void spinClass(int capacity) {
