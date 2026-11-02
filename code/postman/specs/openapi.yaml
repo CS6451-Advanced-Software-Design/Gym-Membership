@@ -42,6 +42,19 @@ tags:
     \ fit within the bill waits for the next one.</li> </ul> <p>The member's card\
     \ is charged as soon as the invoice is issued. A declined card leaves the invoice\
     \ <code>UNPAID</code> until the member pays their arrears."
+- name: Bookings
+  description: "Runs the class timetable: the schedule, bookings, the waitlist and\
+    \ attendance. <ul> <li><b>Booking:</b> a member holds at most 5 future bookings.\
+    \ Off-Peak members can book off-peak classes only, and a premium class costs €\
+    8 unless the member is on an Annual plan.</li> <li><b>Waitlist:</b> a full class\
+    \ has a first-come, first-served waitlist. When a place comes free, the first\
+    \ member who can still book gets it automatically and is notified.</li> <li><b>Cancelling:</b>\
+    \ less than 2 hours before the class costs €5. Trial members pay nothing, but\
+    \ a late cancellation still counts against their 2 bookings.</li> <li><b>No-shows:</b>\
+    \ each costs €5, and 3 in 30 days suspend booking for 7 days.</li> <li><b>Undo:</b>\
+    \ a member can take back their bookings and cancellations, newest first. Fees\
+    \ are not refunded.</li> </ul> <p>A request the rules don't allow is refused with\
+    \ a 422 problem."
 - name: Members
   description: "Shows a member's profile and checks them in for a visit. <p>A check-in\
     \ is only recorded if the member's current membership lets them in right now:\
@@ -545,6 +558,245 @@ paths:
                 memberId: m-8d14e6b2
                 membershipId: ms-3f9c2a71
                 at: 2026-10-28T09:15:00
+  /members/{memberId}/bookings/undo:
+    post:
+      tags:
+      - Bookings
+      summary: Undoes a member's last booking action
+      description: "Undoes a member's last booking action. <p>Takes back their most\
+        \ recent booking or cancellation. Calling it again takes back the one before:\
+        \ <ul> <li>A booking is cancelled, and the usual late fee applies. A place\
+        \ on a waitlist is given up.</li> <li>A cancellation gives the same booking\
+        \ back, if the place hasn't been taken.</li> </ul> Fees are not refunded.\
+        \ The history is cleared if the app restarts."
+      operationId: undo
+      parameters:
+      - name: memberId
+        in: path
+        description: the member whose action to undo
+        required: true
+        schema:
+          type: string
+        example: m-3f9c2a71
+      responses:
+        "422":
+          description: "There is nothing to undo, or it is too late, e.g. the class\
+            \ has started or the place has been taken"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "204":
+          description: No Content
+  /classes:
+    get:
+      tags:
+      - Bookings
+      summary: Shows the schedule
+      description: "Shows the schedule. <p>Every class that hasn't started yet, soonest\
+        \ first, with its places left and the size of its waitlist."
+      operationId: schedule
+      responses:
+        "200":
+          description: The upcoming classes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClassResponse"
+    post:
+      tags:
+      - Bookings
+      summary: Adds a class
+      description: Adds a class. <p>Puts a new class on the timetable with every place
+        free.
+      operationId: addClass
+      requestBody:
+        description: the class to add
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddClassRequest"
+        required: true
+      responses:
+        "400":
+          description: "A required field is missing, or the start time isn't a date\
+            \ and time"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: "The start time has passed, or the capacity is below 1"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "201":
+          description: The new class
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClassResponse"
+  /classes/{classId}/bookings:
+    post:
+      tags:
+      - Bookings
+      summary: Books a class
+      description: "Books a class. <p>Gives the member a place, or if the class is\
+        \ full, puts them on the waitlist. <code>bookingId</code> and <code>waitlistPosition</code>\
+        \ say which. The €8 premium surcharge is charged when they get a place."
+      operationId: book
+      parameters:
+      - name: classId
+        in: path
+        description: the class to book
+        required: true
+        schema:
+          type: string
+        example: c-3f9c2a71
+      requestBody:
+        description: who is booking
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookClassRequest"
+        required: true
+      responses:
+        "400":
+          description: The member id is missing
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: "No class has this id, or the member holds no current membership"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: "The class has started, the membership or plan doesn't allow\
+            \ it, the member is suspended, already has a place, or holds 5 future\
+            \ bookings"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "201":
+          description: The place in the class or on its waitlist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookClassResponse"
+  /bookings/{bookingId}/no-show:
+    post:
+      tags:
+      - Bookings
+      summary: Marks a booking as a no-show
+      description: "Marks a booking as a no-show. <p>Once the class has started, records\
+        \ that the member didn't come. This costs €5, and 3 no-shows in 30 days suspend\
+        \ booking for 7 days."
+      operationId: markNoShow
+      parameters:
+      - name: bookingId
+        in: path
+        description: the booking to mark
+        required: true
+        schema:
+          type: string
+        example: b-3f9c2a71
+      responses:
+        "404":
+          description: No booking has this id
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: "The booking is no longer booked, or its class hasn't started"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "200":
+          description: The no-show booking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingResponse"
+  /bookings/{bookingId}/cancel:
+    post:
+      tags:
+      - Bookings
+      summary: Cancels a booking
+      description: "Cancels a booking. <p>Frees the place, which goes to the first\
+        \ member on the waitlist who can still book. Less than 2 hours before the\
+        \ class this costs €5, unless the member is on a Trial."
+      operationId: cancelBooking
+      parameters:
+      - name: bookingId
+        in: path
+        description: the booking to cancel
+        required: true
+        schema:
+          type: string
+        example: b-3f9c2a71
+      responses:
+        "404":
+          description: No booking has this id
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: "The booking is no longer booked, or its class has started"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "200":
+          description: The cancelled booking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingResponse"
+  /bookings/{bookingId}/attended:
+    post:
+      tags:
+      - Bookings
+      summary: Marks a booking as attended
+      description: "Marks a booking as attended. <p>Once the class has started, records\
+        \ that the member came."
+      operationId: markAttended
+      parameters:
+      - name: bookingId
+        in: path
+        description: the booking to mark
+        required: true
+        schema:
+          type: string
+        example: b-3f9c2a71
+      responses:
+        "404":
+          description: No booking has this id
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: "The booking is no longer booked, or its class hasn't started"
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "200":
+          description: The attended booking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingResponse"
   /billing-runs:
     post:
       tags:
@@ -1043,6 +1295,122 @@ components:
           type: string
           format: date-time
           description: when they checked in
+    AddClassRequest:
+      type: object
+      description: A class to put on the timetable.
+      properties:
+        name:
+          type: string
+          description: what the class is
+          example: Spin
+          minLength: 1
+        startTime:
+          type: string
+          format: date-time
+          description: "when it starts, which must be in the future"
+          example: 2026-11-06T18:00:00
+        capacity:
+          type: integer
+          format: int32
+          description: "how many places it has, at least 1"
+          example: 12
+        premium:
+          type: boolean
+          description: "whether it carries the €8 surcharge, which Annual members\
+            \ don't pay. False if left out"
+          example: false
+      required:
+      - capacity
+      - name
+      - startTime
+    ClassResponse:
+      type: object
+      description: A class on the timetable.
+      properties:
+        classId:
+          type: string
+          description: the class id
+        name:
+          type: string
+          description: what the class is
+        startTime:
+          type: string
+          format: date-time
+          description: when it starts
+        capacity:
+          type: integer
+          format: int32
+          description: how many places it has
+        premium:
+          type: boolean
+          description: whether it carries the €8 surcharge
+        placesLeft:
+          type: integer
+          format: int32
+          description: how many places can still be booked
+        waitlistSize:
+          type: integer
+          format: int32
+          description: how many members are waiting for a place
+    BookClassRequest:
+      type: object
+      description: A member asking for a place in a class.
+      properties:
+        memberId:
+          type: string
+          description: the member booking
+          example: m-3f9c2a71
+          minLength: 1
+      required:
+      - memberId
+    BookClassResponse:
+      type: object
+      description: "What came of a booking request: a place in the class, or a place\
+        \ on its waitlist."
+      properties:
+        memberId:
+          type: string
+          description: the member who asked
+        classId:
+          type: string
+          description: the class they asked for
+        bookingId:
+          type:
+          - string
+          - "null"
+          description: "the new booking, or <code>null</code> if the class was full\
+            \ and they joined the waitlist"
+        waitlistPosition:
+          type: integer
+          format: int32
+          description: "their place on the waitlist, counting from 1, or 0 if they\
+            \ got a place"
+    BookingResponse:
+      type: object
+      description: A member's place in a class.
+      properties:
+        bookingId:
+          type: string
+          description: the booking id
+        memberId:
+          type: string
+          description: the member who holds the place
+        classId:
+          type: string
+          description: the class it is for
+        status:
+          type: string
+          description: "where it is: booked, cancelled, attended or a no-show"
+          enum:
+          - BOOKED
+          - CANCELLED
+          - ATTENDED
+          - NO_SHOW
+        bookedAt:
+          type: string
+          format: date-time
+          description: "when the member booked, or when they were promoted from the\
+            \ waitlist"
     BillingRunRequest:
       type: object
       description: Starts a billing run.

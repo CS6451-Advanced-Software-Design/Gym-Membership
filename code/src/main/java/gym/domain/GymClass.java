@@ -46,6 +46,13 @@ public record GymClass(String classId, String name, LocalDateTime startTime, int
         return booked >= capacity;
     }
 
+    /**
+     * Pre: {@code booked} is the number of active bookings for this class. Post: never below 0.
+     */
+    public int placesLeft(int booked) {
+        return Math.max(0, capacity - booked);
+    }
+
     public boolean hasStarted(LocalDateTime now) {
         return !now.isBefore(startTime);
     }

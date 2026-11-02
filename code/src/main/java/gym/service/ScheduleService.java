@@ -1,14 +1,18 @@
 package gym.service;
 
+import gym.domain.Booking;
 import gym.domain.GymClass;
 import gym.domain.RuleViolationException;
 import gym.port.in.ManageScheduleUseCase;
+import gym.port.out.BookingRepository;
 import gym.port.out.GymClassRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,10 +23,12 @@ import org.springframework.stereotype.Service;
 public class ScheduleService implements ManageScheduleUseCase {
 
     private final GymClassRepository classes;
+    private final BookingRepository bookings;
     private final Clock clock;
 
-    public ScheduleService(GymClassRepository classes, Clock clock) {
+    public ScheduleService(GymClassRepository classes, BookingRepository bookings, Clock clock) {
         this.classes = classes;
+        this.bookings = bookings;
         this.clock = clock;
     }
 
@@ -42,11 +48,17 @@ public class ScheduleService implements ManageScheduleUseCase {
     }
 
     @Override
-    public List<GymClass> schedule() {
+    public List<ScheduledClass> schedule() {
         LocalDateTime now = LocalDateTime.now(clock);
+        // Counted once for every class, rather than reading all the bookings again for each one
+        Map<String, Long> placesTaken = bookings.findAll().stream()
+                .filter(Booking::isBooked)
+                .collect(Collectors.groupingBy(Booking::classId, Collectors.counting()));
         return classes.findAll().stream()
                 .filter(gymClass -> !gymClass.hasStarted(now))
                 .sorted(Comparator.comparing(GymClass::startTime))
+                .map(gymClass -> new ScheduledClass(
+                        gymClass, gymClass.placesLeft(placesTaken.getOrDefault(gymClass.classId(), 0L).intValue())))
                 .toList();
     }
 }

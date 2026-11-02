@@ -81,6 +81,12 @@ class GymClassTest {
     }
 
     @Test
+    void placesLeftIsWhatIsNotBookedAndNeverBelowZero() {
+        assertEquals(1, spin().placesLeft(1));
+        assertEquals(0, spin().placesLeft(3));
+    }
+
+    @Test
     void aMemberCanLeaveTheWaitlist() {
         GymClass left = spin().joinWaitlist("m1").joinWaitlist("m2").leaveWaitlist("m1");
 

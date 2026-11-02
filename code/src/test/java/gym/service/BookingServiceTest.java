@@ -919,7 +919,7 @@ class BookingServiceTest {
 
     @Test
     void aMemberCanBookAClassThatWasAdded() {
-        GymClass added = new ScheduleService(classes, clock).addClass("Spin", SPIN_STARTS, 12, false);
+        GymClass added = new ScheduleService(classes, bookings, clock).addClass("Spin", SPIN_STARTS, 12, false);
         activeMembership("m1");
 
         assertFalse(service.book("m1", added.classId()).isWaitlisted());
