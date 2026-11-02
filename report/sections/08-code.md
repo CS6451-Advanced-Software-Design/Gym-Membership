@@ -197,10 +197,7 @@ void freezingStopsBookingAndCheckInAndMovesTheEndDate() {
 
 We used a Factory for creating the four plans: Monthly, Annual, Student and Off-Peak.
 
-1. Each plan is its own class with its own rules: its price, whether it has a trial, its end date, when it allows check-in and classes, and who is eligible.
-2. `PlanFactory` is the only class that knows which class goes with which plan type. The sign-up request names a `PlanType`, and the service asks the factory for the plan.
-3. Callers only ever see the abstract `Plan`, so they never name a plan class.
-4. Adding a plan means one new `Plan` subclass, one `PlanType` value with its price and one entry in the factory's map. No change is needed to `MembershipService`, Billing or Booking.
+Each plan is its own class with its own rules (price, trial, end date, access hours, eligibility). `PlanFactory` is the only class that maps a `PlanType` to its class; `MembershipService.signUp` calls `PlanFactory.create(type)` and only ever sees the abstract `Plan`. Adding a plan is one subclass, one `PlanType` value and one map entry, with no change to `MembershipService`, Billing or Booking.
 
 ```java
 public final class PlanFactory {
@@ -225,26 +222,6 @@ public final class PlanFactory {
 ```
 
 *The factory (`gym/domain/PlanFactory.java`, comments left out)*
-
-```java
-public class OffPeakPlan extends Plan {
-    private static final LocalTime OPENS = LocalTime.of(10, 0);
-    private static final LocalTime CLOSES = LocalTime.of(16, 0);
-
-    @Override
-    public boolean allowsCheckIn(LocalDateTime at) {
-        DayOfWeek day = at.getDayOfWeek();
-        boolean weekday = day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY;
-        LocalTime time = at.toLocalTime();
-        return weekday && !time.isBefore(OPENS) && time.isBefore(CLOSES);
-    }
-}
-
-// in MembershipService.signUp
-Plan plan = PlanFactory.create(type);
-```
-
-*One of the products, with only the rule it changes, and where the factory is used (`gym/domain/OffPeakPlan.java`, `gym/service/MembershipService.java`)*
 
 ```java
 @Test
