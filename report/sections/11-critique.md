@@ -25,7 +25,7 @@ To improve this, we would split `BillingService` into one class per use case, al
 | JaCoCo | 97.3% line coverage (1164 of 1196) | Unit 81.5%, end-to-end 81.5%, integration 37.1% |
 | PMD | 51 violations | TooManyMethods: BillingService, MembershipService, MembershipState, TrialState |
 | CK | Highest CBO 29, highest WMC 44 | MembershipController (CBO), BillingService (WMC 44, RFC 64) |
-| SonarQube Cloud | Gate passed: 2 bugs, 0 code smells, 0% duplication | OffPeakPlan (`DayOfWeek` compared with `!=`) |
+| SonarQube Cloud | Gate passed: 0 bugs, 0 code smells, 0% duplication | OffPeakPlan's 2 `DayOfWeek != ` flags resolved as false positives in SonarCloud |
 
 Table: Code metrics on main (CI, 2 Nov)
 
