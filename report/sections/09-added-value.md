@@ -44,6 +44,6 @@ SonarQube Cloud runs inside CI's `metrics` job. It was only wired in after both 
 | Maintainability rating | A (0 issues) |
 | Reliability rating | A (0 bugs) |
 
-![SonarQube Cloud's check on a pull request: quality gate passed, 0 new issues, 0 security hotspots. Coverage on new code is 0% because that pull request only changed the report](../screenshots/sonarqube-pr-comment.png){width=60%}
+![SonarQube Cloud's check on the `MembershipStateFactory` refactoring (PR #119): quality gate passed, 0 new issues, 0 security hotspots, 100% coverage on new code](../screenshots/sonarqube-pr-comment.png){width=60%}
 
 Reliability took a bit more work to get to A. The scan first found 7 High severity issues. 5 of them were `MembershipState` holding static references to its own subclasses (rule `S2390`), which was real and is fixed by the `MembershipStateFactory` extraction. The other 2 were `day != DayOfWeek.SATURDAY` in `OffPeakPlan` (rule `S8696`, which wants `.equals()`). `DayOfWeek` is an enum, so `!=` is safe there, and I resolved both as `False Positive` in SonarCloud instead of changing the code.
