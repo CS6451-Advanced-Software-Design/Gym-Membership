@@ -52,7 +52,7 @@ Later, when I wrote UC1 in the full template, I found a gap that I had missed wh
 
 Building Membership with the State pattern was the part where the course made the most sense to me:
 
-- each state in the §6 state chart became a subclass, and each arrow became a method;
+- each state in the state chart became a subclass, and each arrow became a method;
 - the base class refuses everything by default, so a Frozen membership can't book a class without a single `if` on the status;
 - the states are so small that I could write a test for every arrow of the chart.
 
@@ -63,7 +63,5 @@ Working inside the hexagon taught me to respect the boundaries of code that othe
 What didn't work, and what I would do differently next time:
 
 - **I started late.** I reviewed drafts in weeks 5 and 6 but didn't make any commits until 21 Oct, so most of my code came in one big pull request (#38, 20 commits). Smaller pull requests from the first iteration would have been easier to review and would have shown my progress week by week.
-- **I sketched after coding.** My hand sketches record the design instead of helping me find it, so next time I would sketch first.
-- **GenAI needed checking.** I used it a lot, and one draft said the Loyalty discount could apply at sign-up, which it can't, so now I check everything it gives me against the code and the brief.
 
 Overall, this project showed me what the lectures meant by analysis feeding design: the business rules, the state chart and the use cases decided my classes before I wrote them, and the tests and CI made sure they kept doing what the requirements said.

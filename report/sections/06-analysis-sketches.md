@@ -10,13 +10,13 @@ Evidence: report/analysis/README.md, report/sketches/README.md.
 
 ## Candidate Objects
 
-To find the candidate classes, I used noun identification, which we learned in Lecture B. I went through the UC1 and UC2 descriptions and the business rules and wrote down every noun. A noun became a class only if it has its own state, behaviour and identity. If a noun was just a value of something else, it became an attribute or an enumeration; if it was an outside system, it became a port; and if it only named a person's role or a screen, I dropped it.
+To find the candidate classes, I used noun identification. I went through the UC1 and UC2 descriptions and the business rules and wrote down every noun. A noun became a class only if it has its own state, behaviour and identity. If a noun was just a value of something else, it became an attribute or an enumeration; if it was an outside system, it became a port; and if it only named a person's role or a screen, I dropped it.
 
 | Noun (where found) | Decision | Why |
 | --- | --- | --- |
 | Member, prospective member (UC1, UC2) | Class `Member` | A prospective member is the same person before sign-up |
 | Membership (UC1, BR-M2 to M5) | Class `Membership` | It has a lifecycle, so it gets the state chart |
-| Trial, Active, Frozen, Lapsed, Cancelled (BR-M2 to M4) | Subclasses of `MembershipState` | What a membership may do depends on its state (State pattern) |
+| Trial, Active, Frozen, Lapsed, Cancelled (BR-M2 to M4) | Subclasses of `MembershipState` | What a membership do depends on its state |
 | Monthly, Annual, Student, Off-Peak plan (BR-M1) | `Plan` with four subclasses, made by `PlanFactory` | Each plan has its own price, trial, hours and eligibility rule |
 | Freeze (BR-M3) | Class `Freeze` | Needed to check 1 to 3 months, at most once every 12 months |
 | Class on the timetable (UC2) | Class `GymClass` | `Class` clashes with Java's `java.lang.Class` |
