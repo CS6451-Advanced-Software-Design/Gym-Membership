@@ -11,21 +11,31 @@ applies each one, and two GUI prototypes.
 
 ![Use case diagram](../requirements/use-case-diagram.png){height=13cm}
 
-In our use case diagram we took 5 human actors - Prospective Member, Member, Front Desk Staff, Instructor and Manager. Member is a specialisation of Prospective Member: a Prospective Member is someone new who can only sign up, while a Member can also rejoin a membership. The two non-human actors were a Clock and a Payment Gateway. Having these was going a bit too in depth, as discussed with our professor during the lecture, but we kept them anyway as they made sense to us for future exploration of use cases as well. Steps shared between use cases are pulled out with «include», like Calculate Charges and Verify Membership Status, and optional ones are «extend» with the condition written on them, for example Join Waitlist only happens when the class is full.
+In our use case diagram we took 5 human actors - Prospective Member, Member, Front Desk Staff, Instructor and Manager. Member is a specialisation of Prospective Member: a Prospective Member is someone new who can only sign up, while a Member can also rejoin a membership.
+
+The two non-human actors were a Clock and a Payment Gateway. Having these was going a bit too in depth, as discussed with our professor during the lecture, but we kept them anyway as they made sense to us for future exploration of use cases as well.
+
+Steps shared between use cases are pulled out with «include», like Calculate Charges and Verify Membership Status, and optional ones are «extend» with the condition written on them, for example Join Waitlist only happens when the class is full.
 
 Below we explain UC1 (Sign Up) and UC2 (Book a Class) in detail, as we believe they are the primary use cases of our application and touch most of the logic we worked on.
 
 Only UC9 (Manage Plans and Prices) and UC12 (View Reports) are not fully built out in our current implementation.
 
+```{=typst}
+#v(1em)
+```
+
 ## UC1: Sign Up for Membership
 
-- **Goal in Context:** A person joins the gym on one of our four plans and pays for what's left of the first month (or the whole year on Annual)
-- **Scope & Level:** Gym membership system, user goal
-- **Preconditions:** The plans and prices are set up (BR-M1), and the person doesn't already hold a membership that isn't cancelled
-- **Success End Condition:** The membership starts in Trial (or Active on Annual), the first invoice is created and a welcome message is sent. If they were referred, the referrer gets their credit
-- **Failed End Condition:** Nothing is saved and nothing is charged
-- **Primary, Secondary Actors:** Prospective Member; Payment Gateway
-- **Trigger:** The person clicks Join
+| Use case 1 | Sign Up for Membership |
+| --- | --- |
+| Goal in Context | A person joins the gym on one of our four plans and pays for what's left of the first month (or the whole year on Annual) |
+| Scope & Level | Gym membership system, user goal |
+| Preconditions | The plans and prices are set up (BR-M1), and the person doesn't already hold a membership that isn't cancelled |
+| Success End Condition | The membership starts in Trial (or Active on Annual), the first invoice is created and a welcome message is sent. If they were referred, the referrer gets their credit |
+| Failed End Condition | Nothing is saved and nothing is charged |
+| Primary, Secondary Actors | Prospective Member; Payment Gateway |
+| Trigger | The person clicks Join |
 
 **Main success scenario**
 
@@ -46,24 +56,29 @@ Only UC9 (Manage Plans and Prices) and UC12 (View Reports) are not fully built o
 - **2:** Monthly €45, Student €30, Off-Peak €30, or Annual €450 paid upfront with no trial
 - **5:** Corporate 15% or Family 10%. Loyalty 5% needs 24 months, so it never applies at sign-up
 
-**Related information**
+| **Related information** | |
+| --- | --- |
+| Priority / Performance / Frequency | Top priority; under 2 seconds including the payment; around 20 a day |
+| Channel to actors | REST `POST /memberships` (through Postman or Swagger UI), and the Join screen prototype |
+| Open issues | Should a declined Annual payment be refused instead of starting Active? Family memberships with one payer were left out of scope (24 Oct) |
+| Due Date / Superordinates | Release 0.2.0 (done) / Manage memberships |
+| Subordinates | Calculate Charges, Apply Referral Credit |
 
-- **Priority / Performance / Frequency:** Top priority; under 2 seconds including the payment; around 20 a day
-- **Channel to actors:** REST `POST /memberships` (through Postman or Swagger UI), and the Join screen prototype
-- **Open issues:** Should a declined Annual payment be refused instead of starting Active? Family memberships with one payer were left out of scope (24 Oct)
-- **Due Date / Superordinates:** Release 0.2.0 (done) / Manage memberships
-- **Subordinates:** Calculate Charges, Apply Referral Credit
-
+```{=typst}
+#v(1em)
+```
 
 ## UC2: Book Class
 
-- **Goal in Context:** A member gets a place in a class, or a place on its waitlist when it's full
-- **Scope & Level:** Gym membership system (Booking), user goal
-- **Preconditions:** The member has a membership, and the class is on the timetable and hasn't started yet
-- **Success End Condition:** The member has a confirmed booking or a waitlist position, any premium surcharge is recorded, and a Trial booking is counted
-- **Failed End Condition:** Nothing is booked or charged, and the member is told why
-- **Primary, Secondary Actors:** Member; Front Desk Staff when they book for a member
-- **Trigger:** The member picks a class and clicks Book
+| Use case 2 | Book Class |
+| --- | --- |
+| Goal in Context | A member gets a place in a class, or a place on its waitlist when it's full |
+| Scope & Level | Gym membership system (Booking), user goal |
+| Preconditions | The member has a membership, and the class is on the timetable and hasn't started yet |
+| Success End Condition | The member has a confirmed booking or a waitlist position, any premium surcharge is recorded, and a Trial booking is counted |
+| Failed End Condition | Nothing is booked or charged, and the member is told why |
+| Primary, Secondary Actors | Member; Front Desk Staff when they book for a member |
+| Trigger | The member picks a class and clicks Book |
 
 **Main success scenario**
 
@@ -82,18 +97,25 @@ Only UC9 (Manage Plans and Prices) and UC12 (View Reports) are not fully built o
 
 - **4:** Annual members and normal classes pay no surcharge. Front Desk Staff can also book on a member's behalf
 
-**Related information**
+| **Related information** | |
+| --- | --- |
+| Priority / Performance / Frequency | Top priority; under 1 second, and if two members race for the last place only one gets it; around 500 a day |
+| Channel to actors | REST `POST /classes/{classId}/bookings`, and the Book a Class screen prototype |
+| Open issues | Can a member book two classes that overlap? Should the waitlist still promote people within 2 hours of the start? |
+| Due Date / Superordinates | Release 1.0 / Manage bookings |
+| Subordinates | Verify Membership Status, Join Waitlist |
 
-- **Priority / Performance / Frequency:** Top priority; under 1 second, and if two members race for the last place only one gets it; around 500 a day
-- **Channel to actors:** REST `POST /classes/{classId}/bookings`, and the Book a Class screen prototype
-- **Open issues:** Can a member book two classes that overlap? Should the waitlist still promote people within 2 hours of the start?
-- **Due Date / Superordinates:** Release 1.0 / Manage bookings
-- **Subordinates:** Verify Membership Status, Join Waitlist
-
+```{=typst}
+#v(1em)
+```
 
 ## Quality Attributes
 
 We picked extensibility, which the specification asked for, and testability. Both are written as scenarios from Bass et al. (2019), and under each one we list the tactics we used and where they show up in our code.
+
+```{=typst}
+#v(1em)
+```
 
 ### QA1: Extensibility
 
@@ -114,6 +136,10 @@ Tactics (modifiability):
 
 The same idea works for discounts (just add another `DiscountPolicy`, our Strategy pattern) and for membership states (another `MembershipState`). We also made `PlanFactoryTest` fail if someone adds a `PlanType` without a class for it, so it can't be forgotten.
 
+```{=typst}
+#v(1em)
+```
+
 ### QA2: Testability
 
 Most of our rules depend on dates, like the 7-day trial or being Lapsed for 60 days. We obviously can't wait 60 days to see if a test passes, so we needed every rule to be testable quickly and give the same result every time, without charging any real card or writing any files.
@@ -131,6 +157,10 @@ Tactics (testability):
 - **Abstract data sources:** services only see the `port.out` repositories, so tests can swap in `InMemoryRepository`.
 - **Specialised interfaces:** `PaymentGateway` and `NotificationSender` are ports too, so tests use fakes that decline the cards we choose and record every message sent.
 
+```{=typst}
+#v(1em)
+```
+
 ## GUI Prototypes
 
 These are the wireframes for our two key use cases. We didn't build actual screens, since the business logic was our focus, so for now the same requests go through Postman or Swagger UI.
@@ -141,6 +171,14 @@ These are the wireframes for our two key use cases. We didn't build actual scree
 ![Book a Class screen for UC2](../requirements/gui-book-class.png){width=100%}
 :::
 
-The Join screen follows UC1 from top to bottom. It only asks for what our rules actually need, and it shows the first payment before the person pays. For example, Bob joining on 25 October pays €45 × 7/31 = €10.16 for the rest of the month (BR-P4). If extension 3a refuses them, the reason shows up under the form before anything is charged.
+**Join screen** (UC1):
 
-The Book a Class screen follows UC2. The bar at the top shows everything that gets checked before a booking: the plan, the state, how many bookings are used and whether they are suspended. Each class shows how many places are left with a Book or Join waitlist button, premium classes show the €8 surcharge, and when a booking is refused, the reason from the membership is shown, like in extension 2a.
+- It follows UC1 from top to bottom, and only asks for what our rules actually need.
+- It shows the first payment before the person pays. For example, Bob joining on 25 October pays €45 × 7/31 = €10.16 for the rest of the month (BR-P4).
+- If extension 3a refuses them, the reason shows up under the form before anything is charged.
+
+**Book a Class screen** (UC2):
+
+- The bar at the top shows everything checked before a booking: the plan, the state, how many bookings are used and whether they are suspended.
+- Each class shows how many places are left, with a Book or Join waitlist button, and premium classes show the €8 surcharge.
+- When a booking is refused, the reason from the membership is shown, like in extension 2a.
