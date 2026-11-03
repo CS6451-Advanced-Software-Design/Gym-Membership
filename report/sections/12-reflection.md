@@ -41,29 +41,29 @@ Overall, the project changed how I think about "added value": it is not a checkl
 
 ## Dhruv Punj
 
-As the Business Analyst I learned that requirements are mostly decisions. The first use case drafts left questions open, and on 24 Oct I had to settle them before any code could be written:
+As the Business Analyst, I learned that requirements are mostly decisions. The first use case drafts left some questions open, and on 24 Oct I had to settle them before any code could be written:
 
 - a trial member pays a pro-rated first charge straight away;
-- Annual starts Active with no trial;
-- a membership left Lapsed for 60 days is cancelled;
+- the Annual plan starts Active, with no trial;
+- a membership that stays Lapsed for 60 days is cancelled;
 - family plans are out of scope.
 
-Writing UC1 in the full template later showed me a gap I had missed while coding: a declined Annual payment still starts the membership Active. Walking through every extension is what found it, so I now see the template as a way of checking the design, not just documenting it.
+Later, when I wrote UC1 in the full template, I found a gap that I had missed while coding: a declined Annual payment still starts the membership as Active. I only found it by going through every extension step by step, so now I see the template as a way of checking the design, not just documenting it.
 
-Building Membership with the State pattern was where the course made the most sense to me:
+Building Membership with the State pattern was the part where the course made the most sense to me:
 
-- each state in the §6 state chart became a subclass and each arrow a method;
-- the base class refuses everything by default, so a Frozen membership can't book without a single `if` on the status;
-- the states are so small that I could test every arrow of the chart.
+- each state in the §6 state chart became a subclass, and each arrow became a method;
+- the base class refuses everything by default, so a Frozen membership can't book a class without a single `if` on the status;
+- the states are so small that I could write a test for every arrow of the chart.
 
-I also learned to be careful with names: `PlanFactory` is a simple factory, not the GoF Factory Method.
+I also learned to be careful with names, because `PlanFactory` is a simple factory and not the GoF Factory Method.
 
-Working inside the hexagon taught me to respect boundaries other people own. Membership had to bill through Billing's ports without changing Chirag's `BillingService`, and ArchUnit failed my build when one of my DTOs reached into `port.in`. The most surprising bug wasn't in my logic: memberships already saved on Railway had no value for my new fields, so they failed to load until I made those fields optional. Data outlives code.
+Working inside the hexagon taught me to respect the boundaries of code that other people own. Membership had to bill members through Billing's ports without changing Chirag's `BillingService`, and ArchUnit failed my build when one of my DTOs reached into `port.in`. The most surprising bug was not in my logic at all: memberships that were already saved on Railway had no value for my new fields, so they failed to load until I made those fields optional. So, data lives longer than code.
 
-What didn't work, and what I would do differently:
+What didn't work, and what I would do differently next time:
 
-- **I started late.** I reviewed drafts in weeks 5 and 6 but made no commits until 21 Oct, so most of my code arrived in one large pull request (#38, 20 commits). Smaller pull requests from the first iteration would have been easier to review and shown my progress week by week.
-- **I sketched after coding.** My hand sketches record the design rather than help me find it; next time I would sketch first.
-- **GenAI needed checking.** I used it a lot, and one draft claimed the Loyalty discount could apply at sign-up, which it can't, so now I check everything it produces against the code and the brief.
+- **I started late.** I reviewed drafts in weeks 5 and 6 but didn't make any commits until 21 Oct, so most of my code came in one big pull request (#38, 20 commits). Smaller pull requests from the first iteration would have been easier to review and would have shown my progress week by week.
+- **I sketched after coding.** My hand sketches record the design instead of helping me find it, so next time I would sketch first.
+- **GenAI needed checking.** I used it a lot, and one draft said the Loyalty discount could apply at sign-up, which it can't, so now I check everything it gives me against the code and the brief.
 
-Overall the project showed me what the lectures meant by analysis feeding design: the business rules, state chart and use cases decided my classes before I wrote them, and the tests and CI kept them doing what the requirements said.
+Overall, this project showed me what the lectures meant by analysis feeding design: the business rules, the state chart and the use cases decided my classes before I wrote them, and the tests and CI made sure they kept doing what the requirements said.
