@@ -31,44 +31,20 @@ Table: Types (classes, interfaces, records and enums) and lines of code per pack
 
 ## Classes, Authors and Lines of Code
 
-```{=typst}
-#[
-#show table: set text(size: 8pt)
-#set table(inset: 3pt)
-```
-
-| Package | Classes (main author, lines of code) |
+| Package | Classes by main author, with lines of code |
 | --- | --- |
-| gym | BillingConfiguration (Chirag, 16), GymApplication (Chirag, 19), InterceptorConfiguration (Chirag, 20), OpenApiConfiguration (Chirag, 164) |
-| adapter.logging | LoggingInterceptor (Chirag, 37), Outcome (Chirag, 13) |
-| adapter.notification | EventNotificationSender (Dhruv, 16), NotificationLog (Dhruv, 14) |
-| adapter.payment | FakePaymentGateway (Dhruv, 36), PaymentProperties (Dhruv, 9) |
-| adapter.persistence | JsonFileBookingRepository (Bharat, 11), JsonFileChargeRepository (Chirag, 11), JsonFileCheckInRepository (DineshReddy, 11), JsonFileGymClassRepository (Bharat, 11), JsonFileInvoiceRepository (Chirag, 11), JsonFileMemberRepository (Chirag, 11), JsonFileMembershipRepository (Chirag, 11), JsonFileRepository (Chirag, 73), PersistenceProperties (Chirag, 6) |
-| controller | BillingController (Chirag, 46), BillingJob (Chirag, 19), BookingController (Bharat 97%, 103), ErrorHandler (Chirag, 19), MemberController (DineshReddy 84%, 54), MembershipChecksJob (Dhruv, 15), MembershipController (Dhruv 97%, 125) |
-| domain | ActiveState (Dhruv, 55), AnnualPlan (Dhruv, 19), BestDiscount (Chirag, 16), BillingAccount (Chirag, 11), Booking (Bharat, 40), BookingResult (Bharat, 12), BookingStatus (Bharat, 7), CancelledState (Dhruv, 7), Charge (Chirag, 25), ChargeType (Chirag, 12), CheckIn (DineshReddy, 11), CorporateDiscount (Chirag, 7), DiscountPolicy (Chirag, 4), FamilyDiscount (Chirag, 7), Freeze (Dhruv, 11), FrozenState (Dhruv, 21), GymClass (Bharat, 47), Invoice (Chirag, 39), InvoiceStatus (Chirag, 5), LapsedState (Dhruv, 34), LoyaltyDiscount (Chirag, 7), Member (Chirag 88%, 15), Membership (Dhruv 79%, 106), MembershipState (Dhruv 78%, 49), MembershipStateFactory (DineshReddy, 16), MembershipStatus (Chirag, 8), Money (Dhruv, 68), MonthlyPlan (Dhruv, 10), NoShows (Bharat, 21), NotFoundException (Chirag, 6), Notification (Dhruv, 9), OffPeakPlan (Dhruv, 22), Plan (Dhruv, 30), PlanFactory (Dhruv, 24), PlanType (Chirag, 14), RuleViolationException (Chirag, 6), StudentPlan (Dhruv, 18), TrialState (Dhruv 88%, 55), Waitlist (Bharat, 43) |
-| dto | AddClassRequest (Bharat, 11), BillingRunRequest (Chirag, 6), BookClassRequest (Bharat 90%, 5), BookClassResponse (Bharat, 9), BookingResponse (Bharat, 9), CancellationResponse (Dhruv, 8), ChargeResponse (Chirag, 10), CheckInResponse (DineshReddy, 8), ClassResponse (Bharat, 10), FreezeRequest (Dhruv, 5), InvoiceResponse (Chirag, 25), MemberResponse (DineshReddy, 15), MembershipResponse (Dhruv 86%, 36), PlanResponse (Dhruv, 11), SignUpRequest (Dhruv 96%, 15), SignUpResponse (Dhruv, 8) |
-| interceptor | UseCaseContext (Chirag, 52), UseCaseDispatcher (Chirag, 34), UseCaseInterception (Chirag, 51), UseCaseInterceptor (Chirag, 9) |
-| port.in | BookClassUseCase (Bharat, 5), BookingCommandsUseCase (Bharat, 8), CalculateChargesUseCase (Chirag, 7), CancelBookingUseCase (Bharat, 5), CancelMembershipUseCase (Dhruv, 8), CheckInUseCase (DineshReddy, 7), FreezeMembershipUseCase (Dhruv, 6), ManageScheduleUseCase (Bharat, 10), PayArrearsUseCase (Chirag, 6), RecordAttendanceUseCase (Bharat, 6), RecordChargeUseCase (Chirag, 8), RestoreMembershipUseCase (Dhruv, 5), RunDailyChecksUseCase (Dhruv, 6), RunMonthlyBillingUseCase (Chirag, 7), SignUpUseCase (Dhruv, 11), UndoBookingUseCase (Bharat, 7), ViewInvoicesUseCase (Chirag, 6), ViewMemberUseCase (DineshReddy, 5), ViewMembershipUseCase (Dhruv, 8) |
-| port.out | BookingRepository (Bharat, 4), ChargeRepository (Chirag, 4), CheckInRepository (DineshReddy, 4), GymClassRepository (Bharat, 4), InvoiceRepository (Chirag, 4), MemberRepository (DineshReddy 67%, 8), MembershipRepository (Chirag, 4), NotificationSender (Dhruv, 5), PaymentGateway (Dhruv, 5), Repository (Chirag, 9) |
-| service | AttendanceService (Bharat, 50), BillingAccountFactory (DineshReddy, 54), BillingService (Chirag 96%, 227), BookClassCommand (Bharat, 30), BookingCommand (Bharat, 5), BookingCommandService (Bharat, 51), BookingQueries (Bharat, 63), BookingService (Bharat, 174), CancelBookingCommand (Bharat, 22), MemberService (DineshReddy, 73), MembershipDailyChecksService (DineshReddy, 75), MembershipService (Dhruv 97%, 147), ScheduleService (Bharat, 50) |
-| test: gym | ArchitectureTest (Chirag, 52), BillingE2E (Chirag, 122), BookingE2E (Bharat, 232), GymApplicationIT (Chirag, 9), MemberE2E (DineshReddy, 96), MembershipE2E (Dhruv, 116), OpenApiSpecIT (Chirag 96%, 60) |
-| test: adapter.logging | LoggingInterceptorTest (Chirag, 64) |
-| test: adapter.notification | NotificationIT (Dhruv 96%, 21) |
-| test: adapter.payment | FakePaymentGatewayTest (Dhruv, 33) |
-| test: adapter.persistence | BillingPersistenceIT (Chirag, 44), BookingPersistenceIT (Bharat, 42), JsonFileRepositoryIT (Chirag 84%, 62), MemberPersistenceIT (DineshReddy, 21), MembershipPersistenceIT (Dhruv, 38) |
-| test: controller | BillingControllerTest (Chirag, 62), BillingJobIT (Chirag, 23), BillingJobTest (Chirag, 24), BookingControllerTest (Bharat, 188), ErrorHandlerTest (Chirag, 39), MembershipChecksJobIT (Dhruv, 23), MembershipChecksJobTest (Dhruv, 17) |
-| test: domain | BookingTest (Bharat, 52), DiscountPolicyTest (Chirag, 35), GymClassTest (Bharat, 71), InvoiceTest (Chirag, 43), MembershipStateTest (Dhruv 92%, 152), MoneyTest (Dhruv, 59), NoShowsTest (Bharat, 46), PlanFactoryTest (Dhruv, 62), WaitlistTest (Bharat, 58) |
-| test: interceptor | InterceptorWiringIT (Chirag, 25), UseCaseDispatcherTest (Chirag, 49), UseCaseInterceptionTest (Chirag, 91) |
-| test: port.in | PingUseCase (Chirag, 14) |
-| test: port.out | MemberRepositoryTest (DineshReddy, 24) |
-| test: service | BillingServiceTest (Chirag 99%, 239), BookingCommandServiceTest (Bharat, 226), BookingServiceTest (Bharat, 797), MemberServiceTest (DineshReddy, 82), MembershipServiceTest (Dhruv 92%, 187), ScheduleServiceTest (Bharat, 70) |
-| test: support | InMemoryRepository (Dhruv, 31), TestClock (Dhruv, 30) |
+| gym | **Chirag:** BillingConfiguration 16, GymApplication 19, InterceptorConfiguration 20, OpenApiConfiguration 164 |
+| adapter | **Chirag:** LoggingInterceptor 37, Outcome 13, JsonFileChargeRepository 11, JsonFileInvoiceRepository 11, JsonFileMemberRepository 11, JsonFileMembershipRepository 11, JsonFileRepository 73, PersistenceProperties 6; **Dhruv:** EventNotificationSender 16, NotificationLog 14, FakePaymentGateway 36, PaymentProperties 9; **Bharat:** JsonFileBookingRepository 11, JsonFileGymClassRepository 11; **DineshReddy:** JsonFileCheckInRepository 11 |
+| controller | **Chirag:** BillingController 46, BillingJob 19, ErrorHandler 19; **Bharat:** BookingController 103; **DineshReddy:** MemberController 54; **Dhruv:** MembershipChecksJob 15, MembershipController 125 |
+| domain | **Dhruv:** ActiveState 55, AnnualPlan 19, CancelledState 7, Freeze 11, FrozenState 21, LapsedState 34, Membership 106, MembershipState 49, Money 68, MonthlyPlan 10, Notification 9, OffPeakPlan 22, Plan 30, PlanFactory 24, StudentPlan 18, TrialState 55; **Chirag:** BestDiscount 16, BillingAccount 11, Charge 25, ChargeType 12, CorporateDiscount 7, DiscountPolicy 4, FamilyDiscount 7, Invoice 39, InvoiceStatus 5, LoyaltyDiscount 7, Member 15, MembershipStatus 8, NotFoundException 6, PlanType 14, RuleViolationException 6; **Bharat:** Booking 40, BookingResult 12, BookingStatus 7, GymClass 47, NoShows 21, Waitlist 43; **DineshReddy:** CheckIn 11, MembershipStateFactory 16 |
+| dto | **Bharat:** AddClassRequest 11, BookClassRequest 5, BookClassResponse 9, BookingResponse 9, ClassResponse 10; **Chirag:** BillingRunRequest 6, ChargeResponse 10, InvoiceResponse 25; **Dhruv:** CancellationResponse 8, FreezeRequest 5, MembershipResponse 36, PlanResponse 11, SignUpRequest 15, SignUpResponse 8; **DineshReddy:** CheckInResponse 8, MemberResponse 15 |
+| interceptor | **Chirag:** UseCaseContext 52, UseCaseDispatcher 34, UseCaseInterception 51, UseCaseInterceptor 9 |
+| port | **Bharat:** BookClassUseCase 5, BookingCommandsUseCase 8, CancelBookingUseCase 5, ManageScheduleUseCase 10, RecordAttendanceUseCase 6, UndoBookingUseCase 7, BookingRepository 4, GymClassRepository 4; **Chirag:** CalculateChargesUseCase 7, PayArrearsUseCase 6, RecordChargeUseCase 8, RunMonthlyBillingUseCase 7, ViewInvoicesUseCase 6, ChargeRepository 4, InvoiceRepository 4, MembershipRepository 4, Repository 9; **Dhruv:** CancelMembershipUseCase 8, FreezeMembershipUseCase 6, RestoreMembershipUseCase 5, RunDailyChecksUseCase 6, SignUpUseCase 11, ViewMembershipUseCase 8, NotificationSender 5, PaymentGateway 5; **DineshReddy:** CheckInUseCase 7, ViewMemberUseCase 5, CheckInRepository 4, MemberRepository 8 |
+| service | **Bharat:** AttendanceService 50, BookClassCommand 30, BookingCommand 5, BookingCommandService 51, BookingQueries 63, BookingService 174, CancelBookingCommand 22, ScheduleService 50; **DineshReddy:** BillingAccountFactory 54, MemberService 73, MembershipDailyChecksService 75; **Chirag:** BillingService 227; **Dhruv:** MembershipService 147 |
 
-Table: Every class, by package, with the member who wrote most of its lines (with their share when it is under 100%) and its lines of code. Authorship by `git blame -w -M` on commit 41bed5f (non-blank lines), lines of code by cloc 2.02
+Table: Every class in the main code, grouped by package and by the member who wrote most of its lines, with its lines of code. Authorship by `git blame -w -M` on commit 41bed5f (non-blank lines), lines of code by cloc 2.02
 
-```{=typst}
-]
-```
+The 44 test classes (3831 lines) follow the same packages and are counted in the two tables around this one.
 
 ## Lines of Code per Member
 
@@ -92,5 +68,5 @@ Table: Lines per member in the code and tests on commit 41bed5f, by `git blame -
 
 ## Diary
 
-::: {include="../diary.md" merge="true" widths="0.07 0.08 0.45 0.2 0.2" size="7pt"}
+::: {include="../diary.md" merge="true" widths="0.08 0.46 0.23 0.23" size="8pt"}
 :::

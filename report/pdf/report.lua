@@ -8,8 +8,7 @@
 -- Includes: a div such as ::: {include="../diary.md"} ::: is replaced by that file, without its title and
 -- introduction, with its headings moved down a level (or by `shift`). A long table can be fitted to the page with
 -- `widths` (each column's share of the page width, e.g. "0.1 0.9") and `size` (its text size, e.g. "8pt").
--- `merge` turns a file of one table per heading (the diary's weeks) into one table, with the heading's first two
--- words in a new first column and each non-empty bold-led paragraph (e.g. **Notes:**) as a row of its own.
+-- `merge` turns a file of one table per heading (the diary's weeks) into one table with a row per heading.
 -- Grids: a div such as ::: {.grid columns=2} ::: lays its figures out side by side, `columns` to a row, so a page
 -- holds more of them. Give each image a width (e.g. {width=100%}), which is then a share of its column.
 -- Landscape: a div such as ::: landscape ::: gets a page of its own turned sideways, for a diagram too wide to read
@@ -127,51 +126,111 @@ local function group(table)
   end
 end
 
--- One table from a heading-and-table-per-section file: each heading's first two words ("Week 4") go in a new first
--- column on its first row, and a non-empty paragraph after a table (e.g. **Notes:** ...) becomes a row of its own
+-- Drops the GenAI prompt and pull request numbers from a diary entry: §13 and the repository history already
+-- carry them, and in the merged table they only add length
+local function strip(inlines)
+  local markdown = pandoc.write(pandoc.Pandoc({ pandoc.Plain(inlines) }), 'markdown-smart', { wrap_text = 'none' })
+  markdown = markdown:gsub('\\#', '#')
+    :gsub('%s*%(PRs? #[^)]*%)', '')
+    :gsub('%s*%(#%d+[^)]*%)', '')
+    :gsub('[.;,]?%s*GenAI #[%d#–%-, ]*%d', '')
+    :gsub('%s*%(GenAI[^)]*%)', '')
+    :gsub('\n', ' ')
+  local blocks = pandoc.read(markdown, 'markdown-smart').blocks
+  return blocks[1] and blocks[1].content or pandoc.List()
+end
+
+-- One table from a heading-and-table-per-section file such as the diary: one row per heading, labelled with the
+-- heading's first two words ("Week 4"). Each later column lists every first-column entry (the member) that has
+-- something in it, with members who wrote the same thing combined, and a non-empty bold-led paragraph after the
+-- table (e.g. **Notes:** ...) is added to the second-to-last column
 local function merge(blocks)
-  local merged, label
-  local function cell(inlines)
-    return pandoc.Cell({ pandoc.Plain(inlines or {}) })
+  local text = pandoc.utils.stringify
+  local result, header
+  local function lines(entries)
+    local inlines = pandoc.List()
+    for index, entry in ipairs(entries) do
+      if index > 1 then
+        inlines:insert(pandoc.LineBreak())
+      end
+      inlines:insert(pandoc.Strong({ pandoc.Str(table.concat(entry.names, ', ') .. ':') }))
+      inlines:insert(pandoc.Space())
+      inlines:extend(entry.content)
+    end
+    return pandoc.Cell({ pandoc.Plain(inlines) })
+  end
+  local rows = pandoc.List()
+  local label, columns
+  local function finish()
+    if not columns then
+      return
+    end
+    local cells = pandoc.List({ pandoc.Cell({ pandoc.Plain({ pandoc.Str(label) }) }) })
+    for _, entries in ipairs(columns) do
+      cells:insert(lines(entries))
+    end
+    rows:insert(pandoc.Row(cells))
+    columns = nil
   end
   for _, block in ipairs(blocks) do
     if block.t == 'Header' then
+      finish()
       local words = {}
-      for word in pandoc.utils.stringify(block):gmatch('%S+') do
+      for word in text(block):gmatch('%S+') do
         words[#words + 1] = word
       end
       label = (words[1] or '') .. ' ' .. (words[2] or '')
     elseif block.t == 'Table' then
-      local rows = pandoc.List()
+      if not header then
+        header = block
+      end
+      columns = {}
+      for index = 2, #block.colspecs do
+        columns[index - 1] = {}
+      end
       for _, body in ipairs(block.bodies) do
-        rows:extend(body.body)
-      end
-      if not merged then
-        merged = block
-        merged.colspecs:insert(1, { pandoc.AlignDefault, nil })
-        merged.head.rows[1].cells:insert(1, cell({ pandoc.Str('Week') }))
-        merged.bodies = { merged.bodies[1] }
-        merged.bodies[1].body = pandoc.List()
-      end
-      for index, row in ipairs(rows) do
-        row.cells:insert(1, cell(index == 1 and { pandoc.Str(label) } or nil))
-        merged.bodies[1].body:insert(row)
-      end
-    elseif block.t == 'Para' and merged then
-      local text = pandoc.utils.stringify(block)
-      local name, rest = text:match('^(%w+):%s*(.*)$')
-      if name and rest ~= '' then
-        local inlines = pandoc.List(block.content)
-        -- drop the leading **Name:** and the space after it
-        while #inlines > 0 and (inlines[1].t == 'Strong' or inlines[1].t == 'Space') do
-          inlines:remove(1)
+        for _, row in ipairs(body.body) do
+          local name = text(row.cells[1].contents)
+          for index = 2, #row.cells do
+            local content = strip(row.cells[index].contents[1] and row.cells[index].contents[1].content or pandoc.List())
+            local value = text(row.cells[index].contents)
+            if value ~= '' then
+              local entries = columns[index - 1]
+              local found
+              for _, entry in ipairs(entries) do
+                if entry.value == value then
+                  found = entry
+                end
+              end
+              if found then
+                table.insert(found.names, name)
+              else
+                table.insert(entries, { names = { name }, value = value, content = pandoc.List(content) })
+              end
+            end
+          end
         end
-        local row = pandoc.Row({ cell(), cell({ pandoc.Str(name) }), cell(inlines), cell(), cell() })
-        merged.bodies[1].body:insert(row)
+      end
+    elseif block.t == 'Para' and columns then
+      local name, rest = text(block):match('^(%w+):%s*(.*)$')
+      if name and rest ~= '' then
+        local content = pandoc.List(block.content)
+        while #content > 0 and (content[1].t == 'Strong' or content[1].t == 'Space') do
+          content:remove(1)
+        end
+        table.insert(columns[#columns - 1], { names = { name }, value = rest, content = content })
       end
     end
   end
-  return merged and pandoc.Blocks({ merged }) or blocks
+  finish()
+  if not header then
+    return blocks
+  end
+  header.colspecs[1] = { pandoc.AlignDefault, nil }
+  header.head.rows[1].cells[1] = pandoc.Cell({ pandoc.Plain({ pandoc.Str('Week') }) })
+  header.bodies = { header.bodies[1] }
+  header.bodies[1].body = rows
+  return pandoc.Blocks({ header })
 end
 
 local function include(div, base)
