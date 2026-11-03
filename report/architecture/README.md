@@ -1,6 +1,6 @@
 # Architecture (report §5)
 
-> **Bootstrap notes (GenAI, prompts #6–7 in [genai-prompts.md](../genai-prompts.md)).** These are facts and decisions for the Architect, not report text. The report section (max 2 pages) must be written in our own words.
+> **Bootstrap notes (GenAI, prompts #5–6 in [genai-prompts.md](../genai-prompts.md)).** These are facts and decisions for the Architect, not report text. The report section (max 2 pages) must be written in our own words.
 
 **Status:** pattern chosen 7 Oct 2026, Interceptor added 21 Oct 2026. MVC + **Hexagonal (Ports and Adapters)** + **Interceptor**, monolithic, one Spring Boot jar.
 
