@@ -32,6 +32,8 @@ Table: PMD and CK before and after refactoring (`report/metrics/before-refactor/
 
 Both new classes carry zero PMD violations. Neither extraction needed any Spring wiring changes: `MembershipChecksJob` and `MembershipController` already depended on the `RunDailyChecksUseCase` *interface*, not the concrete class, so Spring injects the new bean automatically. The full test suite (unit, integration, end-to-end, real Spring context boot) stayed green before and after each change.
 
+Booking (Bharat's feature) was still being built when the two classes above were picked, so it was deliberately left out and re-checked once it settled. By 2 Nov, `BookingService`'s own WMC had already dropped from 40 to 30 as the Command-pattern work (`BookingCommandService`, `AttendanceService`, `ScheduleService`, `BookingQueries`) pulled responsibilities out of it, and PMD no longer flags it with `GodClass` or `TooManyMethods`. Re-running PMD and CK against the finished codebase (`report/metrics/` has the raw output) found zero `GodClass` or `CouplingBetweenObjects` violations anywhere - the two refactors above already removed every real instance, and nothing new has reappeared since - so a third refactor was not forced just to have one.
+
 ## SonarQube Cloud
 
 SonarQube Cloud now runs in CI's `metrics` job, authenticated with a `SONAR_TOKEN` secret, after the coverage/PMD gates. There is no true before/after pair for it the way PMD/CK have one: Sonar wasn't wired up until after both refactorings above were already merged, so a "before" snapshot would mean checking out an old commit by hand rather than showing what the pipeline actually measured at the time - not something to fake. What follows is the first real scan, plus what changed in the three days since.
