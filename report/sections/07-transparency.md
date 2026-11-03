@@ -27,24 +27,24 @@ patterns, testing and CI/CD. Then the diary, which comes from report/diary.md.
 | Tests (`code/src/test`) | 44 | 3831 |
 | **All** | **182** | **7180** |
 
-Table: Types (classes, interfaces, records and enums) and lines of code per package. Counted by cloc 2.02 on commit 41bed5f; lines of code leave out blank and comment lines
+Table: Types and lines of code per package (cloc, commit 41bed5f)
 
 ## Classes, Authors and Lines of Code
 
-| Package | Classes by main author, with lines of code |
-| --- | --- |
-| gym | **Chirag:** BillingConfiguration 16, GymApplication 19, InterceptorConfiguration 20, OpenApiConfiguration 164 |
-| adapter | **Chirag:** LoggingInterceptor 37, Outcome 13, JsonFileChargeRepository 11, JsonFileInvoiceRepository 11, JsonFileMemberRepository 11, JsonFileMembershipRepository 11, JsonFileRepository 73, PersistenceProperties 6; **Dhruv:** EventNotificationSender 16, NotificationLog 14, FakePaymentGateway 36, PaymentProperties 9; **Bharat:** JsonFileBookingRepository 11, JsonFileGymClassRepository 11; **DineshReddy:** JsonFileCheckInRepository 11 |
-| controller | **Chirag:** BillingController 46, BillingJob 19, ErrorHandler 19; **Bharat:** BookingController 103; **DineshReddy:** MemberController 54; **Dhruv:** MembershipChecksJob 15, MembershipController 125 |
-| domain | **Dhruv:** ActiveState 55, AnnualPlan 19, CancelledState 7, Freeze 11, FrozenState 21, LapsedState 34, Membership 106, MembershipState 49, Money 68, MonthlyPlan 10, Notification 9, OffPeakPlan 22, Plan 30, PlanFactory 24, StudentPlan 18, TrialState 55; **Chirag:** BestDiscount 16, BillingAccount 11, Charge 25, ChargeType 12, CorporateDiscount 7, DiscountPolicy 4, FamilyDiscount 7, Invoice 39, InvoiceStatus 5, LoyaltyDiscount 7, Member 15, MembershipStatus 8, NotFoundException 6, PlanType 14, RuleViolationException 6; **Bharat:** Booking 40, BookingResult 12, BookingStatus 7, GymClass 47, NoShows 21, Waitlist 43; **DineshReddy:** CheckIn 11, MembershipStateFactory 16 |
-| dto | **Bharat:** AddClassRequest 11, BookClassRequest 5, BookClassResponse 9, BookingResponse 9, ClassResponse 10; **Chirag:** BillingRunRequest 6, ChargeResponse 10, InvoiceResponse 25; **Dhruv:** CancellationResponse 8, FreezeRequest 5, MembershipResponse 36, PlanResponse 11, SignUpRequest 15, SignUpResponse 8; **DineshReddy:** CheckInResponse 8, MemberResponse 15 |
-| interceptor | **Chirag:** UseCaseContext 52, UseCaseDispatcher 34, UseCaseInterception 51, UseCaseInterceptor 9 |
-| port | **Bharat:** BookClassUseCase 5, BookingCommandsUseCase 8, CancelBookingUseCase 5, ManageScheduleUseCase 10, RecordAttendanceUseCase 6, UndoBookingUseCase 7, BookingRepository 4, GymClassRepository 4; **Chirag:** CalculateChargesUseCase 7, PayArrearsUseCase 6, RecordChargeUseCase 8, RunMonthlyBillingUseCase 7, ViewInvoicesUseCase 6, ChargeRepository 4, InvoiceRepository 4, MembershipRepository 4, Repository 9; **Dhruv:** CancelMembershipUseCase 8, FreezeMembershipUseCase 6, RestoreMembershipUseCase 5, RunDailyChecksUseCase 6, SignUpUseCase 11, ViewMembershipUseCase 8, NotificationSender 5, PaymentGateway 5; **DineshReddy:** CheckInUseCase 7, ViewMemberUseCase 5, CheckInRepository 4, MemberRepository 8 |
-| service | **Bharat:** AttendanceService 50, BookClassCommand 30, BookingCommand 5, BookingCommandService 51, BookingQueries 63, BookingService 174, CancelBookingCommand 22, ScheduleService 50; **DineshReddy:** BillingAccountFactory 54, MemberService 73, MembershipDailyChecksService 75; **Chirag:** BillingService 227; **Dhruv:** MembershipService 147 |
+| Package | Chirag | Bharat | DineshReddy | Dhruv |
+| --- | --- | --- | --- | --- |
+| gym | 4 / 219 | – | – | – |
+| adapter | 8 / 173 | 2 / 22 | 1 / 11 | 4 / 75 |
+| controller | 3 / 84 | 1 / 103 | 1 / 54 | 2 / 140 |
+| domain | 15 / 182 | 6 / 170 | 2 / 27 | 16 / 538 |
+| dto | 3 / 41 | 5 / 44 | 2 / 23 | 6 / 83 |
+| interceptor | 4 / 146 | – | – | – |
+| port | 9 / 55 | 8 / 49 | 4 / 24 | 8 / 54 |
+| service | 1 / 227 | 8 / 445 | 3 / 202 | 1 / 147 |
+| **Main code** | **47 / 1127** | **30 / 833** | **13 / 341** | **37 / 1037** |
+| tests | 18 / 1057 | 10 / 1782 | 4 / 223 | 12 / 769 |
 
-Table: Every class in the main code, grouped by package and by the member who wrote most of its lines, with its lines of code. Authorship by `git blame -w -M` on commit 41bed5f (non-blank lines), lines of code by cloc 2.02
-
-The 44 test classes (3831 lines) follow the same packages and are counted in the two tables around this one.
+Table: Classes / lines of code per member and package (`git blame`, commit 41bed5f). Full list in [Appendix A](#appendix-classes)
 
 ## Lines of Code per Member
 
@@ -56,7 +56,7 @@ The 44 test classes (3831 lines) follow the same packages and are counted in the
 | Dhruv | 1449 | 801 | 2250 | 25.3% |
 | **All** | **4865** | **4020** | **8885** | **100%** |
 
-Table: Lines per member in the code and tests on commit 41bed5f, by `git blame -w -M` (non-blank lines, so comments and Javadoc count, which is why the total is higher than cloc's)
+Table: Lines per member (`git blame`, commit 41bed5f, comments included)
 
 ## Responsibilities
 

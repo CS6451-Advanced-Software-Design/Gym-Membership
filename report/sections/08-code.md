@@ -26,7 +26,7 @@ We designed all our use cases to enter through a controller (or a scheduled job)
 | UC13 Daily Checks | MembershipChecksJob (daily), `POST /membership-checks` | RunDailyChecks | Membership­Daily­Checks­Service | TrialState, FrozenState, LapsedState |
 | UC14 Pay Arrears | `POST …/pay-arrears` | RestoreMembership, PayArrears | MembershipService, BillingService | LapsedState, Invoice |
 
-Table: Each use case built so far, from where it enters to the classes that carry it out
+Table: Use cases and the classes behind them
 
 <!-- UC9 and UC12 (plans and prices, reports) aren't built yet. -->
 

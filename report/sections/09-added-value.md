@@ -26,7 +26,7 @@ PMD and CK run on every PR, and I saved a copy of each stage in `report/metrics/
 | BillingService | CBO 25, WMC 54, RFC 76, LOC 192. PMD: GodClass, TooManyMethods, ExcessiveImports | CBO 22, WMC 44, RFC 64, LOC 171. PMD: TooManyMethods | Extracted `account()` and its two helpers into a new BillingAccountFactory, so GodClass is gone |
 | MembershipService | CBO 28, WMC 36, RFC 55, LOC 134. PMD: ExcessiveImports, CouplingBetweenObjects, TooManyMethods, UseLocaleWithCaseConversions x2 | CBO 26, WMC 25, RFC 49, LOC 96. PMD: TooManyMethods | Extracted `runDailyChecks()` into a new MembershipDailyChecksService, a nightly batch over every membership, and fixed the two UseLocaleWithCaseConversions with `Locale.ROOT` |
 
-Table: PMD and CK before and after refactoring (`report/metrics/before-refactor/`, `after-refactor-1/`, `after-refactor-2/`)
+Table: PMD and CK before and after refactoring (`report/metrics/`)
 
 Both new classes come out with zero PMD violations, and the full test suite stayed green before and after each change. I left Booking out while it was still being built, and when I re-checked it on 2 Nov the Command-pattern work had already cut `BookingService`'s WMC from 40 to 30, so I didn't force a third refactor.
 
@@ -44,6 +44,6 @@ SonarQube Cloud runs inside CI's `metrics` job. It was only wired in after both 
 | Maintainability rating | A (0 issues) |
 | Reliability rating | A (0 bugs) |
 
-![SonarQube Cloud's check on the `MembershipStateFactory` refactoring (PR #119): quality gate passed, 0 new issues, 0 security hotspots, 100% coverage on new code](../screenshots/sonarqube-pr-comment.png){width=60%}
+![SonarQube Cloud check on the refactoring (PR #119)](../screenshots/sonarqube-pr-comment.png){width=60%}
 
 Reliability took a bit more work to get to A. The scan first found 7 High severity issues. 5 of them were `MembershipState` holding static references to its own subclasses (rule `S2390`), which was real and is fixed by the `MembershipStateFactory` extraction. The other 2 were `day != DayOfWeek.SATURDAY` in `OffPeakPlan` (rule `S8696`, which wants `.equals()`). `DayOfWeek` is an enum, so `!=` is safe there, and I resolved both as `False Positive` in SonarCloud instead of changing the code.
