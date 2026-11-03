@@ -35,7 +35,13 @@ plugins="$HOME/Library/Application Support/VisualParadigm/plugins/blueprint"
 mkdir -p "$plugins/classes" && cp report/blueprints/plugin/plugin.xml "$plugins"
 javac --release 11 -cp "$app/app/lib/openapi.jar" -d "$plugins/classes" report/blueprints/plugin/Blueprint.java
 vp Plugin -project "$PWD/report/blueprints/gym-membership.vpp" -pluginid blueprint -pluginargs "$PWD/report/blueprints/edges.txt"
+
+# 4. Export from Community Edition: the same command-line runner, with its own JVM, and only a small corner mark
+ce="/Applications/Visual Paradigm CE.app/Contents/Resources"
+ce_classpath=$(grep -o '\-cp "[^"]*"' "$ce/app/scripts/ExportDiagramImage.sh" | sed 's/-cp "//; s/"$//')
+(cd "$ce/app/scripts" && "$ce/jre.bundle/Contents/Home/bin/java" -Djava.awt.headless=true -cp "$ce_classpath" com.vp.cmd.ExportDiagramImage \
+  -project "$PWD/report/blueprints/gym-membership.vpp" -out /tmp/blueprints -type png_with_background \
+  -diagram "Recovered package diagram" "Component diagram" "Deployment diagram")
 ```
 
-Then open the project in Community Edition and export the diagrams with **Project > Export > Diagrams as Image**. The exports have a transparent background, which turns black on GitHub's dark theme, so flatten each onto white: `magick <diagram>.png -background white -alpha remove -alpha off <diagram>.png`.
-The evaluation's own exports are covered in a watermark.
+Then copy the three PNGs over `package-diagram.png`, `component-diagram.png` and `deployment-diagram.png`. `png_with_background` keeps them on white, so they stay readable on GitHub's dark theme. The evaluation's own exports are covered in a watermark.
