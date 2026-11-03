@@ -21,10 +21,10 @@ One hacky workaround we did was the feature was not available in the CE, so we t
 | Instant Reverse on `code/src/main/java` | Every `record` type silently dropped (66 of 85 types on 27 Oct) |
 | Instant Reverse on `code/target/classes` | All 127 types and 14 packages |
 | Package edges from the `import` lines | 19 edges (Instant Reverse skips imports) |
-| Drawn by an Open API plugin (GenAI #57) | The three diagrams, in `report/blueprints/gym-membership.vpp` |
+| Drawn by an Open API plugin (GenAI #38) | The three diagrams, in `report/blueprints/gym-membership.vpp` |
 | Exported from Community Edition 18.1 | PNGs with a small Community Edition mark |
 
-Table: How the blueprints were recovered (first on 27 Oct, again on 3 Nov after Member and Booking)
+Table: How the blueprints were recovered (27 Oct, redone 3 Nov)
 
 When using source code for reverse engineering, we found 19 of the 85 types (every DTO and the core domain classes) were missing from the reversed model. The issue was our source code using the `record` feature from Java. Example -
 
@@ -43,7 +43,7 @@ It's a common way of defining data classes in Java since Java 16, a class whose 
 
 ## Design-Time Package Diagram
 
-![Recovered package diagram. A triangle marks a package whose classes implement interfaces in the other](../blueprints/package-diagram.png){width=100%}
+![Recovered package diagram (a triangle marks implemented interfaces)](../blueprints/package-diagram.png){width=100%}
 
 This is the real package diagram as interpreted by the Visual Paradigm software using our codebase, with the arrows taken from the imports. It mostly matches the design we created. Just a few differences exist that you can see below:
 
@@ -62,7 +62,7 @@ I believe the biggest issue to fix would be the `adapter.persistence` → `domai
 ::: landscape
 ## Component Diagram
 
-![Component diagram, built on the reversed port interfaces](../blueprints/component-diagram.png){width=88%}
+![Component diagram](../blueprints/component-diagram.png){width=88%}
 
 Here the diagram shows components as per the classes we needed in our code. The eight services sit in the middle as the core of the Hexagonal architecture we intended: each one provides its use case (`port.in`) ports on the left and uses the driven (`port.out`) ports on the right, which the JSON, notification and payment adapters implement. Where one service needs another, for example Booking charging the premium surcharge through `RecordChargeUseCase`, it goes through that port too. UseCaseDispatcher wraps all the use case ports, as the Interceptor pattern intended, and then calls the LoggingInterceptor.
 :::

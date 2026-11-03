@@ -7,7 +7,7 @@ The package, component and deployment diagrams, recovered from the code in Visua
 | [gym-membership.vpp](gym-membership.vpp) | The Visual Paradigm project: the model reversed from the code, and the three diagrams |
 | [package-diagram.png](package-diagram.png), [component-diagram.png](component-diagram.png), [deployment-diagram.png](deployment-diagram.png) | The diagrams, exported from Visual Paradigm Community Edition |
 | [edges.txt](edges.txt) | Package dependencies from the `import` lines: from, to, number of imports |
-| [plugin/](plugin) | The Visual Paradigm Open API plugin that drew the diagrams on the reversed model (GenAI #57) |
+| [plugin/](plugin) | The Visual Paradigm Open API plugin that drew the diagrams on the reversed model (GenAI #38) |
 
 ## Rebuilding
 
