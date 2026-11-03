@@ -577,7 +577,7 @@ paths:
         required: true
         schema:
           type: string
-        example: m-3f9c2a71
+        example: m-1d685de8
       responses:
         "422":
           description: "There is nothing to undo, or it is too late, e.g. the class\
@@ -686,7 +686,7 @@ paths:
         required: true
         schema:
           type: string
-        example: c-3f9c2a71
+        example: c-54b4cdb7
       requestBody:
         description: who is booking
         content:
@@ -757,7 +757,7 @@ paths:
         required: true
         schema:
           type: string
-        example: b-3f9c2a71
+        example: b-8e998e2b
       responses:
         "404":
           description: No booking has this id
@@ -810,7 +810,7 @@ paths:
         required: true
         schema:
           type: string
-        example: b-3f9c2a71
+        example: b-981af13d
       responses:
         "404":
           description: No booking has this id
@@ -861,7 +861,7 @@ paths:
         required: true
         schema:
           type: string
-        example: b-3f9c2a71
+        example: b-b94b7221
       responses:
         "404":
           description: No booking has this id
@@ -1460,7 +1460,7 @@ components:
         memberId:
           type: string
           description: the member booking
-          example: m-3f9c2a71
+          example: m-ca315689
           minLength: 1
       required:
       - memberId

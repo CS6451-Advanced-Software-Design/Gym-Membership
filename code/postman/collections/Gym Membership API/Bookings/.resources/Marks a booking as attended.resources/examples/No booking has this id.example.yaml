@@ -1,0 +1,29 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/bookings/:bookingId/attended"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: bookingId
+      value: b-b94b7221
+      disabled: false
+      description: (Required) the booking to mark
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 404
+  statusText: Not Found
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "detail": "Booking b-42 not found",
+        "instance": "/bookings/b-42/attended",
+        "status": 404,
+        "title": "Not Found"
+      }
+order: 2000

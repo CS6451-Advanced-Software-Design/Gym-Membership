@@ -1,0 +1,19 @@
+$kind: http-request
+description: Adds a class. <p>Puts a new class on the timetable with every place free.
+url: "{{baseUrl}}/classes"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "capacity": 12,
+      "name": "Spin",
+      "startTime": "1958-05-13T07:01:53.872Z",
+      "premium": false
+    }
+settings: {}
+examples: ./.resources/Adds a class.resources/examples
+order: 3000

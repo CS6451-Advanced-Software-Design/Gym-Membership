@@ -1,0 +1,30 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/bookings/:bookingId/no-show"
+  method: POST
+  headers:
+    Accept: application/json
+  pathVariables:
+    - key: bookingId
+      value: b-8e998e2b
+      disabled: false
+      description: (Required) the booking to mark
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "bookingId": "b-8e998e2b",
+        "memberId": "m-1d685de8",
+        "classId": "c-d66acda5",
+        "status": "NO_SHOW",
+        "bookedAt": "2026-11-02T18:39:13.000Z"
+      }
+order: 1000

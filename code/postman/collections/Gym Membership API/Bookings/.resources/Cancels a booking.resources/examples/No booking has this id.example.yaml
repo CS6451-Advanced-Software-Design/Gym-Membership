@@ -1,0 +1,29 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/bookings/:bookingId/cancel"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: bookingId
+      value: b-981af13d
+      disabled: false
+      description: (Required) the booking to cancel
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 404
+  statusText: Not Found
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "detail": "Booking b-42 not found",
+        "instance": "/bookings/b-42/cancel",
+        "status": 404,
+        "title": "Not Found"
+      }
+order: 2000

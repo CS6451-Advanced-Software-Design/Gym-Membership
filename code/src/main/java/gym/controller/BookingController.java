@@ -113,7 +113,7 @@ public class BookingController {
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
     @ApiResponse(responseCode = "422", description = "The class has started, the membership or plan doesn't allow it, the member is suspended, already has a place, or holds 5 future bookings",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public BookClassResponse book(@Parameter(example = "c-3f9c2a71") @PathVariable String classId, @Valid @RequestBody BookClassRequest request) {
+    public BookClassResponse book(@Parameter(example = "c-54b4cdb7") @PathVariable String classId, @Valid @RequestBody BookClassRequest request) {
         return BookClassResponse.from(request.memberId(), classId, commands.book(request.memberId(), classId));
     }
 
@@ -132,7 +132,7 @@ public class BookingController {
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
     @ApiResponse(responseCode = "422", description = "The booking is no longer booked, or its class has started",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public BookingResponse cancelBooking(@Parameter(example = "b-3f9c2a71") @PathVariable String bookingId) {
+    public BookingResponse cancelBooking(@Parameter(example = "b-981af13d") @PathVariable String bookingId) {
         return BookingResponse.from(commands.cancel(bookingId));
     }
 
@@ -152,7 +152,7 @@ public class BookingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponse(responseCode = "422", description = "There is nothing to undo, or it is too late, e.g. the class has started or the place has been taken",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public void undo(@Parameter(example = "m-3f9c2a71") @PathVariable String memberId) {
+    public void undo(@Parameter(example = "m-1d685de8") @PathVariable String memberId) {
         commands.undoLast(memberId);
     }
 
@@ -170,7 +170,7 @@ public class BookingController {
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
     @ApiResponse(responseCode = "422", description = "The booking is no longer booked, or its class hasn't started",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public BookingResponse markAttended(@Parameter(example = "b-3f9c2a71") @PathVariable String bookingId) {
+    public BookingResponse markAttended(@Parameter(example = "b-b94b7221") @PathVariable String bookingId) {
         return BookingResponse.from(attendance.markAttended(bookingId));
     }
 
@@ -189,7 +189,7 @@ public class BookingController {
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
     @ApiResponse(responseCode = "422", description = "The booking is no longer booked, or its class hasn't started",
             content = @Content(mediaType = PROBLEM, schema = @Schema(implementation = ProblemDetail.class)))
-    public BookingResponse markNoShow(@Parameter(example = "b-3f9c2a71") @PathVariable String bookingId) {
+    public BookingResponse markNoShow(@Parameter(example = "b-8e998e2b") @PathVariable String bookingId) {
         return BookingResponse.from(attendance.markNoShow(bookingId));
     }
 }

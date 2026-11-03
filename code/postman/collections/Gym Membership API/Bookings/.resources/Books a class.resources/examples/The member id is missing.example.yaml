@@ -1,0 +1,32 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/classes/:classId/bookings"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: classId
+      value: c-54b4cdb7
+      disabled: false
+      description: (Required) the class to book
+  body:
+    type: json
+    content: |-
+      {
+        "memberId": "m-ca315689"
+      }
+response:
+  statusCode: 400
+  statusText: Bad Request
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "detail": "Invalid request content.",
+        "instance": "/classes/c-54b4cdb7/bookings",
+        "status": 400,
+        "title": "Bad Request"
+      }
+order: 2000

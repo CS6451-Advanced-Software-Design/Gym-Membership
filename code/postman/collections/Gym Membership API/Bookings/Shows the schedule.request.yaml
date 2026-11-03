@@ -1,0 +1,9 @@
+$kind: http-request
+description: Shows the schedule. <p>Every class that hasn't started yet, soonest first, with its places left and the size of its waitlist.
+url: "{{baseUrl}}/classes"
+method: GET
+headers:
+  Accept: application/json
+settings: {}
+examples: ./.resources/Shows the schedule.resources/examples
+order: 2000

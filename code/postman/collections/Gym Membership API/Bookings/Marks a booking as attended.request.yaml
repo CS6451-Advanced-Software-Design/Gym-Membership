@@ -1,0 +1,14 @@
+$kind: http-request
+description: Marks a booking as attended. <p>Once the class has started, records that the member came.
+url: "{{baseUrl}}/bookings/:bookingId/attended"
+method: POST
+headers:
+  Accept: application/json
+pathVariables:
+  - key: bookingId
+    value: b-b94b7221
+    disabled: false
+    description: (Required) the booking to mark
+settings: {}
+examples: ./.resources/Marks a booking as attended.resources/examples
+order: 7000

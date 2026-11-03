@@ -1,0 +1,21 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/members/:memberId/bookings/undo"
+  method: POST
+  pathVariables:
+    - key: memberId
+      value: m-1d685de8
+      disabled: false
+      description: (Required) the member whose action to undo
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 204
+  statusText: No Content
+  headers:
+    Content-Type: text/plain
+  body:
+    type: text
+    content: ""
+order: 1000
