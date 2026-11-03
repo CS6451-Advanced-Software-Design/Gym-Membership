@@ -128,13 +128,11 @@ A gym will always want to add new plans, and each one comes with its own price, 
 | Response | One new `Plan` subclass, one new `PlanType` value and one line in `PlanFactory`, plus their tests |
 | Response measure | No changes to `MembershipService`, Billing, Booking or the controllers; the new plan shows up in `GET /plans`; all tests pass; done in under a day |
 
-Tactics (modifiability):
+Adding a Weekend plan, with the three modifiability tactics we used marked on it (new parts in green):
 
-- **Increase semantic coherence:** every plan keeps its own rules in its own class, like `StudentPlan`, `OffPeakPlan` and `AnnualPlan`.
-- **Use an intermediary:** only `PlanFactory` knows which class goes with which `PlanType`, so `MembershipService` never mentions a specific plan.
-- **Defer binding:** the plan is picked at run time and its rules are called through polymorphism, instead of a `switch` on the plan type.
+![QA1: what changes when a plan is added](../requirements/qa1-extensibility.png){width=85%}
 
-The same idea works for discounts (just add another `DiscountPolicy`, our Strategy pattern) and for membership states (another `MembershipState`). We also made `PlanFactoryTest` fail if someone adds a `PlanType` without a class for it, so it can't be forgotten.
+The same idea works for discounts (another `DiscountPolicy`) and membership states (another `MembershipState`), and `PlanFactoryTest` fails if a `PlanType` has no class.
 
 ```{=typst}
 #v(1em)
