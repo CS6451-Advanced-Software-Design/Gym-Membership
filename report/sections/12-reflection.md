@@ -63,7 +63,5 @@ Working inside the hexagon taught me to respect the boundaries of code that othe
 What didn't work, and what I would do differently next time:
 
 - **I started late.** I reviewed drafts in weeks 5 and 6 but didn't make any commits until 21 Oct, so most of my code came in one big pull request (#38, 20 commits). Smaller pull requests from the first iteration would have been easier to review and would have shown my progress week by week.
-- **I sketched after coding.** My hand sketches record the design instead of helping me find it, so next time I would sketch first.
-- **GenAI needed checking.** I used it a lot, and one draft said the Loyalty discount could apply at sign-up, which it can't, so now I check everything it gives me against the code and the brief.
 
 Overall, this project showed me what the lectures meant by analysis feeding design: the business rules, the state chart and the use cases decided my classes before I wrote them, and the tests and CI made sure they kept doing what the requirements said.
