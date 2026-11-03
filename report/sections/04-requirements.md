@@ -161,7 +161,7 @@ Tactics (testability):
 
 ## GUI Prototypes
 
-These are the wireframes for our two key use cases. We didn't build actual screens, since the business logic was our focus, so for now the same requests go through Postman or Swagger UI.
+We never planned to build a GUI. From the start our focus was the business logic, and we used Postman and Swagger UI to visually keep track of our API and try every request. These two wireframes for our key use cases are just for reference.
 
 ::: {.grid columns=2}
 ![Join screen for UC1 Sign Up](../requirements/gui-join.png){width=100%}
