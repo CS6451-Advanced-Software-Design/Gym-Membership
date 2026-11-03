@@ -65,7 +65,64 @@ public UseCaseDispatcher useCaseDispatcher() {
 
 ## Design Patterns
 
-*Observer (Bharat), with a snippet and its test.*
+### Observer
+
+We used Observer Pattern which is basically a way to say "tell whoever is interested" without knowing who that is. The main reason for observer is that BookingService should not know how a member is told. We used it in our project for future feature addition, like a new Listener Classes - Email, SMS, etc.
+
+1. When user cancel booking, it saves the cancelled booking and then calls the promoteFromWaitlist
+2. If someone is waiting and can still book the class, they get a place saved first, and then a message sent and `EventNotificationSender` publish the Notification as an event.
+3. The publisher does not know who the listener is, so future examples like email, sms can be added without changing the booking code. For now only `NotificationLog` exists which writes to the log
+
+```java
+// BookingService.promoteFromWaitlist
+if (next.isPresent()) {
+    classes.save(remaining);
+    takePlace(next.get(), gymClass, now);
+    // Sent last, so a member is only told once the place is really theirs
+    notifications.send(gymClass.promotionNotice(memberId));
+    return;
+}
+
+@Component
+public class EventNotificationSender implements NotificationSender {
+    @Override
+    public void send(Notification notification) {
+        events.publishEvent(notification);
+    }
+}
+
+@Component
+public class NotificationLog {
+    @EventListener
+    public void deliver(Notification notification) {
+        LOGGER.info("notify member {}: {} - {}", notification.memberId(), notification.subject(), notification.message());
+    }
+}
+```
+
+*The code shows after place is saved (promotion), notification is sent, publisher (`EventNotificationSender`) publishes event (showed only key lines, not whole class) (`gym/service`, `gym/adapter/notification`)*
+
+```java
+@Test
+void aPromotedMemberIsToldAboutTheirPlace() {
+    // BR-B2
+    spinClass(1);
+    activeMembership("m1");
+    activeMembership("m2");
+    Booking booking = service.book("m1", "c1").booking();
+    service.book("m2", "c1");
+
+    service.cancel(booking.bookingId());
+
+    assertEquals(1, notifications.size());
+    Notification notice = notifications.getFirst();
+    assertEquals("m2", notice.memberId());
+    assertEquals("You have a place in Spin", notice.subject());
+    assertTrue(notice.message().contains("2026-11-06 at 18:00"));
+}
+```
+
+*The test that proves m1 has the only place and m2 waits. m1 cancels, so m2 gets place and exactly one notification addressed to m2 (`BookingServiceTest`)*
 
 ### Strategy
 
