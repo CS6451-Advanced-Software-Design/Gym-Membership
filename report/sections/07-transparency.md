@@ -92,5 +92,5 @@ Table: Lines per member in the code and tests on commit 41bed5f, by `git blame -
 
 ## Diary
 
-::: {include="../diary.md" widths="0.11 0.43 0.23 0.23" size="8pt"}
+::: {include="../diary.md" merge="true" widths="0.07 0.08 0.45 0.2 0.2" size="7pt"}
 :::
