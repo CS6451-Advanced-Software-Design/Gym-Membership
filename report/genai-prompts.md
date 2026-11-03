@@ -158,5 +158,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 151 | 3 Nov | Chirag | "we can add a sketch like diagram to show something visually instead of using so many words" | A plain PlantUML diagram for QA1 (adding a Weekend plan, new parts in green, the three tactics as notes) in place of the QA1 tactics list |
 | 152 | 3 Nov | Chirag | "for 'GUI Prototypes' say that we had no plans of actually work on GUI and from start focused on postman and swaggerui for visually keeping track of our api. these 2 wireframes are just for reference" | The §4 GUI Prototypes intro reworded to say so |
 | 153 | 3 Nov | Chirag | "make 'Figure 2: QA1: what changes when a plan is added' very simple" | The QA1 diagram cut down to the classes and arrows, with the tactics named in one sentence under it |
+| 154 | 3 Nov | Chirag | "7.2 Classes, Authors and Lines of Code table is very very long, is it required to be in there by the specificaiton given by professor?", then "lets make it shorter" | Confirmed the spec requires it; the table regrouped to one row per package with its classes inline, the package-info rows dropped, at 8pt: about 4½ pages down to 1½ |
 
 Table: GenAI prompts
