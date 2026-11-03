@@ -1,0 +1,29 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/bookings/:bookingId/cancel"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: bookingId
+      value: b-981af13d
+      disabled: false
+      description: (Required) the booking to cancel
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity (WebDAV) (RFC 4918)
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "detail": "Booking b-981af13d is CANCELLED, so it can't be cancelled",
+        "instance": "/bookings/b-981af13d/cancel",
+        "status": 422,
+        "title": "Unprocessable Content"
+      }
+order: 3000

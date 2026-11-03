@@ -1,0 +1,29 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/bookings/:bookingId/no-show"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: bookingId
+      value: b-8e998e2b
+      disabled: false
+      description: (Required) the booking to mark
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity (WebDAV) (RFC 4918)
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "detail": "Booking b-8e998e2b is NO_SHOW, so it can't be marked as a no-show",
+        "instance": "/bookings/b-8e998e2b/no-show",
+        "status": 422,
+        "title": "Unprocessable Content"
+      }
+order: 3000

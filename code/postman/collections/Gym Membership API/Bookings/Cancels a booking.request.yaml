@@ -1,0 +1,14 @@
+$kind: http-request
+description: Cancels a booking. <p>Frees the place, which goes to the first member on the waitlist who can still book. Less than 2 hours before the class this costs €5, unless the member is on a Trial.
+url: "{{baseUrl}}/bookings/:bookingId/cancel"
+method: POST
+headers:
+  Accept: application/json
+pathVariables:
+  - key: bookingId
+    value: b-981af13d
+    disabled: false
+    description: (Required) the booking to cancel
+settings: {}
+examples: ./.resources/Cancels a booking.resources/examples
+order: 6000

@@ -1,0 +1,14 @@
+$kind: http-request
+description: "Undoes a member's last booking action. <p>Takes back their most recent booking or cancellation. Calling it again takes back the one before: <ul> <li>A booking is cancelled, and the usual late fee applies. A place on a waitlist is given up.</li> <li>A cancellation gives the same booking back, if the place hasn't been taken.</li> </ul> Fees are not refunded. The history is cleared if the app restarts."
+url: "{{baseUrl}}/members/:memberId/bookings/undo"
+method: POST
+headers:
+  Accept: application/problem+json
+pathVariables:
+  - key: memberId
+    value: m-1d685de8
+    disabled: false
+    description: (Required) the member whose action to undo
+settings: {}
+examples: ./.resources/Undoes a member's last booking action.resources/examples
+order: 1000

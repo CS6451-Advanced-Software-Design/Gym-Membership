@@ -1,0 +1,21 @@
+$kind: http-request
+description: Books a class. <p>Gives the member a place, or if the class is full, puts them on the waitlist. <code>bookingId</code> and <code>waitlistPosition</code> say which. The €8 premium surcharge is charged when they get a place.
+url: "{{baseUrl}}/classes/:classId/bookings"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+pathVariables:
+  - key: classId
+    value: c-54b4cdb7
+    disabled: false
+    description: (Required) the class to book
+body:
+  type: json
+  content: |-
+    {
+      "memberId": "m-ca315689"
+    }
+settings: {}
+examples: ./.resources/Books a class.resources/examples
+order: 4000

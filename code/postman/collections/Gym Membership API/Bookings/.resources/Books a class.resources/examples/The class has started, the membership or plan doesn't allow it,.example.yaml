@@ -1,0 +1,33 @@
+$kind: http-example
+name: The class has started, the membership or plan doesn't allow it, the member is suspended, already has a place, or holds 5 future bookings
+request:
+  url: "{{baseUrl}}/classes/:classId/bookings"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: classId
+      value: c-54b4cdb7
+      disabled: false
+      description: (Required) the class to book
+  body:
+    type: json
+    content: |-
+      {
+        "memberId": "m-ca315689"
+      }
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity (WebDAV) (RFC 4918)
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "detail": "Member m-ca315689 already has a place in class c-54b4cdb7",
+        "instance": "/classes/c-54b4cdb7/bookings",
+        "status": 422,
+        "title": "Unprocessable Content"
+      }
+order: 4000

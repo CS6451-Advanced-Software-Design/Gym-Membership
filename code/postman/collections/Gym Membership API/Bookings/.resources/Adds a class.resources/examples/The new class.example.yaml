@@ -1,0 +1,33 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/classes"
+  method: POST
+  headers:
+    Accept: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "capacity": 12,
+        "name": "Spin",
+        "startTime": "1958-05-13T07:01:53.872Z",
+        "premium": false
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "classId": "c-54b4cdb7",
+        "name": "Spin",
+        "startTime": "2026-11-06T18:00:00.000Z",
+        "capacity": 12,
+        "premium": false,
+        "placesLeft": 12,
+        "waitlistSize": 0
+      }
+order: 1000

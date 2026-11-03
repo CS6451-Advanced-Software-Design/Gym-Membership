@@ -1,0 +1,14 @@
+$kind: http-request
+description: Marks a booking as a no-show. <p>Once the class has started, records that the member didn't come. This costs €5, and 3 no-shows in 30 days suspend booking for 7 days.
+url: "{{baseUrl}}/bookings/:bookingId/no-show"
+method: POST
+headers:
+  Accept: application/json
+pathVariables:
+  - key: bookingId
+    value: b-8e998e2b
+    disabled: false
+    description: (Required) the booking to mark
+settings: {}
+examples: ./.resources/Marks a booking as a no-show.resources/examples
+order: 5000

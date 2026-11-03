@@ -1,0 +1,32 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/classes/:classId/bookings"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: classId
+      value: c-54b4cdb7
+      disabled: false
+      description: (Required) the class to book
+  body:
+    type: json
+    content: |-
+      {
+        "memberId": "m-ca315689"
+      }
+response:
+  statusCode: 404
+  statusText: Not Found
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "detail": "Class c-42 not found",
+        "instance": "/classes/c-42/bookings",
+        "status": 404,
+        "title": "Not Found"
+      }
+order: 3000
