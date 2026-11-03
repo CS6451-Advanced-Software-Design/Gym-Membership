@@ -64,7 +64,7 @@ Table: Lines per member (`git blame`, commit 41bed5f, comments included)
 | --- | --- |
 | Design patterns | Chirag worked on Strategy (discount) Interceptor, Hexagonal and MVC Skeleton and the ArchitectureTest. Bharat worked on Command Pattern (for undo functionality) and used Observer Pattern for waitlist notification. Dhruv worked on State (membership lifecycle part) and Factory (PlanFactory Part) and Observer (port, publisher and listener). DineshReddy used Observer for check-in notifications |
 | Testing | Each member tested their own features. Chirag split the tests into 3 kinds (unit, integration, end-to-end), each as its own CI check. Bharat did the most test code, 1857 lines that includes - BookingServiceTest, BookingCommandServiceTest, BookingPersistenceIT and BookingE2E |
-| CI/CD | Chirag created CI Pipeline, the metrics comment on PRs and the Railway deployment and Report PDF build. DineshReddy did SonarQube scan, the Docker build on every PR, the live-app deploy check and CI fixes |
+| CI/CD | DineshReddy created the CI pipeline, the metrics comment on PRs, the Railway deployment and the report PDF build, working on Chirag's laptop, so those commits are under Chirag's account. He also did the SonarQube scan, the Docker build on every PR, the live-app deploy check and CI fixes |
 
 ## Diary
 
