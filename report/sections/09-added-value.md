@@ -45,19 +45,19 @@ SonarQube Cloud now runs inside CI's `metrics` job, after the coverage and PMD g
 | Duplication | 0.0% |
 | Security rating | A (0 vulnerabilities) |
 | Security review rating | A (0 hotspots) |
-| Maintainability rating | A (2 issues, same OffPeakPlan pair as Reliability) |
-| Reliability rating | D (2 issues) |
+| Maintainability rating | A (0 issues) |
+| Reliability rating | A (0 bugs) |
 
-![SonarQube Cloud overview: public project, quality gate passed, 2 issues, 0% duplication, 96.3% coverage](../screenshots/sonarqube-overview.png){width=100%}
+![SonarQube Cloud overview: public project, quality gate passed, 0 issues, 0% duplication, 96.3% coverage](../screenshots/sonarqube-overview.png){width=100%}
 
-Security, Security Hotspots and Maintainability all came back A, so there's nothing really to explain there:
+Security, Security Hotspots and Maintainability all came back A straight away:
 
 ![SonarQube Cloud Security snapshot: rating A, 0 issues](../screenshots/sonarqube-security.png){width=100%}
 
 ![SonarQube Cloud Security Hotspot snapshot: review rating A, 0 hotspots](../screenshots/sonarqube-security-hotspot.png){width=100%}
 
-![SonarQube Cloud Maintainability snapshot: rating A, 2 issues, 0 closed](../screenshots/sonarqube-maintainability.png){width=100%}
+![SonarQube Cloud Maintainability snapshot: rating A, 0 issues](../screenshots/sonarqube-maintainability.png){width=100%}
 
-Reliability is the only rating that isn't A, so I want to actually explain it instead of just leaving the number there. SonarQube grades by the worst open issue, not by how many there are. The scan first found 7 High severity issues. 5 of them were `MembershipState` holding static references to its own 5 subclasses (rule `S2390`), that one's real, and it's fixed now by the `MembershipStateFactory` extraction above. The other 2 are in `OffPeakPlan.java:22`, on the line `day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY` (rule `S8696`, which wants `.equals()` instead of `==`). I'm leaving that one alone on purpose, it's a false positive: `DayOfWeek` is an enum, so `!=` on enum constants is guaranteed safe by the language itself, and it's actually what Effective Java recommends. The "value-based class" warning in `java.time`'s Javadoc gets copy-pasted onto its enums too, even though enums don't have the identity problem that warning is about. Changing it to `.equals()` would just make the code read worse for a rating that's cosmetic anyway, so I'm keeping it as `==` and leaving Reliability at D with these 2 issues open instead of quietly "fixing" something that isn't broken.
+Reliability took a bit more work to get to A, and it's worth explaining how rather than just showing the number. SonarQube grades by the worst open issue, not by how many there are. The scan first found 7 High severity issues. 5 of them were `MembershipState` holding static references to its own 5 subclasses (rule `S2390`), that one's real, and it's fixed by the `MembershipStateFactory` extraction above. The other 2 were in `OffPeakPlan.java:22`, on the line `day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY` (rule `S8696`, which wants `.equals()` instead of `==`). I checked that one properly before touching anything: `DayOfWeek` is an enum, so `!=` on enum constants is guaranteed safe by the language itself, and it's actually what Effective Java recommends. The "value-based class" warning in `java.time`'s Javadoc gets copy-pasted onto its enums too, even though enums don't have the identity problem that warning is about. Changing the code to `.equals()` would have made it read worse for a rating that's cosmetic anyway, so instead of touching the code I resolved both as `False Positive` directly in SonarCloud, which is what that status is for once you've actually verified it isn't a bug. Reliability moved to A once that landed.
 
-![SonarQube Cloud Reliability snapshot: rating D, 2 issues (100% High), 5 closed in the last 30 days, 1.9 hour average fix time](../screenshots/sonarqube-reliability.png){width=100%}
+![SonarQube Cloud Reliability snapshot: rating A, 0 open issues](../screenshots/sonarqube-reliability.png){width=100%}
