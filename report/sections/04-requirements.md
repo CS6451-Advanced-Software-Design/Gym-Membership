@@ -14,7 +14,7 @@ The use case drafts in report/requirements/use-cases came from GenAI (prompt #2)
 
 The diagram shows five human actors: Prospective Member, who can only sign up, and Member, which specialises it so a past member can join again, then Front Desk Staff, Instructor and Manager. It also has two non-human ones: the Clock, a time actor that starts monthly billing (UC7) and the daily checks (UC13), and the Payment Gateway that charges cards. Shared steps are pulled out with «include» (Calculate Charges, Verify Membership Status), and optional ones are «extend» with their condition, such as Join Waitlist when a class is full.
 
-UC1 Sign Up and UC2 Book Class are described in full because between them they touch most of the business rules. The prototype implements UC1, UC4–UC7, UC11, UC13 and UC14; Booking (UC2, UC3, UC8) is being built and the Manager's use cases are left for a later release.
+UC1 Sign Up and UC2 Book Class are described in full because between them they touch most of the business rules. The prototype implements UC1–UC8, UC10, UC11, UC13 and UC14; the Manager's plans and reports (UC9, UC12) are left for a later release.
 
 ## UC1: Sign Up for Membership
 
@@ -87,7 +87,7 @@ UC1 Sign Up and UC2 Book Class are described in full because between them they t
 | RELATED INFORMATION | Book Class |
 | --- | --- |
 | Priority / Performance / Frequency | Top; under 1 second, and only one of two members racing for the last place gets it; about 500 a day |
-| Channel to actors | REST `POST /bookings`; the Book a Class screen prototype |
+| Channel to actors | REST `POST /classes/{classId}/bookings`; the Book a Class screen prototype |
 | OPEN ISSUES | May a member book two overlapping classes? Should the waitlist still promote within 2 hours of the start? |
 | Due Date / Superordinates | Release 1.0 / Manage bookings |
 | Subordinates | Verify Membership Status, Join Waitlist |
@@ -124,7 +124,7 @@ Most rules depend on dates (a 7-day trial, 60 days in Lapsed), and we want each 
 | Source / Stimulus | A developer or CI; a rule changes, e.g. the 60-day Lapsed rule (BR-M6) |
 | Artefact / Environment | Services and domain classes; no network, database or payment provider |
 | Response | Unit tests move a test clock forward and use in-memory repositories and a fake gateway |
-| Response measure | Every rule built so far has a unit test; 204 unit tests run with no files, network or real clock; a failure blocks the merge |
+| Response measure | Every rule built so far has a unit test; 254 unit tests run with no files, network or real clock; a failure blocks the merge |
 
 | Tactic (testability) | Where it is applied |
 | --- | --- |
