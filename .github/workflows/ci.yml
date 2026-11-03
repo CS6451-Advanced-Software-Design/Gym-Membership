@@ -199,7 +199,10 @@ jobs:
 
       # Whole-codebase scan for §9: complexity, duplication, maintainability, plus the coverage figure above.
       # Reuses the already-merged jacoco.xml (sonar.coverage.jacoco.xmlReportPaths in pom.xml) rather than re-running tests
+      # Dependabot's runs get no repository secrets, so the scan can't authenticate there. Its bumps only touch
+      # dependencies, and the next push to main scans them anyway
       - name: SonarQube Cloud
+        if: github.actor != 'dependabot[bot]'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./mvnw -B org.sonarsource.scanner.maven:sonar-maven-plugin:$SONAR_SCANNER_VERSION:sonar
