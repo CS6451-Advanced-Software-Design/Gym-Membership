@@ -10,16 +10,16 @@ Evidence: .github/workflows, the metrics comment on each PR, report/metrics (to 
 
 ## CI/CD
 
-CI (`.github/workflows/ci.yml`) runs three matrix lanes - unit, integration and end-to-end - each a plain `./mvnw verify` with no `continue-on-error`, so one failing test fails the whole run and blocks the merge (`main` is a protected branch). A separate `Metrics` job merges the three lanes' JaCoCo coverage, runs PMD and CK, and posts the numbers as a comment edited in place on every push to the pull request, so a reviewer sees them without downloading an artifact. Every action is pinned to a commit SHA, not a tag. A `Report` workflow (`.github/workflows/report.yml`) rebuilds the report PDF on every change under `report/` and fails if a section goes over the spec's page limit. On `main`, Railway builds `code/Dockerfile` and redeploys automatically, with `/actuator/health` as its health check.
+Our CI (`.github/workflows/ci.yml`) runs three test lanes, unit, integration and end-to-end, each one just `./mvnw verify`. There's no `continue-on-error` anywhere, so one failing test blocks the whole merge, since `main` is a protected branch. A separate `Metrics` job merges the coverage from all three lanes, runs PMD and CK, and posts the numbers as a comment on the PR, the same comment edited each push, so nobody has to download an artifact just to see them. Every action is pinned to a commit SHA instead of a tag. There's also a `Report` workflow (`.github/workflows/report.yml`) that rebuilds the report PDF whenever anything under `report/` changes, and fails if a section goes over its page limit. On `main`, Railway builds `code/Dockerfile` and redeploys on its own, using `/actuator/health` as the health check.
 
-Reviewing all three workflows end to end as Technical Lead found and fixed:
+Going through all three workflows properly as the DevOps lead, I found two real problems and fixed both:
 
-- `curl -sLo` for the JaCoCo and CK jars had no `-f` flag, so a broken Maven Central URL would silently write an HTML error page to the `.jar` path and fail several steps later with a cryptic `ZipException`, instead of a clear error at the real point of failure.
-- None of `ci.yml`'s two jobs, `release.yml` or `report.yml` set `timeout-minutes`, so a hung test, or a release or report build stuck waiting on something, could burn CI minutes for up to GitHub's 6-hour default before being killed. All four jobs across the three workflows now bound their runtime.
+- The `curl -sLo` call downloading the JaCoCo and CK jars didn't have `-f`. If Maven Central ever returned an error page instead of the jar, curl would happily save that HTML as the `.jar` file, and the real failure wouldn't show up until several steps later as a confusing `ZipException`.
+- None of the jobs anywhere, `ci.yml`'s two jobs, `release.yml`, `report.yml`, had `timeout-minutes` set. A stuck test or a hanging build could have run for up to GitHub's default 6 hours before anyone noticed. All four jobs now have a sensible timeout.
 
 ## Metrics Leading to Refactoring
 
-PMD (`code/pmd-ruleset.xml`) and CK (CBO, WMC, RFC, LOC) run on every PR; CI keeps every run's reports as a `metrics` artifact so the before numbers always exist, and a copy of each step below is also kept in `report/metrics/`. Combined, they pointed at the same two classes as the worst in the codebase: `BillingService`, which PMD flagged as an actual `GodClass`, and `MembershipService`, both with the highest WMC and RFC of any class.
+PMD (`code/pmd-ruleset.xml`) and CK (CBO, WMC, RFC, LOC) run on every PR. CI keeps the reports from each run as a `metrics` artifact, so there's always a real before snapshot, and I also saved a copy of each stage in `report/metrics/`. Both tools agreed on the same two worst classes in the codebase: `BillingService`, which PMD actually flagged as a `GodClass`, and `MembershipService`, which had the highest WMC and RFC of anything else.
 
 | Class | Metric | Before | After | What changed |
 | --- | --- | --- | --- | --- |
@@ -30,13 +30,13 @@ PMD (`code/pmd-ruleset.xml`) and CK (CBO, WMC, RFC, LOC) run on every PR; CI kee
 
 Table: PMD and CK before and after refactoring (`report/metrics/before-refactor/`, `after-refactor-1/`, `after-refactor-2/`)
 
-Both new classes carry zero PMD violations. Neither extraction needed any Spring wiring changes: `MembershipChecksJob` and `MembershipController` already depended on the `RunDailyChecksUseCase` *interface*, not the concrete class, so Spring injects the new bean automatically. The full test suite (unit, integration, end-to-end, real Spring context boot) stayed green before and after each change.
+Both new classes come out with zero PMD violations. I didn't have to touch any Spring wiring either time, because `MembershipChecksJob` and `MembershipController` were already depending on the `RunDailyChecksUseCase` interface, not the concrete class, so Spring just picked up the new bean on its own. I ran the full test suite, unit, integration, end-to-end, with a real Spring context boot, before and after each change, and it stayed green both times.
 
-Booking (Bharat's feature) was still being built when the two classes above were picked, so it was deliberately left out and re-checked once it settled. By 2 Nov, `BookingService`'s own WMC had already dropped from 40 to 30 as the Command-pattern work (`BookingCommandService`, `AttendanceService`, `ScheduleService`, `BookingQueries`) pulled responsibilities out of it, and PMD no longer flags it with `GodClass` or `TooManyMethods`. Re-running PMD and CK against the finished codebase (`report/metrics/` has the raw output) found zero `GodClass` or `CouplingBetweenObjects` violations anywhere - the two refactors above already removed every real instance, and nothing new has reappeared since - so a third refactor was not forced just to have one.
+Booking (Bharat's feature) was still being built when I picked these two classes, so I left it out on purpose and went back to check it once it settled. By 2 Nov, `BookingService`'s own WMC had already dropped from 40 to 30 on its own, because the Command-pattern work (`BookingCommandService`, `AttendanceService`, `ScheduleService`, `BookingQueries`) pulled a lot out of it already. PMD doesn't flag it with `GodClass` or `TooManyMethods` anymore either. I re-ran PMD and CK against the finished codebase (raw output's in `report/metrics/`) and found zero `GodClass` or `CouplingBetweenObjects` violations anywhere, the two refactors above already got rid of every real one, and nothing new has shown up since, so I didn't force a third refactor just to have one.
 
 ## SonarQube Cloud
 
-SonarQube Cloud now runs in CI's `metrics` job, authenticated with a `SONAR_TOKEN` secret, after the coverage/PMD gates. There is no true before/after pair for it the way PMD/CK have one: Sonar wasn't wired up until after both refactorings above were already merged, so a "before" snapshot would mean checking out an old commit by hand rather than showing what the pipeline actually measured at the time - not something to fake. What follows is the first real scan, plus what changed in the three days since.
+SonarQube Cloud now runs inside CI's `metrics` job, after the coverage and PMD gates, using a `SONAR_TOKEN` secret. There isn't a real before/after pair for this one the way there is for PMD/CK, Sonar wasn't even wired in until after both refactors above were already merged. A "before" snapshot would mean checking out an old commit by hand just to fake a number, which isn't something I wanted to do. So what's below is the first real scan, plus what's changed in the three days since.
 
 | Metric | Value |
 | --- | --- |
@@ -50,7 +50,7 @@ SonarQube Cloud now runs in CI's `metrics` job, authenticated with a `SONAR_TOKE
 
 ![SonarQube Cloud overview: public project, quality gate passed, 2 issues, 0% duplication, 95.8% coverage](../screenshots/sonarqube-overview.png){width=100%}
 
-Security, Security Hotspots and Maintainability are all A, with nothing open to explain:
+Security, Security Hotspots and Maintainability all came back A, so there's nothing really to explain there:
 
 ![SonarQube Cloud Security snapshot: rating A, 0 issues](../screenshots/sonarqube-security.png){width=100%}
 
@@ -58,6 +58,6 @@ Security, Security Hotspots and Maintainability are all A, with nothing open to 
 
 ![SonarQube Cloud Maintainability snapshot: rating A, 2 issues, 0 closed](../screenshots/sonarqube-maintainability.png){width=100%}
 
-Reliability is the one rating not at A, and it is worth explaining rather than leaving as a number: SonarQube rates by the *worst* open issue's severity, not by count. The scan originally found 7 High-severity issues: 5 were `MembershipState` holding static references to its own 5 subclasses (rule `S2390`), real and now fixed by the `MembershipStateFactory` extraction above; the other 2 are `OffPeakPlan.java:22`'s `day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY` (rule `S8696`, "use `.equals()` not `==`"). That second pair is a false positive, left as `==` on purpose: `DayOfWeek` is an enum, so `!=` on its constants is JLS-guaranteed-safe and is the comparison Effective Java recommends - `java.time`'s "value-based class" Javadoc disclaimer is boilerplate copied onto its enums too, even though enums can't have the identity problem it warns about. Changing it to `.equals()` would read worse for a cosmetic rating change, so the rating stays D with those 2 issues open rather than being silently "fixed" for the wrong reason.
+Reliability is the only rating that isn't A, so I want to actually explain it instead of just leaving the number there. SonarQube grades by the worst open issue, not by how many there are. The scan first found 7 High severity issues. 5 of them were `MembershipState` holding static references to its own 5 subclasses (rule `S2390`), that one's real, and it's fixed now by the `MembershipStateFactory` extraction above. The other 2 are in `OffPeakPlan.java:22`, on the line `day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY` (rule `S8696`, which wants `.equals()` instead of `==`). I'm leaving that one alone on purpose, it's a false positive: `DayOfWeek` is an enum, so `!=` on enum constants is guaranteed safe by the language itself, and it's actually what Effective Java recommends. The "value-based class" warning in `java.time`'s Javadoc gets copy-pasted onto its enums too, even though enums don't have the identity problem that warning is about. Changing it to `.equals()` would just make the code read worse for a rating that's cosmetic anyway, so I'm keeping it as `==` and leaving Reliability at D with these 2 issues open instead of quietly "fixing" something that isn't broken.
 
 ![SonarQube Cloud Reliability snapshot: rating D, 2 issues (100% High), 5 closed in the last 30 days, 1.9 hour average fix time](../screenshots/sonarqube-reliability.png){width=100%}
