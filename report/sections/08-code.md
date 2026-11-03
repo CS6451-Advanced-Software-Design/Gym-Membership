@@ -179,9 +179,9 @@ void theBestDiscountWinsAndDiscountsDontStack() {
 
 ### State
 
-We used the State design pattern for the membership lifecycle: Trial, Active, Frozen, Lapsed and Cancelled, the states in the §6 state chart.
+We used the State design pattern for the membership lifecycle, with the five states from the §6 state chart: Trial, Active, Frozen, Lapsed and Cancelled.
 
-What a membership may do depends on its state: a Trial can book only 2 classes, an Active one can be frozen, and a Frozen or Lapsed one can't book or check in. Each state is a stateless subclass that overrides only what it allows; everything else is refused once, in the base class, with a readable reason (a 422 over REST). `Membership` just hands each call to `state()`, so there is no `switch` on the status outside `of`.
+What a membership can do depends on its state. A Trial can book only 2 classes, an Active one can be frozen, and a Frozen or Lapsed one can't book or check in. Each state is its own small class with no fields, and it only overrides the operations it allows. Everything else is refused once, in the base class, with a reason the member can read (a 422 over REST). `Membership` just passes every call to `state()`, so there is no `switch` on the status anywhere except in `of`.
 
 ```java
 public abstract class MembershipState {
@@ -219,9 +219,9 @@ void aTrialCannotBeFrozen() {
 
 ### Factory
 
-We used a Factory for creating the four plans: Monthly, Annual, Student and Off-Peak.
+We used a Factory to create the four plans: Monthly, Annual, Student and Off-Peak.
 
-Each plan is its own class with its own rules (price, trial, end date, access hours, eligibility). `PlanFactory` is the only class that maps a `PlanType` to its class; `MembershipService.signUp` calls `PlanFactory.create(type)` and only ever sees the abstract `Plan`. Adding a plan is one subclass, one `PlanType` value and one map entry, with no change to `MembershipService`, Billing or Booking.
+Each plan is its own class with its own rules, like its price, trial, end date, access hours and who can join it. `PlanFactory` is the only class that knows which class goes with which `PlanType`. When someone signs up, `MembershipService.signUp` calls `PlanFactory.create(type)` and only ever sees the abstract `Plan`. So, adding a new plan only needs one new subclass, one `PlanType` value and one entry in the factory's map, with no change to `MembershipService`, Billing or Booking.
 
 ```java
 private static final Map<PlanType, Supplier<Plan>> PLANS = new EnumMap<>(Map.of(
