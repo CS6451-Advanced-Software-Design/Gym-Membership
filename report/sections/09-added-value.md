@@ -36,19 +36,19 @@ Booking (Bharat's feature) was still being built when I picked these two classes
 
 ## SonarQube Cloud
 
-SonarQube Cloud now runs inside CI's `metrics` job, after the coverage and PMD gates, using a `SONAR_TOKEN` secret. There isn't a real before/after pair for this one the way there is for PMD/CK, Sonar wasn't even wired in until after both refactors above were already merged. A "before" snapshot would mean checking out an old commit by hand just to fake a number, which isn't something I wanted to do. So what's below is the first real scan, plus what's changed in the three days since.
+SonarQube Cloud now runs inside CI's `metrics` job, after the coverage and PMD gates, using a `SONAR_TOKEN` secret. There isn't a real before/after pair for this one the way there is for PMD/CK, Sonar wasn't even wired in until after both refactors above were already merged. A "before" snapshot would mean checking out an old commit by hand just to fake a number, which isn't something I wanted to do. So what's below is that first real scan, refreshed again on 3 Nov once Booking was fully merged in.
 
 | Metric | Value |
 | --- | --- |
 | Quality gate | Passed |
-| Coverage | 95.8% |
+| Coverage | 96.3% |
 | Duplication | 0.0% |
 | Security rating | A (0 vulnerabilities) |
 | Security review rating | A (0 hotspots) |
-| Maintainability rating | A (0 code smells) |
+| Maintainability rating | A (2 issues, same OffPeakPlan pair as Reliability) |
 | Reliability rating | D (2 issues) |
 
-![SonarQube Cloud overview: public project, quality gate passed, 2 issues, 0% duplication, 95.8% coverage](../screenshots/sonarqube-overview.png){width=100%}
+![SonarQube Cloud overview: public project, quality gate passed, 2 issues, 0% duplication, 96.3% coverage](../screenshots/sonarqube-overview.png){width=100%}
 
 Security, Security Hotspots and Maintainability all came back A, so there's nothing really to explain there:
 
