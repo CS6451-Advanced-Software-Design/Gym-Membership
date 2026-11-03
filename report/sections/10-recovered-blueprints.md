@@ -18,13 +18,13 @@ One hacky workaround we did was the feature was not available in the CE, so we t
 
 | Step | What came out |
 | --- | --- |
-| Instant Reverse on `code/src/main/java` | 66 of 85 types: all 19 `record` types silently dropped |
-| Instant Reverse on `code/target/classes` | All 85 types and 14 packages |
+| Instant Reverse on `code/src/main/java` | Every `record` type silently dropped (66 of 85 types on 27 Oct) |
+| Instant Reverse on `code/target/classes` | All 127 types and 14 packages |
 | Package edges from the `import` lines | 19 edges (Instant Reverse skips imports) |
 | Drawn by an Open API plugin (GenAI #57) | The three diagrams, in `report/blueprints/gym-membership.vpp` |
 | Exported from Community Edition 18.1 | PNGs with a small Community Edition mark |
 
-Table: How the blueprints were recovered (on 27 Oct, before the Member feature in #58)
+Table: How the blueprints were recovered (first on 27 Oct, again on 3 Nov after Member and Booking)
 
 When using source code for reverse engineering, we found 19 of the 85 types (every DTO and the core domain classes) were missing from the reversed model. The issue was our source code using the `record` feature from Java. Example -
 
@@ -49,12 +49,11 @@ This is the real package diagram as interpreted by the Visual Paradigm software 
 
 | Recovered, not in §5 | Why |
 | --- | --- |
-| `dto` → `domain` (16 imports) | DTOs are built from domain objects |
-| `controller` → `domain` (2) | ErrorHandler maps domain exceptions to HTTP errors |
-| `adapter.persistence` → `domain` (4) | The JSON adapter stores domain objects (§5's liability) |
+| `dto` → `domain` (22 imports) | DTOs are built from domain objects |
+| `controller` → `domain` (3) | ErrorHandler maps domain exceptions to HTTP errors |
+| `adapter.persistence` → `domain` (7) | The JSON adapter stores domain objects (§5's liability) |
 | Root package `gym` | Composition root: wires the Strategy and the Interceptor |
 | No stereotypes | Intent isn't in the code |
-| No booking or member management | Both came after the recovery: member management and check-in in #58, Booking in #128–#131 |
 
 Table: Design-time against recovered package diagram
 
@@ -63,9 +62,9 @@ I believe the biggest issue to fix would be the `adapter.persistence` → `domai
 ::: landscape
 ## Component Diagram
 
-![Component diagram, built on the reversed port interfaces](../blueprints/component-diagram.png){width=100%}
+![Component diagram, built on the reversed port interfaces](../blueprints/component-diagram.png){width=88%}
 
-Here the diagram shows components as per the classes we needed in our code. BillingService is in the centre acting as the core of the Hexagonal architecture we intended, with all six driven ports around it. UseCaseDispatcher wraps all the use case (`port.in`) ports, as the Interceptor pattern intended, and then calls the LoggingInterceptor.
+Here the diagram shows components as per the classes we needed in our code. The eight services sit in the middle as the core of the Hexagonal architecture we intended: each one provides its use case (`port.in`) ports on the left and uses the driven (`port.out`) ports on the right, which the JSON, notification and payment adapters implement. Where one service needs another, for example Booking charging the premium surcharge through `RecordChargeUseCase`, it goes through that port too. UseCaseDispatcher wraps all the use case ports, as the Interceptor pattern intended, and then calls the LoggingInterceptor.
 :::
 
 ## Deployment Diagram
