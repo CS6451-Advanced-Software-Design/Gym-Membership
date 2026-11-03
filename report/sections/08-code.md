@@ -124,6 +124,69 @@ void aPromotedMemberIsToldAboutTheirPlace() {
 
 *The test that proves m1 has the only place and m2 waits. m1 cancels, so m2 gets place and exactly one notification addressed to m2 (`BookingServiceTest`)*
 
+### Command
+
+Command is a Design Pattern in which an action is stored as a small object so that future actions can be taken such as undo. It is used when a member book a class and cancels a booking, then perform an undo action, so to remember the members last action we use the command pattern. It helps to remember the member past action so undo functionality can be performed when required
+
+1. When member cancels a Booking, BookingController gets triggered, which calls  the BookingCommandService (invoker) which stores and keeps the command in the member's history which only after command has run
+2. BookingCommandService creates and run the BookClassCommand or CancelBookingCommand (concrete class) which has the functionality to invoke method acc.
+3. The concrete class then finally calls BookingService which then does the real work acc. to use cases.
+4. When member presses undo it does one of the two things, "undo a booking" - gives up the place or leaves the waiting list. "undo a cancel" - gives the same place back if the place is free, otherwise member from waiting list gets promoted when its canceled.
+
+```java
+interface BookingCommand<R> {
+    R execute();
+    void undo();
+}
+
+class CancelBookingCommand implements BookingCommand<Booking> {
+    @Override
+    public Booking execute() {
+        return cancelling.cancel(bookingId);
+    }
+
+    @Override
+    public void undo() {
+        undoing.restoreBooking(bookingId);
+    }
+}
+
+@Service
+public class BookingCommandService implements BookingCommandsUseCase {
+    private final Map<String, Deque<BookingCommand<?>>> histories = new HashMap<>();
+
+    @Override
+    public synchronized void undoLast(String memberId) {
+        Deque<BookingCommand<?>> history = histories.getOrDefault(memberId, new ArrayDeque<>());
+        if (history.isEmpty()) {
+            throw new RuleViolationException("Member " + memberId + " has nothing to undo");
+        }
+        history.peek().undo();
+        history.pop();
+    }
+}
+```
+*CancelBookingCommand performs cancel action - execute and undo, histories hold one pile per member, 'nothing to undo' message on pile empty. Undo goes one step at a time, newest first (`gym/service`, only key lines)*
+
+```java
+@Test
+void undoGoesBackOneActionAtATime() {
+    spinClass(10);
+    activeMembership("m1");
+    Booking booking = commands.book("m1", "c1").booking();
+    commands.cancel(booking.bookingId());
+
+    commands.undoLast("m1");
+    assertEquals(BookingStatus.BOOKED, statusOf(booking));
+
+    commands.undoLast("m1");
+    assertEquals(BookingStatus.CANCELLED, statusOf(booking));
+    assertThrows(RuleViolationException.class, () -> commands.undoLast("m1"));
+}
+```
+*m1 books and then cancel, first undo - takes back the cancel so booking is BOOKED again, second undo takes back booking, status CANCELLED, third undo is refused, due to nothing left to undo (`BookingCommandServiceTest`)*
+
+
 ### Strategy
 
 We used the Strategy design pattern for designing the discounting logic in our application.
