@@ -52,7 +52,7 @@ Later, when I wrote UC1 in the full template, I found a gap that I had missed wh
 
 Building Membership with the State pattern was the part where the course made the most sense to me:
 
-- each state in the §6 state chart became a subclass, and each arrow became a method;
+- each state in the state chart became a subclass, and each arrow became a method;
 - the base class refuses everything by default, so a Frozen membership can't book a class without a single `if` on the status;
 - the states are so small that I could write a test for every arrow of the chart.
 
