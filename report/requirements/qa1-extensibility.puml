@@ -1,7 +1,7 @@
 @startuml
 !include ../common.iuml
 hide empty members
-skinparam classAttributeIconSize 0
+hide circle
 skinparam class {
   BackgroundColor #F5F5F5
   BorderColor #333333
@@ -15,59 +15,22 @@ package "Unchanged" {
   class BillingService
   class BookingService
 }
-
-class PlanFactory {
-  + create(type: PlanType): Plan
-}
-
-enum PlanType {
-  MONTHLY
-  ANNUAL
-  STUDENT
-  OFF_PEAK
-  WEEKEND <<new>>
-}
-
-abstract class Plan {
-  + price(): Money
-  + allowsClassAt(start): boolean
-  + checkEligible(member)
-}
-
+class PlanFactory
+abstract class Plan
 class MonthlyPlan
 class AnnualPlan
 class StudentPlan
 class OffPeakPlan
 class WeekendPlan <<new>>
 
-MembershipService ..> PlanFactory : create(type)
+MembershipService ..> PlanFactory
 MembershipService ..> Plan
 BillingService ..> Plan
 BookingService ..> Plan
-PlanFactory ..> PlanType
 PlanFactory ..> Plan : creates
 Plan <|-- MonthlyPlan
 Plan <|-- AnnualPlan
 Plan <|-- StudentPlan
 Plan <|-- OffPeakPlan
 Plan <|-- WeekendPlan
-
-note right of PlanFactory
-  <b>Use an intermediary</b>
-  the only place a PlanType
-  is mapped to its class
-  (+1 line for WEEKEND)
-end note
-
-note bottom of WeekendPlan
-  <b>Increase semantic coherence</b>
-  its own price, hours and rules
-end note
-
-note left of BillingService
-  <b>Defer binding</b>
-  services only call Plan,
-  so the right rules run
-  at run time
-end note
 @enduml
