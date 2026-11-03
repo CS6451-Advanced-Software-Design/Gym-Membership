@@ -31,7 +31,7 @@ To find the candidate classes, I used noun identification, which we learned in L
 | Student ID, referral code, employer | Attributes of `Member` | No behaviour of their own |
 | Front desk staff, manager | Dropped | Actors with no business state to store |
 
-The biggest change from the first list was the membership states. They started as one status field on `Membership`, but freezing, booking and checking in each needed a different answer in every state, so each state became its own class. Payment went the other way: it looked like an entity, but nothing about a payment is kept except whether it went through.
+The biggest change from my first list was the membership states. At first they were just one status field on `Membership`, but freezing, booking and checking in each needed a different answer in every state, so each state became its own class. Payment went the other way round: it looked like an entity at first, but the only thing we keep about a payment is whether it went through or not.
 
 ## Class Diagram
 
