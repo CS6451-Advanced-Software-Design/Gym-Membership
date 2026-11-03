@@ -219,9 +219,9 @@ void aTrialCannotBeFrozen() {
 
 ### Factory
 
-We used a Factory for creating the four plans: Monthly, Annual, Student and Off-Peak.
+We used a Factory to create the four plans: Monthly, Annual, Student and Off-Peak.
 
-Each plan is its own class with its own rules (price, trial, end date, access hours, eligibility). `PlanFactory` is the only class that maps a `PlanType` to its class; `MembershipService.signUp` calls `PlanFactory.create(type)` and only ever sees the abstract `Plan`. Adding a plan is one subclass, one `PlanType` value and one map entry, with no change to `MembershipService`, Billing or Booking.
+Each plan is its own class with its own rules, like its price, trial, end date, access hours and who can join it. `PlanFactory` is the only class that knows which class goes with which `PlanType`. When someone signs up, `MembershipService.signUp` calls `PlanFactory.create(type)` and only ever sees the abstract `Plan`. So, adding a new plan only needs one new subclass, one `PlanType` value and one entry in the factory's map, with no change to `MembershipService`, Billing or Booking.
 
 ```java
 private static final Map<PlanType, Supplier<Plan>> PLANS = new EnumMap<>(Map.of(
