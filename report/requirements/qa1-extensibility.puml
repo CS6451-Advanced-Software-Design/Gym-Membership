@@ -1,0 +1,36 @@
+@startuml
+!include ../common.iuml
+hide empty members
+hide circle
+skinparam class {
+  BackgroundColor #F5F5F5
+  BorderColor #333333
+  BackgroundColor<<new>> #E3F4E1
+  BorderColor<<new>> #2E7D32
+}
+skinparam packageStyle rectangle
+
+package "Unchanged" {
+  class MembershipService
+  class BillingService
+  class BookingService
+}
+class PlanFactory
+abstract class Plan
+class MonthlyPlan
+class AnnualPlan
+class StudentPlan
+class OffPeakPlan
+class WeekendPlan <<new>>
+
+MembershipService ..> PlanFactory
+MembershipService ..> Plan
+BillingService ..> Plan
+BookingService ..> Plan
+PlanFactory ..> Plan : creates
+Plan <|-- MonthlyPlan
+Plan <|-- AnnualPlan
+Plan <|-- StudentPlan
+Plan <|-- OffPeakPlan
+Plan <|-- WeekendPlan
+@enduml
