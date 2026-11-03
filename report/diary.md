@@ -64,4 +64,4 @@ Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 f
 | Chirag | Brought the live app, Postman and the report up to date with Booking. Recovered the §10 blueprints again. Rewrote §4 and shortened §7 and §9 | Railway held the Booking merges for approval, so the live app was behind | Cut `v1.0.0`, submit; prepare for the walkthrough |
 | Bharat | | | |
 | DineshReddy | Wrote §13's intro. Re-checked `BookingService` with PMD/CK, no third refactor needed. Re-ran SonarQube after Booking merged and resolved the 2 `OffPeakPlan` false positives, Reliability D→A. Drew my two Member check-in sketches | Postman auto-publish still waiting on the workspace's GitHub link | My reflection; submit; prepare for the walkthrough |
-| Dhruv | Shortened my report sections: §1, §4, my reflection, State and Factory in §8 | The report was 51 pages, most of it in §4 | Rewrite my sections in my own words; prepare for the walkthrough |
+| Dhruv | refactored the report a bit and made some changes in different sections of report | The report was 51 pages, most of it in §4 | Rewrite my sections in my own words |
