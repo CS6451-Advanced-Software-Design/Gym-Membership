@@ -1,0 +1,30 @@
+$kind: http-example
+name: There is nothing to undo, or it is too late, e.g. the class has started or the place has been taken
+request:
+  url: "{{baseUrl}}/members/:memberId/bookings/undo"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  pathVariables:
+    - key: memberId
+      value: m-1d685de8
+      disabled: false
+      description: (Required) the member whose action to undo
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity (WebDAV) (RFC 4918)
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "detail": "Member m-1d685de8 has nothing to undo",
+        "instance": "/members/m-1d685de8/bookings/undo",
+        "status": 422,
+        "title": "Unprocessable Content"
+      }
+order: 2000

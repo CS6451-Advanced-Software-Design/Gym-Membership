@@ -8,5 +8,5 @@ import jakarta.validation.constraints.NotBlank;
  *
  * @param memberId the member booking
  */
-public record BookClassRequest(@NotBlank @Schema(example = "m-3f9c2a71") String memberId) {
+public record BookClassRequest(@NotBlank @Schema(example = "m-ca315689") String memberId) {
 }

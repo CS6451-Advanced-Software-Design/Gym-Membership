@@ -14,17 +14,21 @@ We designed all our use cases to enter through a controller (or a scheduled job)
 | Use case | Entry point | Port (`port.in`, without "UseCase") | Service | Domain classes |
 | --- | --- | --- | --- | --- |
 | UC1 Sign Up | `POST /memberships` | SignUp | MembershipService | PlanFactory, Plan, Member, Membership; Billing's CalculateCharges |
+| UC2 Book Class | `POST /classes/{classId}/bookings` | BookingCommands, BookClass | Booking­Command­Service (Command), BookingService | GymClass, Booking, Waitlist, Membership (`canBook`) |
+| UC3 Cancel Booking | `POST /bookings/{bookingId}/cancel`, `POST /members/{memberId}/bookings/undo` | BookingCommands, CancelBooking, UndoBooking | Booking­Command­Service (Command), BookingService | Booking, Waitlist, Charge |
 | UC4 Check In | `POST /members/{memberId}/check-ins` | CheckIn | MemberService | Member, Membership (`canCheckIn`), CheckIn |
 | UC5 Freeze / Unfreeze | `POST …/freeze`, `…/unfreeze` | FreezeMembership | MembershipService | Membership, Freeze, FrozenState |
 | UC6 Cancel Membership | `POST …/cancel` | CancelMembership | MembershipService | Membership, CancelledState; Billing's final invoice and early-exit fee |
 | UC7 Run Monthly Billing | BillingJob (monthly), `POST /billing-runs` | RunMonthlyBilling | BillingService | BestDiscount (Strategy), Charge, Invoice |
+| UC8 Record Attendance | `POST /bookings/{bookingId}/attended`, `…/no-show` | RecordAttendance | AttendanceService | Booking, NoShows, Charge |
+| UC10 Manage Class Schedule | `GET /classes`, `POST /classes` | ManageSchedule | ScheduleService | GymClass |
 | UC11 View Invoices | `GET …/invoices` | ViewInvoices | BillingService | Invoice, Charge |
-| UC13 Daily Checks | MembershipChecksJob (daily), `POST /membership-checks` | RunDailyChecks | MembershipService | TrialState, FrozenState, LapsedState |
+| UC13 Daily Checks | MembershipChecksJob (daily), `POST /membership-checks` | RunDailyChecks | Membership­Daily­Checks­Service | TrialState, FrozenState, LapsedState |
 | UC14 Pay Arrears | `POST …/pay-arrears` | RestoreMembership, PayArrears | MembershipService, BillingService | LapsedState, Invoice |
 
 Table: Each use case built so far, from where it enters to the classes that carry it out
 
-<!-- UC2, UC3, UC8–UC10 and UC12 (bookings, attendance, plans, schedule, reports) aren't built yet. -->
+<!-- UC9 and UC12 (plans and prices, reports) aren't built yet. -->
 
 
 ## Architectural Patterns
@@ -249,12 +253,12 @@ Coverage of the tests is measured by JaCoCo (Java Code Coverage), and reported b
 
 | Kind | Tests | Line coverage |
 | --- | --- | --- |
-| Unit | 204 | 79.2% |
-| Integration | 23 | 39.1% |
-| End-to-end | 14 | 64.9% |
-| **All** | **241** | **97.0%** (1029 of 1061 lines) |
+| Unit | 254 | 81.5% |
+| Integration | 23 | 37.1% |
+| End-to-end | 23 | 81.5% |
+| **All** | **300** | **97.3%** (1164 of 1196 lines) |
 
-Table: Automated tests on main (CI run of 1 Nov)
+Table: Automated tests on main (CI run of 2 Nov)
 
 ## Version Control
 

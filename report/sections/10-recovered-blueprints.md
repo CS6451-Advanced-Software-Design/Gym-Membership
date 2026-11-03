@@ -54,7 +54,7 @@ This is the real package diagram as interpreted by the Visual Paradigm software 
 | `adapter.persistence` → `domain` (4) | The JSON adapter stores domain objects (§5's liability) |
 | Root package `gym` | Composition root: wires the Strategy and the Interceptor |
 | No stereotypes | Intent isn't in the code |
-| No booking or member management | Booking isn't built yet; member management and check-in came after the recovery (#58) |
+| No booking or member management | Both came after the recovery: member management and check-in in #58, Booking in #128–#131 |
 
 Table: Design-time against recovered package diagram
 

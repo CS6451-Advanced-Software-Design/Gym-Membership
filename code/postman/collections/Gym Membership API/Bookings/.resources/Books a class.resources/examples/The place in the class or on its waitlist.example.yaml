@@ -1,0 +1,32 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/classes/:classId/bookings"
+  method: POST
+  headers:
+    Accept: application/json
+  pathVariables:
+    - key: classId
+      value: c-54b4cdb7
+      disabled: false
+      description: (Required) the class to book
+  body:
+    type: json
+    content: |-
+      {
+        "memberId": "m-ca315689"
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "memberId": "m-ca315689",
+        "classId": "c-54b4cdb7",
+        "bookingId": "b-981af13d",
+        "waitlistPosition": 0
+      }
+order: 1000

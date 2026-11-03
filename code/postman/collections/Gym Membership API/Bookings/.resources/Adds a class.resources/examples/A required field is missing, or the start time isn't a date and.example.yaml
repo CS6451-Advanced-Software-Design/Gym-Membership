@@ -1,0 +1,31 @@
+$kind: http-example
+name: A required field is missing, or the start time isn't a date and time
+request:
+  url: "{{baseUrl}}/classes"
+  method: POST
+  headers:
+    Accept: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "capacity": 12,
+        "name": "Spin",
+        "startTime": "1958-05-13T07:01:53.872Z",
+        "premium": false
+      }
+response:
+  statusCode: 400
+  statusText: Bad Request
+  headers:
+    Content-Type: application/problem+json
+  body:
+    type: json
+    content: |-
+      {
+        "detail": "Invalid request content.",
+        "instance": "/classes",
+        "status": 400,
+        "title": "Bad Request"
+      }
+order: 2000
