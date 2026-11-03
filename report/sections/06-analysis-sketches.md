@@ -10,7 +10,7 @@ Evidence: report/analysis/README.md, report/sketches/README.md.
 
 ## Candidate Objects
 
-To find the candidate classes, I used noun identification, which we learned in Lecture B. I went through the UC1 and UC2 descriptions and the business rules and wrote down every noun. A noun became a class only if it has its own state, behaviour and identity. If a noun was just a value of something else, it became an attribute or an enumeration; if it was an outside system, it became a port; and if it only named a person's role or a screen, I dropped it.
+To find the candidate classes, I used noun identification. I went through the UC1 and UC2 descriptions and the business rules and wrote down every noun. A noun became a class only if it has its own state, behaviour and identity. If a noun was just a value of something else, it became an attribute or an enumeration; if it was an outside system, it became a port; and if it only named a person's role or a screen, I dropped it.
 
 | Noun (where found) | Decision | Why |
 | --- | --- | --- |
