@@ -41,14 +41,14 @@ Overall, the project changed how I think about "added value": it is not a checkl
 
 ## Dhruv Punj
 
-As the Business Analyst I learned that requirements are mostly decisions. The first use case drafts left questions open, and on 24 Oct I had to settle them before any code could be written:
+As the Business Analyst, I learned that requirements are mostly decisions. The first use case drafts left some questions open, and on 24 Oct I had to settle them before any code could be written:
 
 - a trial member pays a pro-rated first charge straight away;
-- Annual starts Active with no trial;
-- a membership left Lapsed for 60 days is cancelled;
+- the Annual plan starts Active, with no trial;
+- a membership that stays Lapsed for 60 days is cancelled;
 - family plans are out of scope.
 
-Writing UC1 in the full template later showed me a gap I had missed while coding: a declined Annual payment still starts the membership Active. Walking through every extension is what found it, so I now see the template as a way of checking the design, not just documenting it.
+Later, when I wrote UC1 in the full template, I found a gap that I had missed while coding: a declined Annual payment still starts the membership as Active. I only found it by going through every extension step by step, so now I see the template as a way of checking the design, not just documenting it.
 
 Building Membership with the State pattern was where the course made the most sense to me:
 
