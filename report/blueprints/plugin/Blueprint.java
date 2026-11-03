@@ -46,6 +46,11 @@ public class Blueprint implements VPPlugin, VPPluginCommandLineSupport {
         try {
             project = ApplicationManager.instance().getProjectManager().getProject();
             List<String> edges = Files.readAllLines(Path.of(args[0]));
+            for (IModelElement root : project.toModelElementArray()) {
+                if ("blueprints".equals(root.getName())) {
+                    root.delete();
+                }
+            }
             blueprints = factory.createPackage();
             blueprints.setName("blueprints");
             drawPackages(edges);
@@ -131,66 +136,103 @@ public class Blueprint implements VPPlugin, VPPluginCommandLineSupport {
     private void drawComponents() {
         IDiagramUIModel diagram = diagram(DiagramManager.DIAGRAM_TYPE_COMPONENT_DIAGRAM, COMPONENT_DIAGRAM);
 
-        add(diagram, "postman", component("Postman / Swagger UI", "external"), 20, 130, 170, 70);
-        add(diagram, "clock", component("Spring scheduler", "external"), 20, 455, 170, 70);
-        add(diagram, "http", created("HTTP API"), 225, 145, 130, 40);
-        add(diagram, "rest", component("BillingController, MembershipController", "driving adapter"), 390, 115, 250, 100);
-        add(diagram, "jobs", component("BillingJob, MembershipChecksJob", "driving adapter"), 390, 450, 250, 80);
-        add(diagram, "membership", component("MembershipService", "use case"), 960, 100, 190, 90);
-        add(diagram, "billing", component("BillingService", "use case"), 960, 520, 190, 90);
-        String[] memberships = {"SignUpUseCase", "ViewMembershipUseCase", "FreezeMembershipUseCase", "CancelMembershipUseCase",
-                "RestoreMembershipUseCase", "RunDailyChecksUseCase"};
-        for (int i = 0; i < memberships.length; i++) {
-            add(diagram, memberships[i], element("port.in." + memberships[i]), 690, 20 + i * 50, 210, 40);
+        // Each service's inbound ports sit in one column, in the same order as the services beside them
+        String[][] groups = {
+                {"membership", "MembershipService", "SignUpUseCase", "ViewMembershipUseCase", "FreezeMembershipUseCase",
+                        "CancelMembershipUseCase", "RestoreMembershipUseCase"},
+                {"checks", "MembershipDailyChecksService", "RunDailyChecksUseCase"},
+                {"member", "MemberService", "ViewMemberUseCase", "CheckInUseCase"},
+                {"billing", "BillingService", "RunMonthlyBillingUseCase", "ViewInvoicesUseCase", "CalculateChargesUseCase",
+                        "RecordChargeUseCase", "PayArrearsUseCase"},
+                {"commands", "BookingCommandService", "BookingCommandsUseCase"},
+                {"booking", "BookingService", "BookClassUseCase", "CancelBookingUseCase", "UndoBookingUseCase"},
+                {"attendance", "AttendanceService", "RecordAttendanceUseCase"},
+                {"schedule", "ScheduleService", "ManageScheduleUseCase"}};
+        int y = 20;
+        for (String[] group : groups) {
+            int top = y;
+            for (int i = 2; i < group.length; i++) {
+                add(diagram, group[i], element("port.in." + group[i]), 700, y, 220, 36);
+                y += 44;
+            }
+            int height = Math.max(y - top - 8, 60);
+            add(diagram, group[0], component(group[1], "use case"), 1080, top + (y - top - 8 - height) / 2, 230, height);
+            for (int i = 2; i < group.length; i++) {
+                provides(diagram, group[0], group[i]);
+            }
+            y += 22;
         }
-        add(diagram, "RunMonthlyBillingUseCase", element("port.in.RunMonthlyBillingUseCase"), 690, 470, 210, 40);
-        String[] billings = {"CalculateChargesUseCase", "RecordChargeUseCase", "PayArrearsUseCase", "ViewInvoicesUseCase"};
-        for (int i = 0; i < billings.length; i++) {
-            add(diagram, billings[i], element("port.in." + billings[i]), 950, 240 + i * 60, 210, 40);
-        }
-        String[] repositories = {"MemberRepository", "MembershipRepository", "ChargeRepository", "InvoiceRepository"};
+        int bottom = y;
+
+        add(diagram, "postman", component("Postman / Swagger UI", "external"), 20, 160, 170, 70);
+        add(diagram, "http", created("HTTP API"), 225, 175, 130, 40);
+        add(diagram, "rest", component("MembershipController, MemberController, BillingController, BookingController",
+                "driving adapter"), 390, 130, 250, 110);
+        add(diagram, "clock", component("Spring scheduler", "external"), 20, 470, 170, 70);
+        add(diagram, "jobs", component("BillingJob, MembershipChecksJob", "driving adapter"), 390, 465, 250, 80);
+
+        String[] repositories = {"MemberRepository", "MembershipRepository", "CheckInRepository", "ChargeRepository",
+                "InvoiceRepository", "GymClassRepository", "BookingRepository"};
+        int[] tops = {60, 160, 260, 420, 520, 760, 860};
         for (int i = 0; i < repositories.length; i++) {
-            add(diagram, repositories[i], element("port.out." + repositories[i]), 1230, 30 + i * 55, 190, 40);
+            add(diagram, repositories[i], element("port.out." + repositories[i]), 1440, tops[i], 200, 36);
         }
-        add(diagram, "NotificationSender", element("port.out.NotificationSender"), 1230, 330, 190, 40);
-        add(diagram, "PaymentGateway", element("port.out.PaymentGateway"), 1230, 470, 190, 40);
-        add(diagram, "json", component("JsonFileMemberRepository, JsonFileMembershipRepository, JsonFileChargeRepository, "
-                + "JsonFileInvoiceRepository", "driven adapter"), 1480, 40, 230, 180);
-        add(diagram, "notification", component("EventNotificationSender", "driven adapter"), 1480, 310, 230, 80);
-        add(diagram, "payment", component("FakePaymentGateway", "driven adapter"), 1480, 450, 230, 80);
-        add(diagram, "dispatcher", component("UseCaseDispatcher, UseCaseInterception", "interceptor"), 390, 680, 250, 90);
-        add(diagram, "UseCaseInterceptor", element("interceptor.UseCaseInterceptor"), 690, 705, 210, 40);
-        add(diagram, "logging", component("LoggingInterceptor", "driven adapter"), 960, 680, 190, 90);
+        add(diagram, "NotificationSender", element("port.out.NotificationSender"), 1440, 340, 200, 36);
+        add(diagram, "PaymentGateway", element("port.out.PaymentGateway"), 1440, 620, 200, 36);
+        add(diagram, "json", component("JsonFileMemberRepository, JsonFileMembershipRepository, JsonFileCheckInRepository, "
+                + "JsonFileChargeRepository, JsonFileInvoiceRepository, JsonFileGymClassRepository, JsonFileBookingRepository",
+                "driven adapter"), 1760, 400, 240, 160);
+        add(diagram, "notification", component("EventNotificationSender", "driven adapter"), 1760, 230, 240, 70);
+        add(diagram, "payment", component("FakePaymentGateway", "driven adapter"), 1760, 640, 240, 70);
+
+        add(diagram, "dispatcher", component("UseCaseDispatcher, UseCaseInterception", "interceptor"), 390, bottom + 20, 250, 90);
+        add(diagram, "UseCaseInterceptor", element("interceptor.UseCaseInterceptor"), 700, bottom + 45, 220, 40);
+        add(diagram, "logging", component("LoggingInterceptor", "driven adapter"), 1080, bottom + 20, 230, 90);
         note(diagram, "Every component also uses gym.domain, not drawn. UseCaseDispatcher wraps every port.in use case in a "
-                + "dynamic proxy that calls the interceptors, wired by InterceptorConfiguration.", 1230, 660, 480, 90);
+                + "dynamic proxy that calls the interceptors, wired by InterceptorConfiguration.", 1440, bottom + 20, 540, 90);
 
         provides(diagram, "rest", "http");
         requires(diagram, "postman", "http");
-        for (String useCase : memberships) {
-            provides(diagram, "membership", useCase);
-        }
-        for (String useCase : billings) {
-            provides(diagram, "billing", useCase);
-            requires(diagram, "membership", useCase);
-        }
-        provides(diagram, "billing", "RunMonthlyBillingUseCase");
         for (String useCase : new String[] {"SignUpUseCase", "ViewMembershipUseCase", "FreezeMembershipUseCase",
-                "CancelMembershipUseCase", "RestoreMembershipUseCase", "RunDailyChecksUseCase", "RunMonthlyBillingUseCase",
-                "ViewInvoicesUseCase"}) {
+                "CancelMembershipUseCase", "RestoreMembershipUseCase", "RunDailyChecksUseCase", "ViewMemberUseCase",
+                "CheckInUseCase", "RunMonthlyBillingUseCase", "ViewInvoicesUseCase", "BookingCommandsUseCase",
+                "RecordAttendanceUseCase", "ManageScheduleUseCase"}) {
             requires(diagram, "rest", useCase);
         }
+        requires(diagram, "clock", "jobs");
         requires(diagram, "jobs", "RunMonthlyBillingUseCase");
         requires(diagram, "jobs", "RunDailyChecksUseCase");
-        requires(diagram, "clock", "jobs");
+
+        // Use cases one service calls on another, from the port.in imports
+        requires(diagram, "membership", "CalculateChargesUseCase");
+        requires(diagram, "membership", "RecordChargeUseCase");
+        requires(diagram, "membership", "PayArrearsUseCase");
+        requires(diagram, "checks", "CalculateChargesUseCase");
+        requires(diagram, "checks", "ViewInvoicesUseCase");
+        requires(diagram, "commands", "BookClassUseCase");
+        requires(diagram, "commands", "CancelBookingUseCase");
+        requires(diagram, "commands", "UndoBookingUseCase");
+        requires(diagram, "booking", "RecordChargeUseCase");
+        requires(diagram, "attendance", "RecordChargeUseCase");
+
+        // Outbound ports, from the port.out imports
+        String[][] outbound = {
+                {"membership", "MemberRepository", "MembershipRepository", "NotificationSender"},
+                {"checks", "MembershipRepository", "NotificationSender"},
+                {"member", "MemberRepository", "MembershipRepository", "CheckInRepository", "NotificationSender"},
+                {"billing", "MemberRepository", "MembershipRepository", "ChargeRepository", "InvoiceRepository",
+                        "NotificationSender", "PaymentGateway"},
+                {"booking", "MembershipRepository", "GymClassRepository", "BookingRepository", "NotificationSender"},
+                {"attendance", "MembershipRepository", "GymClassRepository", "BookingRepository"},
+                {"schedule", "GymClassRepository", "BookingRepository"}};
+        for (String[] uses : outbound) {
+            for (int i = 1; i < uses.length; i++) {
+                requires(diagram, uses[0], uses[i]);
+            }
+        }
         for (String repository : repositories) {
             provides(diagram, "json", repository);
-            requires(diagram, "billing", repository);
         }
-        requires(diagram, "membership", "MemberRepository");
-        requires(diagram, "membership", "MembershipRepository");
-        requires(diagram, "membership", "NotificationSender");
-        requires(diagram, "billing", "NotificationSender");
-        requires(diagram, "billing", "PaymentGateway");
         provides(diagram, "notification", "NotificationSender");
         provides(diagram, "payment", "PaymentGateway");
         provides(diagram, "logging", "UseCaseInterceptor");
@@ -204,10 +246,10 @@ public class Blueprint implements VPPlugin, VPPluginCommandLineSupport {
         laptop.addChild(add(diagram, "postman", artifact("Postman (live, mock and local environments)"), 40, 120, 220, 60));
         laptop.addChild(add(diagram, "browser", artifact("Web browser (Swagger UI)"), 40, 210, 220, 50));
         add(diagram, "mock", node("Postman mock server", "cloud service"), 20, 400, 260, 80);
-        add(diagram, "github", node("GitHub", "cloud service"), 380, 470, 330, 120);
-        shapes.get("github").addChild(add(diagram, "actions", artifact("GitHub Actions CI: unit, integration and end-to-end tests"), 400, 520, 290, 50));
+        add(diagram, "github", node("GitHub", "cloud service"), 380, 500, 330, 120);
+        shapes.get("github").addChild(add(diagram, "actions", artifact("GitHub Actions CI: unit, integration and end-to-end tests"), 400, 550, 290, 50));
 
-        IShapeUIModel railway = add(diagram, "railway", node("Railway (region iad)", "PaaS"), 380, 20, 900, 400);
+        IShapeUIModel railway = add(diagram, "railway", node("Railway (region iad)", "PaaS"), 380, 20, 900, 440);
         railway.addChild(add(diagram, "proxy", node("Railway HTTPS proxy (TLS ends here)", "edge proxy"), 400, 80, 200, 90));
         IShapeUIModel container = add(diagram, "container", node("Docker container: eclipse-temurin:21-jre-noble",
                 "execution environment"), 640, 70, 360, 320);
@@ -216,20 +258,21 @@ public class Blueprint implements VPPlugin, VPPluginCommandLineSupport {
         container.addChild(jvm);
         jvm.addChild(add(diagram, "jar", artifact("gym-membership.jar (Spring Boot, embedded Tomcat on $PORT)"), 680, 190, 280, 70));
         container.addChild(add(diagram, "dockerfile", artifact("Dockerfile: JDK 21 build stage, JRE 21 run stage"), 660, 310, 320, 50));
-        IShapeUIModel data = add(diagram, "volume", node("Railway volume gym-data (500 MB), mounted at /data", "volume"), 1030, 70, 230, 320);
+        IShapeUIModel data = add(diagram, "volume", node("Railway volume gym-data (500 MB), mounted at /data", "volume"), 1030, 70, 230, 370);
         railway.addChild(data);
-        String[] files = {"members.json", "memberships.json", "charges.json", "invoices.json"};
+        String[] files = {"members.json", "memberships.json", "check-ins.json", "charges.json", "invoices.json", "classes.json",
+                "bookings.json"};
         for (int i = 0; i < files.length; i++) {
-            data.addChild(add(diagram, files[i], artifact(files[i]), 1050, 140 + i * 60, 190, 45));
+            data.addChild(add(diagram, files[i], artifact(files[i]), 1050, 130 + i * 43, 190, 35));
         }
 
         path(diagram, "laptop", "proxy", "HTTPS");
         path(diagram, "proxy", "jar", "HTTP on $PORT");
-        path(diagram, "jar", "volume", "file I/O, GYM_PERSISTENCE_DIRECTORY=/data");
+        path(diagram, "jar", "volume", "file I/O");
         path(diagram, "laptop", "mock", "HTTPS");
         path(diagram, "github", "railway", "deploys main once CI passes");
-        note(diagram, "Railway builds code/Dockerfile, checks /actuator/health, and keeps the JSON files on the volume across "
-                + "redeploys. Logs are JSON (logstash format).", 760, 470, 520, 70);
+        note(diagram, "Railway builds code/Dockerfile, checks /actuator/health, and keeps the JSON files on the volume "
+                + "(GYM_PERSISTENCE_DIRECTORY=/data) across redeploys. Logs are JSON (logstash format).", 760, 500, 520, 70);
     }
 
     private IShapeUIModel add(IDiagramUIModel diagram, String key, IModelElement model, int x, int y, int width, int height) {
