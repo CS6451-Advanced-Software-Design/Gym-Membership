@@ -58,12 +58,12 @@ Building Membership with the State pattern was the part where the course made th
 
 I also learned to be careful with names, because `PlanFactory` is a simple factory and not the GoF Factory Method.
 
-Working inside the hexagon taught me to respect boundaries other people own. Membership had to bill through Billing's ports without changing Chirag's `BillingService`, and ArchUnit failed my build when one of my DTOs reached into `port.in`. The most surprising bug wasn't in my logic: memberships already saved on Railway had no value for my new fields, so they failed to load until I made those fields optional. Data outlives code.
+Working inside the hexagon taught me to respect the boundaries of code that other people own. Membership had to bill members through Billing's ports without changing Chirag's `BillingService`, and ArchUnit failed my build when one of my DTOs reached into `port.in`. The most surprising bug was not in my logic at all: memberships that were already saved on Railway had no value for my new fields, so they failed to load until I made those fields optional. So, data lives longer than code.
 
-What didn't work, and what I would do differently:
+What didn't work, and what I would do differently next time:
 
-- **I started late.** I reviewed drafts in weeks 5 and 6 but made no commits until 21 Oct, so most of my code arrived in one large pull request (#38, 20 commits). Smaller pull requests from the first iteration would have been easier to review and shown my progress week by week.
-- **I sketched after coding.** My hand sketches record the design rather than help me find it; next time I would sketch first.
-- **GenAI needed checking.** I used it a lot, and one draft claimed the Loyalty discount could apply at sign-up, which it can't, so now I check everything it produces against the code and the brief.
+- **I started late.** I reviewed drafts in weeks 5 and 6 but didn't make any commits until 21 Oct, so most of my code came in one big pull request (#38, 20 commits). Smaller pull requests from the first iteration would have been easier to review and would have shown my progress week by week.
+- **I sketched after coding.** My hand sketches record the design instead of helping me find it, so next time I would sketch first.
+- **GenAI needed checking.** I used it a lot, and one draft said the Loyalty discount could apply at sign-up, which it can't, so now I check everything it gives me against the code and the brief.
 
-Overall the project showed me what the lectures meant by analysis feeding design: the business rules, state chart and use cases decided my classes before I wrote them, and the tests and CI kept them doing what the requirements said.
+Overall, this project showed me what the lectures meant by analysis feeding design: the business rules, the state chart and the use cases decided my classes before I wrote them, and the tests and CI made sure they kept doing what the requirements said.
