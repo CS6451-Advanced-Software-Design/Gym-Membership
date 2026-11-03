@@ -50,13 +50,13 @@ As the Business Analyst, I learned that requirements are mostly decisions. The f
 
 Later, when I wrote UC1 in the full template, I found a gap that I had missed while coding: a declined Annual payment still starts the membership as Active. I only found it by going through every extension step by step, so now I see the template as a way of checking the design, not just documenting it.
 
-Building Membership with the State pattern was where the course made the most sense to me:
+Building Membership with the State pattern was the part where the course made the most sense to me:
 
-- each state in the §6 state chart became a subclass and each arrow a method;
-- the base class refuses everything by default, so a Frozen membership can't book without a single `if` on the status;
-- the states are so small that I could test every arrow of the chart.
+- each state in the §6 state chart became a subclass, and each arrow became a method;
+- the base class refuses everything by default, so a Frozen membership can't book a class without a single `if` on the status;
+- the states are so small that I could write a test for every arrow of the chart.
 
-I also learned to be careful with names: `PlanFactory` is a simple factory, not the GoF Factory Method.
+I also learned to be careful with names, because `PlanFactory` is a simple factory and not the GoF Factory Method.
 
 Working inside the hexagon taught me to respect boundaries other people own. Membership had to bill through Billing's ports without changing Chirag's `BillingService`, and ArchUnit failed my build when one of my DTOs reached into `port.in`. The most surprising bug wasn't in my logic: memberships already saved on Railway had no value for my new fields, so they failed to load until I made those fields optional. Data outlives code.
 
