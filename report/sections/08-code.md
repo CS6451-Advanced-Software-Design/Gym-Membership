@@ -34,6 +34,49 @@ Table: Use cases and the classes behind them
 ## Architectural Patterns
 
 ```java
+// The controller calls the inbound port and returns a dto record as JSON
+@PostMapping("/billing-runs")
+@ResponseStatus(HttpStatus.CREATED)
+public List<InvoiceResponse> run(@Valid @RequestBody BillingRunRequest request) {
+    return billing.run(request.period()).stream().map(InvoiceResponse::from).toList();
+}
+```
+
+*MVC / REST: controller, model (`Invoice`) and JSON view (`InvoiceResponse`), with no business rule in the controller (`BillingController`)*
+
+Here we defined an endpoint `/billing-runs` where the PostMapping annotation marks it as a `POST` request, and `HttpStatus.CREATED` response shows it will return the status code for CREATED, which is 201. 
+
+The request body received is directly converted into a BillingRunRequest DTO where it's validated automatically, and then the request goes through the `RunMonthlyBillingUseCase` port, which the BillingService implements.
+
+Lastly the Invoice objects returned by the service are converted into InvoiceResponse records, which then Spring returns as JSON to the caller.
+
+```java
+// port.in: what the outside world can ask the core to do
+public interface RunMonthlyBillingUseCase {
+    List<Invoice> run(YearMonth period);
+}
+
+// port.out: what the core needs from the outside world
+public interface PaymentGateway {
+    boolean charge(String memberId, Money amount);
+}
+
+// The core implements the inbound port and only knows the outbound port
+public class BillingService implements RunMonthlyBillingUseCase /* ... */ {
+    // ...
+    boolean paid = payments.charge(account.memberId(), invoice.total());
+}
+
+// adapter.payment: one implementation, which a real provider could replace
+@Component
+public class FakePaymentGateway implements PaymentGateway { /* ... */ }
+```
+
+*Hexagonal: the ports and one adapter behind the billing run, key lines only (`gym/port`, `gym/service`, `gym/adapter/payment`)*
+
+Hexagonal pattern here shows the ports being implemented, both the inbound ports (running of direct use cases), and outbound ports, interfaces called during the main use case of a call. PaymentGateway is one such example where we can easily implement a real service provider like Stripe here with no change to actual logic anywhere else.
+
+```java
 @ArchTest
 static final ArchRule layersOnlyDependInwards = layeredArchitecture()
         // ... one layer per package
@@ -54,6 +97,8 @@ dispatcher.register(new LoggingInterceptor(), 0);
 ```
 
 *Interceptor: logging is registered once and runs around every use case (`InterceptorConfiguration`)*
+
+Dispatcher is able to add as many concrete interceptors as needed. In our case we just added the LoggingInterceptor, which will run around every use case defined automatically.
 
 ## Design Patterns
 
@@ -290,7 +335,7 @@ Table: Automated tests on main (CI run of 2 Nov)
 
 ## Version Control
 
-We used the most popular version control system, Git, along with the most popular Git provider, GitHub. We enabled GitHub's own bot, Dependabot, to allow automatic version updates to our dependencies (2 of its pull requests already merged).
+We used the most popular version control system, Git, along with the most popular Git provider, GitHub. We enabled GitHub's own bot, Dependabot, to allow automatic version updates to our dependencies (5 of its pull requests already merged).
 
 ::: {.grid columns=2}
 ![Commits to main per week](../version-control/commits.png){width=100%}

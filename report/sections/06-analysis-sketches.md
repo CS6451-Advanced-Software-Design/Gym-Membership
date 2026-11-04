@@ -61,26 +61,27 @@ The ER diagram has fewer boxes than the class diagram, because only data that we
 
 These are photos of our rough work, drawn by hand on paper or on an iPad, with the crossings-out left in. Chirag's three sketches worked out the hexagon, the discount Strategy and an invoice by hand. Mine follow the Membership feature: one member's year through the five states, the State pattern deciding whether a membership can be frozen, the Plan Factory, sign-up with a worked first payment, the daily checks, and how booking and check-in ask a membership what it allows. I copied the layout of each one from a GenAI reference page and then redrew it by hand. What changed between each sketch and the final diagram or code is written next to the photo in `report/sketches/README.md`; for example, the sign-up sketch writes prices in pounds instead of euros, and the State sketch only shows a yes or no, where the code also checks the 1 to 3 month limit. Dinesh's two sketches work out the Member check-in use case: `MemberService` asking `Membership.canCheckIn(now)` on the success and refusal paths, drawn before the feature was built and redrawn as the sequence diagrams the code follows.
 
-::: {.grid columns=3}
-![The hexagon, first draft (Chirag)](../sketches/2026-10-25-hexagon-chirag.jpg){height=4.2cm}
+::: {.grid columns=2}
+![The hexagon, first draft (Chirag)](../sketches/2026-10-25-hexagon-chirag.jpg){height=5.5cm}
 
-![Worked invoice (Chirag)](../sketches/2026-10-25-worked-invoice-chirag.jpg){height=4.2cm}
+![Worked invoice (Chirag)](../sketches/2026-10-25-worked-invoice-chirag.jpg){height=5.5cm}
 
-![Discount Strategy (Chirag)](../sketches/2026-10-25-discount-strategy-chirag.jpg){height=4.2cm}
+![Discount Strategy (Chirag)](../sketches/2026-10-25-discount-strategy-chirag.jpg){height=5.5cm}
 
-![Membership life (Dhruv)](../sketches/2026-10-26-membership-life-dhruv.jpg){height=4.2cm}
+![Membership life (Dhruv)](../sketches/2026-10-26-membership-life-dhruv.jpg){height=5.5cm}
 
-![State pattern (Dhruv)](../sketches/2026-10-26-state-pattern-dhruv.jpg){height=4.2cm}
+![State pattern (Dhruv)](../sketches/2026-10-26-state-pattern-dhruv.jpg){height=5.5cm}
 
-![Daily checks (UC13) (Dhruv)](../sketches/2026-10-26-daily-checks-dhruv.jpg){height=4.2cm}
+![Daily checks (UC13) (Dhruv)](../sketches/2026-10-26-daily-checks-dhruv.jpg){height=5.5cm}
 
-![Plan Factory (Dhruv)](../sketches/2026-10-26-plan-factory-dhruv.jpg){height=4.2cm}
+![Plan Factory (Dhruv)](../sketches/2026-10-26-plan-factory-dhruv.jpg){height=5.5cm}
 
-![Booking and check-in (Dhruv)](../sketches/2026-10-26-booking-checkin-dhruv.jpg){height=4.2cm}
+![Booking and check-in (Dhruv)](../sketches/2026-10-26-booking-checkin-dhruv.jpg){height=5.5cm}
 
-![Sign-up, UC1 (Dhruv)](../sketches/2026-10-26-sign-up-dhruv.jpg){height=4.2cm}
+![Sign-up, UC1 (Dhruv)](../sketches/2026-10-26-sign-up-dhruv.jpg){height=5.5cm}
 
-![Member check-in, success (DineshReddy)](../sketches/2026-10-28-member-checkin-success-dineshreddy.jpg){height=4.2cm}
 
-![Member check-in, refused (DineshReddy)](../sketches/2026-10-28-member-checkin-refused-dineshreddy.jpg){height=4.2cm}
+![Member check-in, success (DineshReddy)](../sketches/2026-10-28-member-checkin-success-dineshreddy.jpg){height=5.5cm}
+
+![Member check-in, refused (DineshReddy)](../sketches/2026-10-28-member-checkin-refused-dineshreddy.jpg){height=5.5cm}
 :::
