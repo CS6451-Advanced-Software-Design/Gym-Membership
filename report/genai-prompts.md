@@ -64,5 +64,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 57 | 3 Nov | Dhruv | "fix the grammar and spacing mistakes in the writting" | Grammar, punctuation and spacing fixes to the §1 narrative I wrote myself, keeping my wording (PR #155) |
 | 58 | 4 Nov | DineshReddy | "add this as mine and show me" (supplied my own domains/languages/frameworks) | Added the DineshReddy Mogili row to §3's Industry Experience table |
 | 59 | 4 Nov | DineshReddy | Asked for a factual draft of all my work to rephrase into my own words, then supplied my own rewritten §12 reflection text | Replaced the §12 reflection draft with my own-voice paragraphs covering the Member feature, the BillingService/MembershipService refactors, CI/CD fixes and documentation work |
+| 61 | 4 Nov | Chirag | "update readme wording etc. to finalize our stuff, like instead of "latest draft" it should say final report" | Final wording in the README, diary, the two bootstrap notes and the report release |
 
 Table: GenAI prompts

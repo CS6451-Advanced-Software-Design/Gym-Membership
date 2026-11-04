@@ -1,6 +1,6 @@
 # Requirements (report §4)
 
-> **Bootstrap draft (GenAI, prompt #2 in [genai-prompts.md](../genai-prompts.md)).** This is a starting point for the Business Analyst. Challenge it, change it, and write the report text in our own words.
+> **Started as a GenAI draft (prompt #2 in [genai-prompts.md](../genai-prompts.md)).** The final version is in [report §4](../sections/04-requirements.md).
 
 ## Actors
 
