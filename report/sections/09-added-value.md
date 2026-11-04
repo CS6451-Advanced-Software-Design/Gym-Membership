@@ -39,8 +39,7 @@ SonarQube Cloud runs inside CI's `metrics` job. It was only wired in after both 
 | Quality gate | Passed |
 | Coverage | 96.3% |
 | Duplication | 0.0% |
-| Security rating | A (0 vulnerabilities) |
-| Security review rating | A (0 hotspots) |
+| Security and review ratings | A (0 vulnerabilities, 0 hotspots) |
 | Maintainability rating | A (0 issues) |
 | Reliability rating | A (0 bugs) |
 

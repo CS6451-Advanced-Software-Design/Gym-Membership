@@ -24,6 +24,7 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 16 | 21 Oct | Dhruv | "can you explain me the folders and docs inside this org, also can we reorganise it in a better manner?" … | Repo split into report/ and code/ |
 | 17 | 21 Oct | Chirag | "lets setup skeleton code, create pr" | Spring Boot skeleton, Repository port, JSON adapter, ArchUnit, CI |
 | 18 | 21 Oct | Chirag | "can we use interceptor architectural pattern too? u can find slides for it on brightspace" … | Interceptor framework, LoggingInterceptor, tests, notes |
+| 19 | 24 Oct | Dhruv | "edit/update/remake all the diagrams with this project idea in mind and commit them to github one by one, not all at once" | All six diagrams redrawn to match the rules and code |
 | 20 | 24 Oct | Dhruv | "let's start with point 1" (the shared groundwork every feature needs) | `Money`, payment and notification ports and adapters, `InMemoryRepository` |
 | 21 | 25 Oct | Chirag | "study the work done so far ... make sure those diagrams dont contradict each other …" | Contradictions between the six diagrams fixed; class-to-entity mapping |
 | 22 | 25 Oct | Chirag | "help me suggest what rough sketches i can make", "show me this - The hexagon, first draft", "explain the parts of hexagon architecture" | Reference for the hand-drawn hexagon sketch; explanation |
@@ -64,5 +65,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 57 | 3 Nov | Dhruv | "fix the grammar and spacing mistakes in the writting" | Grammar, punctuation and spacing fixes to the §1 narrative I wrote myself, keeping my wording (PR #155) |
 | 58 | 4 Nov | DineshReddy | "add this as mine and show me" (supplied my own domains/languages/frameworks) | Added the DineshReddy Mogili row to §3's Industry Experience table |
 | 59 | 4 Nov | DineshReddy | Asked for a factual draft of all my work to rephrase into my own words, then supplied my own rewritten §12 reflection text | Replaced the §12 reflection draft with my own-voice paragraphs covering the Member feature, the BillingService/MembershipService refactors, CI/CD fixes and documentation work |
+| 60 | 4 Nov | Chirag | "i need to submit my assignment [repo link], help me see whats left" then "lets create pr for these fixes" | A check of the report against the spec and marking scheme; corrected the counts in §2, §7, §8 and §10, and the MVC and Hexagonal snippets and captions in §8 |
 
 Table: GenAI prompts

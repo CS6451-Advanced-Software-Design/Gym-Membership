@@ -34,6 +34,41 @@ Table: Use cases and the classes behind them
 ## Architectural Patterns
 
 ```java
+// The controller calls the inbound port and returns a dto record as JSON
+@PostMapping("/billing-runs")
+@ResponseStatus(HttpStatus.CREATED)
+public List<InvoiceResponse> run(@Valid @RequestBody BillingRunRequest request) {
+    return billing.run(request.period()).stream().map(InvoiceResponse::from).toList();
+}
+```
+
+*MVC / REST: controller, model (`Invoice`) and JSON view (`InvoiceResponse`), with no business rule in the controller (`BillingController`)*
+
+```java
+// port.in: what the outside world can ask the core to do
+public interface RunMonthlyBillingUseCase {
+    List<Invoice> run(YearMonth period);
+}
+
+// port.out: what the core needs from the outside world
+public interface PaymentGateway {
+    boolean charge(String memberId, Money amount);
+}
+
+// The core implements the inbound port and only knows the outbound port
+public class BillingService implements RunMonthlyBillingUseCase /* ... */ {
+    // ...
+    boolean paid = payments.charge(account.memberId(), invoice.total());
+}
+
+// adapter.payment: one implementation, which a real provider could replace
+@Component
+public class FakePaymentGateway implements PaymentGateway { /* ... */ }
+```
+
+*Hexagonal: the ports and one adapter behind the billing run, key lines only (`gym/port`, `gym/service`, `gym/adapter/payment`)*
+
+```java
 @ArchTest
 static final ArchRule layersOnlyDependInwards = layeredArchitecture()
         // ... one layer per package
@@ -290,7 +325,7 @@ Table: Automated tests on main (CI run of 2 Nov)
 
 ## Version Control
 
-We used the most popular version control system, Git, along with the most popular Git provider, GitHub. We enabled GitHub's own bot, Dependabot, to allow automatic version updates to our dependencies (2 of its pull requests already merged).
+We used the most popular version control system, Git, along with the most popular Git provider, GitHub. We enabled GitHub's own bot, Dependabot, to allow automatic version updates to our dependencies (5 of its pull requests already merged).
 
 ::: {.grid columns=2}
 ![Commits to main per week](../version-control/commits.png){width=100%}
