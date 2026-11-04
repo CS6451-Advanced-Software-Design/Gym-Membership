@@ -4,9 +4,7 @@ CS6451 Advanced Software Design, Team-Based Assignment Part 1 (Brightspace Group
 
 A monolithic (package-by-layer MVC + Hexagonal, with Interceptor) business tier for a gym and fitness club: membership plans and billing, class bookings with capacity and waitlists, check-in, freezes, penalties, and referral credits. The front end is simulated with Postman and the data layer with file I/O behind repositories and DTOs.
 
-**Deadline: 23:59 Wed 4 Nov 2026** (moved from Sun 1 Nov).
-
-**The report:** the [latest draft PDF](https://github.com/CS6451-Advanced-Software-Design/Gym-Membership/releases/download/report-latest/report.pdf) is rebuilt from [report/sections](report/sections) on every merge to `main`. Each release has the report as it stood at that version.
+**The report:** the [final report PDF](https://github.com/CS6451-Advanced-Software-Design/Gym-Membership/releases/download/report-latest/report.pdf) is built from [report/sections](report/sections). Each release has the report as it stood at that version.
 
 **Try it, no setup needed:** the app is live at https://gym-membership-production-a725.up.railway.app, which opens its Swagger UI. The public [Postman workspace](https://www.postman.com/spaceflight-geoscientist-47956182/gym-membership/collection/g5aqom5/gym-membership-api) has every endpoint, documented from the code, and sends to the live app by default. Pick the **mock** environment for Postman's saved examples, or **local** for the app on your machine. See [code/README.md](code/README.md#postman).
 
@@ -37,10 +35,10 @@ See [report/roles.md](report/roles.md) for the full role split.
 | [report/requirements](report/requirements/README.md) | Actors, use cases, business rules, quality attributes (report §4) |
 | [report/architecture](report/architecture/README.md) | MVC + Hexagonal + Interceptor, package diagram, hosting stack (report §5) |
 | [report/analysis](report/analysis/README.md) | Candidate objects, class, sequence, state chart and ER diagrams (report §6) |
-| [report/sketches](report/sketches/README.md) | Photos of our rough work and hand-drawn sketches (report §6). **Add photos as you draw** |
+| [report/sketches](report/sketches/README.md) | Photos of our rough work and hand-drawn sketches (report §6). |
 | [report/tech-stack.md](report/tech-stack.md) | Java 21 + Spring Boot, Maven, tests, CI/CD, metrics, UML workbench, hosting stack (report §5, §8, §9, §10) |
 | [report/sample-project-lessons.md](report/sample-project-lessons.md) | What past submissions did well and where they lost marks |
-| [report/sections](report/sections) | **The report itself**: one Markdown file per section, in the spec's order. Write your sections here, in your own words. Each file starts with a comment saying what it needs and who owns it |
+| [report/sections](report/sections) | **The report itself**: one Markdown file per section, in the spec's order. Each file starts with a comment saying what it needs and who owns it |
 | [report/pdf](report/pdf) | Builds the PDF: front cover, the blank marking scheme, contents and page numbers. Run `report/pdf/build.sh` (needs pandoc and Typst), or download it from the **Report** check on any PR. Names and student IDs for the cover are in `report/pdf/report.yaml` |
 | [report/blueprints](report/blueprints/README.md) | Package, component and deployment diagrams recovered from the code in Visual Paradigm (report §10) |
 | [report/metrics](report/metrics) | PMD and CK snapshots before and after each refactoring (report §9) |
@@ -48,8 +46,8 @@ See [report/roles.md](report/roles.md) for the full role split.
 | [report/lessons.md](report/lessons.md) | Lessons learned, with evidence, for the critique and reflections (report §11, §12) |
 | [report/report-plan.md](report/report-plan.md) | Owner, evidence and quality bar for every report section (§1–14) |
 | [report/roles.md](report/roles.md) | Roles and package ownership (report §3) |
-| [report/diary.md](report/diary.md) | Weekly diary, Weeks 4–12 (report §7). **Update every week** |
-| [report/genai-prompts.md](report/genai-prompts.md) | Every GenAI prompt used (report §13). **Log prompts as you go** |
+| [report/diary.md](report/diary.md) | Weekly diary (report §7) |
+| [report/genai-prompts.md](report/genai-prompts.md) | Every GenAI prompt used (report §13). |
 
 ## Patterns
 
@@ -160,11 +158,10 @@ The package diagram reverse-engineered from the compiled code, to compare with t
 
 ![Recovered package diagram](report/blueprints/package-diagram.png)
 
-## Working agreement
+## How we worked
 
-- Work on a branch per task and open a pull request. Another member reviews before merge.
+- A branch per task and a pull request for each, with CI passing before merge.
 - Conventional commit messages, e.g. `feat(booking): add waitlist promotion`.
-- Commit under your own GitHub account, **every week**. The commit history is marked evidence of equal contribution (report §7 and §8) and has to agree with the diary.
-- Only claim in the report what the code shows. Every pattern, test and pipeline mentioned must be findable in the repo.
-- Log any GenAI prompt in `report/genai-prompts.md` in the same PR that uses its output.
-- Report prose must be in our own words. GenAI may bootstrap diagrams and code only.
+- Each member committed under their own GitHub account (report §7 and §8).
+- The report only claims what the code shows. Every pattern, test and pipeline it mentions can be found in the repo.
+- GenAI prompts are logged in `report/genai-prompts.md`.
