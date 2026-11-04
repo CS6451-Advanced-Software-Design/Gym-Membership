@@ -24,7 +24,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 16 | 21 Oct | Dhruv | "can you explain me the folders and docs inside this org, also can we reorganise it in a better manner?" … | Repo split into report/ and code/ |
 | 17 | 21 Oct | Chirag | "lets setup skeleton code, create pr" | Spring Boot skeleton, Repository port, JSON adapter, ArchUnit, CI |
 | 18 | 21 Oct | Chirag | "can we use interceptor architectural pattern too? u can find slides for it on brightspace" … | Interceptor framework, LoggingInterceptor, tests, notes |
-| 19 | 24 Oct | Dhruv | "edit/update/remake all the diagrams with this project idea in mind and commit them to github one by one, not all at once" | All six diagrams redrawn to match the rules and code |
 | 20 | 24 Oct | Dhruv | "let's start with point 1" (the shared groundwork every feature needs) | `Money`, payment and notification ports and adapters, `InMemoryRepository` |
 | 21 | 25 Oct | Chirag | "study the work done so far ... make sure those diagrams dont contradict each other …" | Contradictions between the six diagrams fixed; class-to-entity mapping |
 | 22 | 25 Oct | Chirag | "help me suggest what rough sketches i can make", "show me this - The hexagon, first draft", "explain the parts of hexagon architecture" | Reference for the hand-drawn hexagon sketch; explanation |
