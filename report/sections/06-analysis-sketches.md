@@ -80,7 +80,10 @@ These are photos of our rough work, drawn by hand on paper or on an iPad, with t
 
 ![Sign-up, UC1 (Dhruv)](../sketches/2026-10-26-sign-up-dhruv.jpg){height=4.2cm}
 
-![Member check-in, success (DineshReddy)](../sketches/2026-10-28-member-checkin-success-dineshreddy.jpg){height=4.2cm}
+:::
 
-![Member check-in, refused (DineshReddy)](../sketches/2026-10-28-member-checkin-refused-dineshreddy.jpg){height=4.2cm}
+::: {.grid columns=1}
+![Member check-in, success (DineshReddy)](../sketches/2026-10-28-member-checkin-success-dineshreddy.jpg){height=11cm}
+
+![Member check-in, refused (DineshReddy)](../sketches/2026-10-28-member-checkin-refused-dineshreddy.jpg){height=11cm}
 :::
