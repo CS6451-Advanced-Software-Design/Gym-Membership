@@ -44,6 +44,12 @@ public List<InvoiceResponse> run(@Valid @RequestBody BillingRunRequest request) 
 
 *MVC / REST: controller, model (`Invoice`) and JSON view (`InvoiceResponse`), with no business rule in the controller (`BillingController`)*
 
+Here we defined an endpoint `/billing-runs` where the PostMapping annotation marks it as a `POST` request, and `HttpStatus.CREATED` response shows it will return the status code for CREATED, which is 201. 
+
+The request body received is directly converted into a BillingRunRequest DTO where it's validated automatically, and then the request goes through the `RunMonthlyBillingUseCase` port, which the BillingService implements.
+
+Lastly the Invoice objects returned by the service are converted into InvoiceResponse records, which then Spring returns as JSON to the caller.
+
 ```java
 // port.in: what the outside world can ask the core to do
 public interface RunMonthlyBillingUseCase {
@@ -67,6 +73,8 @@ public class FakePaymentGateway implements PaymentGateway { /* ... */ }
 ```
 
 *Hexagonal: the ports and one adapter behind the billing run, key lines only (`gym/port`, `gym/service`, `gym/adapter/payment`)*
+
+Hexagonal pattern here shows the ports being implemented, both the inbound ports (running of direct use cases), and outbound ports, interfaces called during the main use case of a call. PaymentGateway is one such example where we can easily implement a real service provider like Stripe here with no change to actual logic anywhere else.
 
 ```java
 @ArchTest
