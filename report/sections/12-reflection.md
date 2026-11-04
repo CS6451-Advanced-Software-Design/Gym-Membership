@@ -43,7 +43,6 @@ One thing I would do differently next time is set up SonarCloud earlier. I treat
 
 Overall, this project helped me improve my understanding of software development, from planning and implementation to testing, code quality, and documentation. Taking responsibility for both technical work and documentation also helped me understand how all these parts come together in a software project.
 
-*Pick what actually resonates, write it in my own voice, replace this block.*
 
 ## Dhruv Punj
 
