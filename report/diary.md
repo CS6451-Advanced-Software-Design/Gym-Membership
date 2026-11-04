@@ -1,6 +1,6 @@
 # Diary
 
-Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 format).
+Report §7, in the spec's Table 1 format.
 
 ## Week 4 (28 Sep – 4 Oct)
 
