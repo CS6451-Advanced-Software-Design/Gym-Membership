@@ -98,6 +98,8 @@ dispatcher.register(new LoggingInterceptor(), 0);
 
 *Interceptor: logging is registered once and runs around every use case (`InterceptorConfiguration`)*
 
+Dispatcher is able to add as many concrete interceptors as needed. In our case we just added the LoggingInterceptor, which will run around every use case defined automatically.
+
 ## Design Patterns
 
 ### Observer
