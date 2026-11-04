@@ -54,8 +54,6 @@ dispatcher.register(new LoggingInterceptor(), 0);
 ```
 
 *Interceptor: logging is registered once and runs around every use case (`InterceptorConfiguration`)*
-}
-```
 
 ## Design Patterns
 
