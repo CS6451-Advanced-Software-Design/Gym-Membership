@@ -25,7 +25,18 @@ At Appwrite I already follow a lot of these design and best practices, so I coul
 
 ## Bharat Doodi
 
-*To be written by Bharat.*
+During this Project, I worked as the Project Manager and Tester and also worked on developing the Booking Feature. My previous work experience was in Salesforce and Apex, so working with Java, Spring Boot and Hexagonal Architecture was new to me.
+
+One of the main things I learned was Hexagonal Architecture. I was also not aware of what Ports are, but during the project I understood these concepts, which I also used to develop GymClassRepository, BookingRepository and their JSON adapters.
+
+I also got to know how to handle a situation in which two members try to book the last available place at the same time, which could lead to a race condition. I fixed this issue using synchronized and also added tests to check this. When working with the Command Pattern I also got to know how the undo operations can be hard to handle, mainly when a waitlisted member has already taken a cancelled place. I also wrote 17 tests in the BookingCommandServiceTest to cover different situations.
+
+Moreover, the testing part also helped me to find problems during development, like an API request being rejected when the premium field was missing. I also worked on fixing a PMD issue by basically splitting BookingService into smaller classes. Along with development, I also wrote tests for new features, and end-to-end tests in BookingE2E.
+
+One thing I will highly consider for the future is starting the development part earlier, as most of the Booking feature work was completed close to the deadline. I also got to know that passing CI does not always mean the code is correct; we need peer reviews also.
+
+Overall, the project has taught me many things, from the Project Management role to building features to testing them. Moreover, I also got to know about Java development and teamwork skills. It also gave me practical experience with design patterns, pull requests, CI and automatic deployment, which was quite different from my previous Salesforce experience.
+
 
 ## DineshReddy Mogili
 
@@ -43,6 +54,7 @@ One thing I would do differently next time is set up SonarCloud earlier. I treat
 
 Overall, this project helped me improve my understanding of software development, from planning and implementation to testing, code quality, and documentation. Taking responsibility for both technical work and documentation also helped me understand how all these parts come together in a software project.
 
+*Pick what actually resonates, write it in my own voice, replace this block.*
 
 ## Dhruv Punj
 
