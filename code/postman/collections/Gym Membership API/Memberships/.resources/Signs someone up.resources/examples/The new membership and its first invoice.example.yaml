@@ -8,13 +8,9 @@ request:
     type: json
     content: |-
       {
-        "email": "ann.byrne@gmail.com",
         "name": "Ann Byrne",
-        "plan": "MONTHLY",
-        "studentId": "24123456",
-        "employer": "Stripe",
-        "familyId": "byrne",
-        "referralCode": "ms-3f9c2a1b"
+        "email": "ann.byrne@gmail.com",
+        "plan": "MONTHLY"
       }
 response:
   statusCode: 201

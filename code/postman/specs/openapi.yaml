@@ -83,6 +83,13 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/SignUpRequest"
+            examples:
+              A new member on the Monthly plan:
+                description: A new member on the Monthly plan
+                value:
+                  name: Ann Byrne
+                  email: ann.byrne@gmail.com
+                  plan: MONTHLY
         required: true
       responses:
         "400":

@@ -17,6 +17,7 @@ import gym.port.in.SignUpUseCase.SignUp;
 import gym.port.in.ViewMembershipUseCase;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -106,6 +107,10 @@ public class MembershipController {
      * @param request who is joining and on which plan
      * @return The new membership and its first invoice
      */
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = SignUpRequest.class),
+            examples = @ExampleObject(name = "A new member on the Monthly plan",
+                    value = "{\"name\": \"Ann Byrne\", \"email\": \"ann.byrne@gmail.com\", \"plan\": \"MONTHLY\"}")))
     @PostMapping("/memberships")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponse(responseCode = "400", description = "A required field is missing or the email isn't valid",
