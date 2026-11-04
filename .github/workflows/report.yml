@@ -41,17 +41,17 @@ jobs:
           path: report/pdf/out/report.pdf
 
       # Moves the report-latest tag to this commit and replaces the PDF on its release, so the link never goes stale
-      - name: Publish the latest draft
+      - name: Publish the final report
         if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          notes="The report as it stands on main, rebuilt on every merge that changes report/. Built from $GITHUB_SHA. The submitted version is attached to the v1.0.0 release."
+          notes="The final report, built from $GITHUB_SHA. The submitted version is attached to the v1.0.0 release."
           if gh release view report-latest > /dev/null 2>&1; then
             gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/report-latest" -f sha="$GITHUB_SHA" -F force=true > /dev/null
             gh release edit report-latest --notes "$notes"
           else
-            gh release create report-latest --target "$GITHUB_SHA" --prerelease --latest=false \
-              --title 'Report: latest draft' --notes "$notes"
+            gh release create report-latest --target "$GITHUB_SHA" --latest=false \
+              --title 'Final report' --notes "$notes"
           fi
           gh release upload report-latest report/pdf/out/report.pdf --clobber
