@@ -62,5 +62,7 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 55 | 3 Nov | Dhruv | "explain me the purpose of section 1,3,4,6,7,8,12" according to brief | An explanation of what each of these sections is for according to the brief, which I used to check what my parts of the report needed to cover |
 | 56 | 3 Nov | Dhruv | "explain in 2-3 bullet points what should the content in each sections look like" | An outline of the content for each of my sections, used to rewrite my §6 text, the State and Factory descriptions in §8 and my §12 reflection in the same simple style as my own §1 (PRs #156–158) |
 | 57 | 3 Nov | Dhruv | "fix the grammar and spacing mistakes in the writting" | Grammar, punctuation and spacing fixes to the §1 narrative I wrote myself, keeping my wording (PR #155) |
+| 58 | 4 Nov | DineshReddy | "add this as mine and show me" (supplied my own domains/languages/frameworks) | Added the DineshReddy Mogili row to §3's Industry Experience table |
+| 59 | 4 Nov | DineshReddy | Asked for a factual draft of all my work to rephrase into my own words, then supplied my own rewritten §12 reflection text | Replaced the §12 reflection draft with my own-voice paragraphs covering the Member feature, the BillingService/MembershipService refactors, CI/CD fixes and documentation work |
 
 Table: GenAI prompts
