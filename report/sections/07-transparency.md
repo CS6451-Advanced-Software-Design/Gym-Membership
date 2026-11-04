@@ -12,22 +12,22 @@ patterns, testing and CI/CD. Then the diary, which comes from report/diary.md.
 | Package | Types | Lines of code |
 | --- | --- | --- |
 | `gym` | 4 | 219 |
-| `gym.adapter.logging` | 3 | 51 |
-| `gym.adapter.notification` | 3 | 31 |
-| `gym.adapter.payment` | 3 | 46 |
-| `gym.adapter.persistence` | 10 | 157 |
-| `gym.controller` | 8 | 382 |
-| `gym.domain` | 40 | 918 |
-| `gym.dto` | 17 | 192 |
-| `gym.interceptor` | 5 | 147 |
-| `gym.port.in` | 20 | 132 |
-| `gym.port.out` | 11 | 52 |
-| `gym.service` | 14 | 1022 |
-| **Main total** | **138** | **3349** |
+| `gym.adapter.logging` | 2 | 50 |
+| `gym.adapter.notification` | 2 | 30 |
+| `gym.adapter.payment` | 2 | 45 |
+| `gym.adapter.persistence` | 9 | 156 |
+| `gym.controller` | 7 | 381 |
+| `gym.domain` | 39 | 917 |
+| `gym.dto` | 16 | 191 |
+| `gym.interceptor` | 4 | 146 |
+| `gym.port.in` | 19 | 131 |
+| `gym.port.out` | 10 | 51 |
+| `gym.service` | 13 | 1021 |
+| **Main total** | **127** | **3338** |
 | Tests (`code/src/test`) | 44 | 3831 |
-| **All** | **182** | **7180** |
+| **All** | **171** | **7169** |
 
-Table: Types and lines of code per package (cloc, commit 41bed5f)
+Table: Types and lines of code per package (cloc, commit 41bed5f, without the 11 `package-info.java` files)
 
 ## Classes, Authors and Lines of Code
 

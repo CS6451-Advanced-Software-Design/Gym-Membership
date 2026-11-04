@@ -18,7 +18,7 @@ One hacky workaround we did was the feature was not available in the CE, so we t
 
 | Step | What came out |
 | --- | --- |
-| Instant Reverse on `code/src/main/java` | Every `record` type silently dropped (66 of 85 types on 27 Oct) |
+| Instant Reverse on `code/src/main/java` | Every `record` type silently dropped (19 of 85 types missing on 27 Oct) |
 | Instant Reverse on `code/target/classes` | All 127 types and 14 packages |
 | Package edges from the `import` lines | 19 edges (Instant Reverse skips imports) |
 | Drawn by an Open API plugin (GenAI #38) | The three diagrams, in `report/blueprints/gym-membership.vpp` |
