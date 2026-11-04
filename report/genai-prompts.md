@@ -65,6 +65,6 @@ Every prompt went to Claude through Claude Code. Each row keeps the prompts that
 | 57 | 3 Nov | Dhruv | "fix the grammar and spacing mistakes in the writting" | Grammar, punctuation and spacing fixes to the §1 narrative I wrote myself, keeping my wording (PR #155) |
 | 58 | 4 Nov | DineshReddy | "add this as mine and show me" (supplied my own domains/languages/frameworks) | Added the DineshReddy Mogili row to §3's Industry Experience table |
 | 59 | 4 Nov | DineshReddy | Asked for a factual draft of all my work to rephrase into my own words, then supplied my own rewritten §12 reflection text | Replaced the §12 reflection draft with my own-voice paragraphs covering the Member feature, the BillingService/MembershipService refactors, CI/CD fixes and documentation work |
-| 60 | 4 Nov | Chirag | "i need to submit my assignment [repo link], help me see whats left" then "lets create pr for these fixes" | A check of the report against the spec and marking scheme; corrected the counts in §2, §7, §8 and §10, and the MVC and Hexagonal snippets and captions in §8 |
+| 60 | 4 Nov | Chirag | "i need to submit my assignment [repo link], help me see whats left" then "lets create pr for these fixes", "this page looks too blank, lets make diagrams bigger to fill it up" | A check of the report against the spec and marking scheme; corrected the counts in §2, §7, §8 and §10, and the MVC and Hexagonal snippets and captions in §8, and larger check-in sketches in §6 |
 
 Table: GenAI prompts
