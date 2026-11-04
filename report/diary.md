@@ -62,6 +62,6 @@ Report §7. Reviewed in the lab. Fill in at the end of each week (spec Table 1 f
 | Member | Contributions | Issues arising | Plan for next week |
 | --- | --- | --- | --- |
 | Chirag | Brought the live app, Postman and the report up to date with Booking. Recovered the §10 blueprints again. Rewrote §4 and shortened §7 and §9 | Railway held the Booking merges for approval, so the live app was behind | Cut `v1.0.0`, submit; prepare for the walkthrough |
-| Bharat | | | |
+| Bharat | Finished Booking left-out features which include Command Pattern (#128), Observer and PMD split (#129), Booking API (#130) and end-to-end tests (#131), and updated the README. Worked on report parts which include the Diary, §8 Code (#144, #146), §7 Transparency (#147, #148, #150), §3 Project Plan (#166, #168), §2 Software Lifecycle (#167) and §12 Reflection (#170) | PMD failed my PR #129, so needed to split `BookingService`; no peer reviews on my PRs | Final checks, submitting |
 | DineshReddy | Wrote §13's intro. Re-checked `BookingService` with PMD/CK, no third refactor needed. Re-ran SonarQube after Booking merged and resolved the 2 `OffPeakPlan` false positives, Reliability D→A. Drew my two Member check-in sketches | Postman auto-publish still waiting on the workspace's GitHub link | My reflection; submit; prepare for the walkthrough |
 | Dhruv | refactored the report a bit and made some changes in different sections of report | The report was 51 pages, most of it in §4 | Rewrite my sections in my own words |
