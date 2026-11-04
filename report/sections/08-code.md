@@ -61,7 +61,7 @@ dispatcher.register(new LoggingInterceptor(), 0);
 
 ### Observer
 
-We used Observer Pattern which is basically a way to say "tell whoever is interested" without knowing who that is. The main reason for observer is that BookingService should not know how a member is told. We used it in our project for future feature addition, like a new Listener Classes - Email, SMS, etc.
+We used Observer Pattern which is basically a way to say "tell whoever is interested" without knowing who that is. The main reason for observer is that a service like BookingService or MemberService should not know how a member is told. We used it in our project for future feature addition, like a new Listener Classes - Email, SMS, etc.
 
 1. When user cancel booking, it saves the cancelled booking and then calls the promoteFromWaitlist
 2. If someone is waiting and can still book the class, they get a place saved first, and then a message sent and `EventNotificationSender` publish the Notification as an event.
@@ -94,6 +94,33 @@ void aPromotedMemberIsToldAboutTheirPlace() {
 ```
 
 *m1 cancels, so m2 gets the place and exactly one notice (`BookingServiceTest`)*
+
+The Member feature uses the same `NotificationSender` port: `MemberService` asks `Membership.canCheckIn(now)` for the rule, and only once a visit is actually recorded does it tell the member, through the same observer wiring as the waitlist.
+
+```java
+// MemberService.checkIn: the rule lives in Membership, not here
+if (!membership.canCheckIn(now)) {
+    throw new RuleViolationException(...);
+}
+CheckIn checkIn = checkIns.save(new CheckIn(newId("ci-"), member.memberId(), membership.membershipId(), now));
+notifications.send(new Notification(member.memberId(), "Checked in", "You're checked in. Enjoy your workout."));
+```
+
+*`MemberService` saves the visit first, then notifies, the same order as the waitlist promotion (`gym/service/MemberService.java`)*
+
+```java
+@Test
+void checkingInRecordsAVisitAndNotifiesTheMember() {
+    Membership active = activeMembership("m1", new MonthlyPlan());
+
+    CheckIn checkIn = service.checkIn("m1");
+
+    assertTrue(checkIns.findById(checkIn.checkInId()).isPresent());
+    assertEquals("Checked in", notifications.getLast().subject());
+}
+```
+
+*A successful check-in is saved and notifies the member exactly once (`MemberServiceTest`)*
 
 ### Command
 

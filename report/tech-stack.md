@@ -83,7 +83,7 @@ Build and CI (GitHub Actions on every pull request):
 | Web server + application server | Tomcat, embedded in the Spring Boot jar. `java -jar gym-membership.jar` starts everything |
 | Business tier | `service` and `domain` packages |
 | Enterprise Information System (database) | JSON files in a `code/data/` folder, accessed only through `adapter.persistence` |
-| Message bus | Spring's in-process `ApplicationEventPublisher`. It also carries the Observer pattern for waitlist promotion and payment notifications |
+| Message bus | Spring's in-process `ApplicationEventPublisher`. It also carries the Observer pattern for check-in, waitlist promotion and payment notifications |
 | Client | Postman, calling the live app at https://gym-membership-production-a725.up.railway.app (or `http://localhost:8080` in development) |
 
 The §10 deployment diagram follows from this: one node (the Railway container) running a JVM, with the jar artifact (Tomcat inside) and the `data/` folder on its volume.
